@@ -1,0 +1,16 @@
+\begin{algorithm}
+  \caption{\label{alg.maxvalid}
+    The function that finds the ``best" chain according to our protocol's
+    maximum intrinsic difficulty rule given a set of chains $\{C_1, \ldots, C_k\}$}
+  \begin{algorithmic}[1]
+  \Function{\maxvalid}{$C_1,\ldots , C_2$}
+  \Let{\temp}{\epsilon}
+  \For{$i = 1$ to $k$}
+    \If{$\validate(C_i) \land \intrinsicDifficulty(C_i) > \intrinsicDifficulty(\temp)$}
+      \Let{\temp}{C_i}
+    \EndIf
+  \EndFor
+  \State \Return $temp$
+  \EndFunction
+  \end{algorithmic}
+\end{algorithm}

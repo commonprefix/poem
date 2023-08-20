@@ -1,0 +1,46 @@
+
+\section{Entropic Consensus}
+
+Entropy, a Shannon-theoretic quantity employed heavily in statistics and information theory, measures the "compressability" and inherent information content of a random variable, and entropy-rate that of a random process. Any blockchain's evolution is that of a random process. In the classical proof-of-work (PoW) setting, an associated POW function (often a hash function) has $2^k$ states, and is (approximately, if well designed) uniformly distributed across these states. Thus, the maximum entropy associated with hashed outputs is $H_{max} = 2^k$, corresponding to no "work" performed on the system. The PoW algorithm restricts acceptable hashed outputs to all values below a threshold difficulty $2^d$. This sets the maximum output target entropy to be $2^d$.
+
+In practice, the mining process achieves a hashed output ($2^c$) is less than or equal to the difficulty threshold, i.e., $2^c \le 2^d$. We call this the intrinsic difficulty, which removes $2^k - 2^c$ possible states from $H_{max}$. The entropic consensus mechanism utilizes the {\em difference entropy} $$\Delta H= k - c$$ using the actual output entropy rather than the target difference entropy.
+
+\section{Algorithm}
+\subsection{Definitions}
+\begin{enumerate}
+    \item $\Delta H$ is Entropy reduced by a given worked block represented in fractional bits
+    \item $hash$ is the Hash($B_n$) of a given block that represents the work done on a block. It can vary based on the work functions, but Sha256 is a canonical example.
+    \item Genesis = First block in the blockchain
+    \item k = Field size of the hash function
+\end{enumerate}
+
+\begin{algorithm}
+\caption{Intrinsic Difficulty of the block}
+\label{Intrinsic_Difficulty}
+\begin{algorithmic}[2]
+\Require Block
+\Ensure Returns the Intrinsic difficulty of the block
+\Function{$\Delta H$}{$B_n$}
+\State $hash \gets$ Hash($B_n$)
+\State $\Delta h \gets k - \log_2(hash)$
+\State \Return $\Delta h$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Total Entropy Reduction}
+\label{Total_Entropy_Reduction}
+\begin{algorithmic}[3]
+\Require Chain, Block Number
+\Ensure Returns the sum of Intrinsic difficulties of all the blocks going back to genesis from the given block
+\Function{$H$}{$C,n$}
+\If{$B_n$ == $B\_genesis$}
+    \State \Return $0$
+\Else
+    \State \Return \Call{$\Delta H$}{$B_n$} +
+                    \Call{$H$}{$B_{n-1}$}
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}

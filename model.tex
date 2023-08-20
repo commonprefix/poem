@@ -1,0 +1,13 @@
+\section{Model}
+
+We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
+The protocol execution is separated in distinct rounds.
+We assume a synchronous communication network, where all messages are eventually
+delivered with delay less than a round.
+We also assume a static setting, where the protocol is executed by
+a fixed number of $n$ players.
+The adversary controls $t$ of the players.
+In a single round, all players are allowed the same number of queries to
+a random oracle as well as communicating with other player through an
+unauthenticated network, meaning that the adversary can ``spoof"
+the source address of any message that is delivered.
