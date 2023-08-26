@@ -12,6 +12,13 @@ the longest valid chain. In our construction, we define the ``best" chain being
 the one with the most intrinsic difficulty.
 Therefore, we propose $maxvalid()$ returning the valid chain
 with the maximum intrinsic difficulty, as illustrated in Algorithm~\ref{alg.maxvalid}.
-%TODO: Define (block and chain) intrinsic difficulty beforehand
+%TODO: Define (block and chain) intrinsic work beforehand
+%TODO: State that the target must
 
 \import{./algorithms/}{algorithm-maxvalid.tex}
+
+* <= operator (pseudocode)
+* Intrinsic Work algorithm for Block work(B) (kappa - log(H(B)))
+* Intrinsic Work algorithm for Chain work(C)
+
+* validate from Dionysis' book (state that validation rules do not change compared to the original bitcoin)
