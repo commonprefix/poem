@@ -1,0 +1,26 @@
+\begin{algorithm}[H]
+  \caption{\label{alg.validate} The validate algorithm}
+  \begin{algorithmic}[1]
+  \Function{$\textsf{validate}_{\mathcal{G},\delta(\cdot)}$}{$C$}
+    \If{$C[0] \neq \mathcal{G}$}
+      \State\Return$\false$
+    \EndIf
+    \Let{st}{st_0}\Comment{Genesis state}
+    \Let{h}{H(C[0])}
+    \Let{st}{\delta^*(st, C[0].x)}
+    \For{$B \in C[1{:}]$}
+      \Let{(s, x, ctr)}{B}
+      \If{$H(B) > T \lor s \neq h$}
+        \State\Return$\false$
+      \EndIf
+      \Let{st}{\delta^*(st, B.x)}
+      \If{$st = \bot$}
+        \State\Return$\false$\Comment{Invalid state transition}
+      \EndIf
+      \Let{h}{H(B)}
+    \EndFor
+    \State\Return$\true$
+  \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
