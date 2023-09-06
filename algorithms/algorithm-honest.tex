@@ -23,7 +23,7 @@
             \Let{x}{\textsc{Input}()} \Comment{Take all transactions in mempool}
             \Let{B}{\textsf{PoW}(x, \tilde C)}
             \If{$B \neq \bot$} \Comment{Successful Mining}
-                \Let{ C}{ C \conc B} \Comment{Add block to current longest chain}
+                \Let{ C}{ C \concat B} \Comment{Add block to current longest chain}
                 \Let{M}{M \cup \{ C\}}
             \EndIf
             \State {\textsf{round}} $\leftarrow$ {\textsf{round}+1}
@@ -32,7 +32,7 @@
         \Function{$\textsf{Read}$}{}
             \Let{x}{[\,]} \Comment{Instantiate transactions}
             \For{$B \in  C$}
-                \Let{x}{x \conc  C.x} \Comment{Extract all transactions from each block in the chain}
+                \Let{x}{x \concat  C.x} \Comment{Extract all transactions from each block in the chain}
             \EndFor
             \State\Return{$x$}
         \EndFunction
