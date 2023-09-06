@@ -1,18 +1,12 @@
 \section{Definitions}
 
-%TODO: Define python notation [:]. (create notation paragraph)
-
-%TODO: Define intrinsic work
-
-We let $\kappa$ be the security parameter.
-We model our hash function $H$ as a random oracle~\cite{ro}.
-
-\begin{definition}[Random Oracle]
-  The \emph{random oracle}, when queried with a value $x$ for the first time,
-  returns a value $y$, sampled uniformly at random from $\{0, 1\}^\kappa$,
-  and stores the pair $(x, y)$. If the oracle
-  is queried again with $x$, it returns the same $y$.
-\end{definition}
+Given a sequence $Y$, we address it using $Y[i]$ to mean the $i^\text{th}$ element (starting from $0$).
+We use $|Y|$ to denote the length of $Y$.
+Negative indices address elements from the end, so $Y[-i]$ is the $i^\text{th}$ element from
+the end, and $Y[-1]$ in particular is the last. We use $Y[i{:}j]$ to denote the subarray of $Y$
+consisting of the elements indexed from $i$ (inclusive) to $j$ (exclusive). The notation $Y[i{:}]$ means the
+subarray of $Y$ from $i$ onwards, while $Y[{:}j]$ means the subsequence of $Y$ up to (but not including) $j$.
+The notation $\concat$ denotes the concatenation of two strings.
 
 \begin{definition}[Distributed Ledger Protocol]
   A \emph{distributed ledger protocol} is an Interactive Turing Machine (ITM)
@@ -20,14 +14,12 @@ We model our hash function $H$ as a random oracle~\cite{ro}.
 
   \begin{itemize}
     \item $\lwrite(\tx)$:
-      Takes user input by accepting some valid transaction \tx.
+      Takes user input by accepting some transaction \tx.
     \item $\lread()$:
       Produces user output in the form of a \emph{ledger} (a sequence of transactions)
   \end{itemize}
 \end{definition}
 
-\noindent
-\textbf{Notation.}
 In a distributed ledger protocol execution, the notation
 $\Ledger[P][][r]$ denotes the output of $\lread()$
 invoked on party $P$ at the end of round $r$. 
@@ -35,8 +27,7 @@ We denote that ledger
 $\Ledger[P_1][][r_1]$ is a prefix of ledger $\Ledger[P_2][][r_2]$,
 using the notation
 $\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$. When
-either $\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$
-or $\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1]$ holds,
+$(\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]) \lor (\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1])$ holds,
 we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 
 \begin{definition}[Safety]
@@ -55,5 +46,33 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \begin{definition}[Secure]
   A distributed ledger protocol is \emph{secure} if it is
   both safe and live$(u)$.
+\end{definition}
+
+\begin{definition}[Random Oracle]
+  The \emph{random oracle}, when queried with a value $x$ for the first time,
+  returns a value $y$, sampled uniformly at random from $\{0, 1\}^\kappa$,
+  and stores the pair $(x, y)$. If the oracle
+  is queried again with $x$, it returns the same $y$.
+\end{definition}
+
+We let $\kappa$ be the security parameter and we
+model our hash function $H$ as a random oracle~\cite{ro}.
+
+\atnote{Maybe? The notion of \emph{intrinsic work} is first introduced in this paper.}
+
+\begin{definition}[Block Intrinsic Work]
+  The \emph{intrinsic work} of a block
+  \footnote{A block is any triple of the
+  form $B = (h, x, \ctr)$, where $s \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+  The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.}
+  $B$ is denoted as $\work(B) = \kappa - \log H(B)$.
+\end{definition}
+
+\begin{definition}[Chain Intrinsic Work]
+  The \emph{intrinsic work} of a chain
+  \footnote{A \emph{chain} (\emph{blockchain}) is a sequence of blocks.}
+  $C$ is the sum of the
+  intrinsic work of all blocks in $C$.
+  It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
 \end{definition}
 
