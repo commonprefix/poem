@@ -191,7 +191,8 @@
      \newtheorem*{remark}{Remark}
 
      \newtheorem*{theorem*}{Theorem}
-%
+     \newtheorem{conjecture}{Conjecture}[theorem]
+
 %     \theoremstyle{definition}
 %     \newtheorem{definition}{Definition}[section]
 % \fi
@@ -202,6 +203,7 @@
 \iflncs
   \newenvironment{Claim}{claim}{claim}
   \newenvironment{Definition}{definition}{definition}
+  \newenvironment{Conjecture}{conjecture}{conjecture}
 \fi
 
 \ifccs

@@ -1,20 +1,11 @@
 \begin{algorithm}
   \caption{\label{alg:operators}
-    Defining operators
-    $<$,$>$, and $=$, for chain comparison
+    Defining operator $\leq$, for chain comparison
     based on intrinsic work.}
   \begin{algorithmic}[1]
 
-  \Operator{$C_1 < C_2$}
-    \State \Return $\work(C_1) < \work(C_2)$
-  \EndFunction
-
-  \Operator{$C_1 > C_2$}
-    \State \Return $\work(C_1) > \work(C_2)$
-  \EndFunction
-
-  \Operator{$C_1 = C_2$}
-    \State \Return $\work(C_1) = \work(C_2)$
+  \Operator{$C_1 \leq C_2$}
+    \State \Return $\work(C_1) \leq \work(C_2)$
   \EndFunction
 
   \end{algorithmic}

@@ -9,12 +9,7 @@
   \EndFunction
 
   \Function{\work}{$C$}\Comment{Chain intrinsic work}
-    \Let{\ssum}{0}
-    \For{$B \in C$}
-      \Let{\ssum}{\ssum + \work(B)}
-    \EndFor
-    
-    \State \Return $\ssum$
+    \State \Return $\sum_{B \in C}{\work(B)}$
   \EndFunction
 
   \end{algorithmic}

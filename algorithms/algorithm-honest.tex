@@ -1,4 +1,6 @@
-\begin{algorithm}[H]
+%TODO: Add read at line 19.
+%TODO: Use receive instead of M
+\begin{algorithm}[H] %TODO: Delete lines 9, 19 and add explicit echoing (streamlet model)
     \atnote{Modify for simplicity and to make it consistent w/ this paper}
     \caption{\label{alg.backbone} The honest party}
     \begin{algorithmic}[1]
@@ -13,6 +15,7 @@
         \Function{$\textsf{Execute}$}{$1^\kappa$}
             \Let{M}{\emptyset}
             \State $\tilde C \leftarrow$ maxvalid$(C, \bar M[i])$ \label{alg-backbone.maxvalid} \Comment{Adopt Chain with most intrinsic work in the network}
+            %TODO: Fix typesetting
             \If{$\tilde C \neq  C$}
                 \Let{M}{\{\tilde C\}}
                 \Let{ C}{\tilde C}
