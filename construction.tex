@@ -10,19 +10,15 @@ In Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.maxvalid}, the
 round ($\bar M[i])$.
 
 In Algorithm~\ref{alg.maxvalid}, we modify the \maxvalid function to return the valid
-chain with the most intrinsic work instead of the longest one. The intrinsic work
-of a chain is calculated using the \work function (Algorithm~\ref{alg.work}).
+chain with the most intrinsic work instead of the longest one.
 In \maxvalid, the same chain validation rules apply as before. In order to
 validate a chain, in Line~\ref{alg-maxvalid:validate}, the \validate function is used.
 The \validate function (Algorith~\ref{alg.validate}) remains unchanged compared to
 the original Bitcoin protocol.
 
 
-\import{./}{algorithms/algorithm-work.tex}
 %\import{./}{algorithms/algorithm-operators.tex}
-
 \import{./}{algorithms/algorithm-validate.tex}
 \import{./}{algorithms/algorithm-maxvalid.tex}
 \import{./}{algorithms/algorithm-honest.tex}
-
-%TODO: Add PoW algorithm
+\import{./}{algorithms/algorithm-pow.tex}
