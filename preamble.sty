@@ -27,6 +27,7 @@
 \iftwocolumn
 	\usepackage{amsthm}
 \fi
+
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 \usepackage{bookmark}
 % \usepackage{hyperref}
@@ -35,6 +36,15 @@
 \usepackage{import}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+
+\newcommand{\Operator}[1]{%
+  \renewcommand{\algorithmicfunction}{\textbf{operator}}%
+  \Function{#1}{}%
+}
+
+\newcommand{\atnote}[1]{{\color{magenta}[Apostolos: {#1}]}}
+\newcommand{\dznote}[1]{{\color{Cerulean}[Dionysis: {#1}]}}
+
 \usepackage{varwidth}
 \usepackage{enumitem}
 \usepackage{thmtools}

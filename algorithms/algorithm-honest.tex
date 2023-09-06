@@ -1,0 +1,39 @@
+\begin{algorithm}[H]
+    \atnote{Modify for simplicity and to make it consistent w/ this paper}
+    \caption{\label{alg.backbone} The honest party}
+    \begin{algorithmic}[1]
+     \Statex
+     \State{$\mathcal{G}$}
+     \Let{ C}{[\,]}
+        \Function{$\textsf{Constructor}$}{$\mathcal{G}'$}
+            \State $\mathcal{G} \leftarrow \mathcal{G}'$ \Comment{Select Genesis Block}
+            \State $ C \leftarrow [\mathcal{G}]$ \Comment{Add Genesis Block to start of chain}
+            \State \textsf{round} $\leftarrow 1$
+        \EndFunction
+        \Function{$\textsf{Execute}$}{$1^\kappa$}
+            \Let{M}{\emptyset}
+            \State $\tilde C \leftarrow$ maxvalid$(C, \bar M[i])$ \label{alg-backbone.maxvalid} \Comment{Adopt Chain with most intrinsic work in the network}
+            \If{$\tilde C \neq  C$}
+                \Let{M}{\{\tilde C\}}
+                \Let{ C}{\tilde C}
+            \EndIf
+            \Let{x}{\textsc{Input}()} \Comment{Take all transactions in mempool}
+            \Let{B}{\textsf{PoW}(x, \tilde C)}
+            \If{$B \neq \bot$} \Comment{Successful Mining}
+                \Let{ C}{ C \conc B} \Comment{Add block to current longest chain}
+                \Let{M}{M \cup \{ C\}}
+            \EndIf
+            \State {\textsf{round}} $\leftarrow$ {\textsf{round}+1}
+            \State\Return$M$
+        \EndFunction
+        \Function{$\textsf{Read}$}{}
+            \Let{x}{[\,]} \Comment{Instantiate transactions}
+            \For{$B \in  C$}
+                \Let{x}{x \conc  C.x} \Comment{Extract all transactions from each block in the chain}
+            \EndFor
+            \State\Return{$x$}
+        \EndFunction
+        \vskip8pt
+    \end{algorithmic}
+\end{algorithm}
+

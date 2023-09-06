@@ -1,25 +1,26 @@
 \section{Construction}
-The protocol construction is similar to the original Bitcoin construction.
-The \emph{chain validation} predicate remains unchanged, however we introduce
-a few changes in the chain adoption rule.
-Each miner starts a round with a local chain $C$ and checks for incoming messages
-using function $\receive()$. If a better chain $\widetilde{C}$ is received, then the
-miner adopts the new chain $\widetilde{C}$ at that round. The comparison is done using
-function $\maxvalid()$, which return the ``best" chain
-when given a set of chains as input. In the original Bitcoin protocol, the
-``best'' chain is defined as the longest one; hence $\maxvalid()$ returns
-the longest valid chain. In our construction, we define the ``best" chain being
-the one with the most intrinsic difficulty.
-Therefore, we propose $maxvalid()$ returning the valid chain
-with the maximum intrinsic difficulty, as illustrated in Algorithm~\ref{alg.maxvalid}.
-%TODO: Define (block and chain) intrinsic work beforehand
-%TODO: State that the target must
+In our construction, we only modify the chain adoption rule
+of the original Bitcoin protocol.
+In the original protocol, each honest party starts a round with a local chain
+$C$ and checks for incoming messages. If a longer valid chain is received, then
+the party adopts it. This comparison is done using function \maxvalid,
+which return the ``best" chain when given a set of chains as input.
+In Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.maxvalid}, the
+\maxvalid function is provided with chain $C$ and all the other chains received at that
+round ($\bar M[i])$.
 
-\import{./}{algorithms/algorithm-maxvalid.tex}
+In Algorithm~\ref{alg.maxvalid}, we modify the \maxvalid function to return the valid
+chain with the most intrinsic work instead of the longest one. The intrinsic work
+of a chain is calculated using the \work function (Algorithm~\ref{alg.work}).
+In \maxvalid, the same chain validation rules apply as before. In order to
+validate a chain, in Line~\ref{alg-maxvalid:validate}, the \validate function is used.
+The \validate function (Algorith~\ref{alg.validate}) remains unchanged compared to
+the original Bitcoin protocol.
+
+
+\import{./}{algorithms/algorithm-work.tex}
+\import{./}{algorithms/algorithm-operators.tex}
+
 \import{./}{algorithms/algorithm-validate.tex}
-
-* <= operator (pseudocode)
-* Intrinsic Work algorithm for Block work(B) (kappa - log(H(B)))
-* Intrinsic Work algorithm for Chain work(C)
-
-* validate from Dionysis' book (state that validation rules do not change compared to the original bitcoin)
+\import{./}{algorithms/algorithm-maxvalid.tex}
+\import{./}{algorithms/algorithm-honest.tex}

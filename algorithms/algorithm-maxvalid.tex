@@ -1,16 +1,16 @@
-\begin{algorithm}
-  \caption{\label{alg.maxvalid}
-    The function that finds the ``best" chain according to our protocol's
-    maximum intrinsic difficulty rule given a set of chains $\{C_1, \ldots, C_k\}$}
+\begin{algorithm}[H]
+  \atnote{Did not use intrinsic work operators because I think it looks cleaner.}
+  \caption{\label{alg.maxvalid} The maxvalid algorithm}
   \begin{algorithmic}[1]
-  \Function{\maxvalid}{$C_1,\ldots , C_2$}
-  \Let{\temp}{\epsilon}
-  \For{$i = 1$ to $k$}
-    \If{$\validate(C_i) \land \intrinsicDifficulty(C_i) > \intrinsicDifficulty(\temp)$}
-      \Let{\temp}{C_i}
-    \EndIf
-  \EndFor
-  \State \Return $temp$
+  \Function{$\maxvalid_{\mathcal{G}}$}{$\overline{C}$}
+    \Let{C_\mmax}{\epsilon}
+    \For{$C \in \overline{C}$}
+      \If{$\validate_{\mathcal{G}}(C) \land \work(C) > \work(C_\mmax)$} \label{alg-maxvalid:validate}
+        \Let{C_\mmax}{C}
+      \EndIf
+    \EndFor
+    \State\Return{$C_\mmax$}
   \EndFunction
   \end{algorithmic}
 \end{algorithm}
+

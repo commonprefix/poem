@@ -1,23 +1,24 @@
 \begin{algorithm}[H]
-  \caption{\label{alg.validate} The validate algorithm}
+  \caption{\label{alg.validate} The chain validation algorithm
+  remains unchanged. First, in Line~\ref{alg-validate:gen},
+  we check that the first block of the chain is the
+  genesis block. Then, in Line~\ref{alg-validate:pow},
+  we check that all blocks satisfy the PoW equation
+  ($H(B) > T$) and correctly point to their
+  previous block.
+  State transition validation is excluded for simplicity.}
   \begin{algorithmic}[1]
-  \Function{$\textsf{validate}_{\mathcal{G},\delta(\cdot)}$}{$C$}
-    \If{$C[0] \neq \mathcal{G}$}
+  \Function{$\validate_{\mathcal{G}}$}{$C$}
+    \If{$C[0] \neq \mathcal{G}$} \label{alg-validate:gen}
       \State\Return$\false$
     \EndIf
-    \Let{st}{st_0}\Comment{Genesis state}
-    \Let{h}{H(C[0])}
-    \Let{st}{\delta^*(st, C[0].x)}
+    \Let{\hat{h}}{H(C[0])}
     \For{$B \in C[1{:}]$}
-      \Let{(s, x, ctr)}{B}
-      \If{$H(B) > T \lor s \neq h$}
+      \Let{(h, x, ctr)}{B}
+      \If{$H(B) > T \lor h \neq \hat{h}$} \label{alg-validate:pow}
         \State\Return$\false$
       \EndIf
-      \Let{st}{\delta^*(st, B.x)}
-      \If{$st = \bot$}
-        \State\Return$\false$\Comment{Invalid state transition}
-      \EndIf
-      \Let{h}{H(B)}
+      \Let{\hat{h}}{H(B)}
     \EndFor
     \State\Return$\true$
   \EndFunction

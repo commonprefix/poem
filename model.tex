@@ -9,9 +9,8 @@ We also assume a static setting, where the protocol is executed by
 a fixed number of $n$ players.
 The adversary controls $t$ of the players.
 In a single round, all players are allowed the same number $q$ of queries to
-a random oracle $H$ as well as communicating with other player through an
-%TODO: cite random oracle rogaway
-%TODO: define security parameter kappa and state that random oracle provides uniform output,
-%      hence the maximum entropy is kappa
-unauthenticated network, meaning that the adversary can ``spoof"
+a random oracle~\cite{ro} $H$. Hence, the adversary can perform $t q$ queries
+in a single round.
+Parties communicate through an unauthenticated network,
+meaning that the adversary can ``spoof"
 the source address of any message that is delivered.

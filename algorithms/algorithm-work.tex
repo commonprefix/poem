@@ -1,0 +1,22 @@
+\begin{algorithm}
+  \atnote{The genesis block is considered to have H(G) intrinsic
+          work instead of $0$ in the following algorithms}
+  \caption{\label{alg.work}}
+  \begin{algorithmic}[1]
+
+  \Function{\work}{$B$}\Comment{Block intrinsic work}
+    \State \Return $\kappa - \log H(B)$
+  \EndFunction
+
+  \Function{\work}{$C$}\Comment{Chain intrinsic work}
+    \Let{\ssum}{0}
+    \For{$B \in C$}
+      \Let{\ssum}{\ssum + \work(B)}
+    \EndFor
+    
+    \State \Return $\ssum$
+  \EndFunction
+
+  \end{algorithmic}
+\end{algorithm}
+
