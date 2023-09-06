@@ -1,7 +1,7 @@
 \begin{algorithm}[H]
   \caption{\label{alg.pow} The Proof-of-Work discovery algorithm}
   \begin{algorithmic}[1]
-    \Function{$\textsf{pow}_{H,T,q}$}{$x, s$}
+    \Function{$\pow_{H,T,q}$}{$x, s$}
         \State{$ctr \getsrandomly \{0,1\}^\kappa$}
         \For{$i \gets 1 \text{ to } q$}
             \Let{B}{s \concat x \concat ctr}
