@@ -15,25 +15,34 @@ We model our hash function $H$ as a random oracle~\cite{ro}.
 \end{definition}
 
 \begin{definition}[Distributed Ledger Protocol]
-  A distributed ledger protocol is an Interactive Turing Machine (ITM)
+  A \emph{distributed ledger protocol} is an Interactive Turing Machine (ITM)
   which exposes the following methods:
 
   \begin{itemize}
     \item $\lwrite(\tx)$:
-          Takes user input by accepting some valid transaction \tx.
+      Takes user input by accepting some valid transaction \tx.
     \item $\lread()$:
-          Produces user output in the form of a ledger, namely, a
-          sequence of transactions.
+      Produces user output in the form of a \emph{ledger} (a sequence of transactions)
   \end{itemize}
 \end{definition}
-%TODO: Define Distributed Ledger protocols, transactions, and notation $\Ledger[P][][r]$, notation ~, notation
-%      $\preccurlyeq$.
 
+\noindent
+\textbf{Notation.}
+In a distributed ledger protocol execution, the notation
+$\Ledger[P][][r]$ denotes the output of $\lread()$
+invoked on party $P$ at the end of round $r$. 
+We denote that ledger
+$\Ledger[P_1][][r_1]$ is a prefix of ledger $\Ledger[P_2][][r_2]$,
+using the notation
+$\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$. When
+either $\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$
+or $\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1]$ holds,
+we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 
 \begin{definition}[Safety]
   A distributed ledger protocol is \emph{safe} if
-  for any two honest parties $P_1, P_2$ and any two rounds $r_1, r_2$, it holds that either
-  $\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$ or $\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1]$.
+  for any honest parties $P_1, P_2$ and any rounds $r_1, r_2$, it holds that
+  $\Ledger[P_1][][r_1]~\sim~\Ledger[P_2][][r_2]$.
 \end{definition}
 
 \begin{definition}[Liveness]
@@ -47,6 +56,4 @@ We model our hash function $H$ as a random oracle~\cite{ro}.
   A distributed ledger protocol is \emph{secure} if it is
   both safe and live$(u)$.
 \end{definition}
-
-\textbf{Notation.}
 
