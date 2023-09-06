@@ -1,0 +1,26 @@
+\section{Definitions}
+
+\begin{definition}[Random Oracle]
+  The \emph{random oracle} is a theoretical black box with the
+  following functionality:
+  If queried with a value $x$ for the first time, it returns a
+  value $y$, selected uniformly at random from $\{0, 1\}^\kappa$.
+  Furthermore, it stores the pair $(x, y)$. If the random oracle
+  is queried once again with the value $x$, it returns the same
+  stored value $y$ as before.
+\end{definition}
+
+\begin{definition}[Safety]
+  A distributed ledger protocol is \emph{safe} if
+  for any two honest parties $P_1, P_2$ and any two times $r_1, r_2$, it holds that either
+  $\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$ or $\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1]$.
+\end{definition}
+
+\begin{definition}[Liveness]
+  A distributed ledger protocol is \emph{live}$(v)$ if
+  for any honest party that attempts to inject a transaction $\tx$
+  at rounds $r,...,r+u$, it holds that $\tx \in \Ledger[P][][r+u]$
+  for all honest parties $P$.
+\end{definition}
+
+
