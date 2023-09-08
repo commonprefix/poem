@@ -49,32 +49,8 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{definition}
 
 \begin{definition}[Random Oracle]
-  The \emph{random oracle}, when queried with a value $x$ for the first time,
+  The \emph{random oracle}~\cite{ro}, when queried with a value $x$ for the first time,
   returns a value $y$, sampled uniformly at random from $\{0, 1\}^\kappa$,
   and stores the pair $(x, y)$. If the oracle
   is queried again with $x$, it returns the same $y$.
 \end{definition}
-
-We let $\kappa$ be the security parameter and we
-model our hash function $H$ as a random oracle~\cite{ro}.
-
-\atnote{Maybe? The notion of \emph{intrinsic work} is first introduced in this paper.}
-
-\begin{definition}[Block Intrinsic Work]
-  The \emph{intrinsic work} of a block~\footnote{
-    A block is any triple of the
-    form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
-    The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
-  }
-  $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.
-\end{definition}
-
-\begin{definition}[Chain Intrinsic Work]
-  The \emph{intrinsic work} of a chain~\footnote{
-    A \emph{chain} (\emph{blockchain}) is a sequence of blocks.
-  }
-  $C$ is the sum of the
-  intrinsic work of all blocks in $C$.
-  It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
-\end{definition}
-

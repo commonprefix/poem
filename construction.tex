@@ -1,24 +1,62 @@
 \section{Construction}
-In our construction, we only modify the chain adoption rule
-of the original Bitcoin protocol.
-In the original protocol, each honest party starts a round with a local chain
-$C$ and checks for incoming messages. If a longer valid chain is received, then
-the party adopts it. This comparison is done using function \maxvalid,
-which returns the ``best" chain when given a set of chains as input.
-In Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.maxvalid}, the
-\maxvalid function is provided with chain $C$ and all the other chains received at that
-round ($\bar M[i])$.
+In the \poem construction, only the chain adoption rule
+of the original Bitcoin protocol is modified.
+Honest parties, instead of adopting the longest chain, at the begining
+of each round, now adopt the chain with the most intrinsic work.
 
-In Algorithm~\ref{alg.maxvalid}, we modify the \maxvalid function to return the valid
-chain with the most intrinsic work instead of the longest one.
-In \maxvalid, the same chain validation rules apply as before. In order to
-validate a chain, in Line~\ref{alg-maxvalid:validate}, the \validate function is used.
-The \validate function (Algorith~\ref{alg.validate}) remains unchanged compared to
+We let $\kappa$ be the security parameter and we
+model our hash function $H$ as a random oracle.
+
+\begin{definition}[Block Intrinsic Work]
+  The \emph{intrinsic work} of a block~\footnote{
+    A block is any triple of the
+    form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+    The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+  }
+  $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.
+\end{definition}
+
+\begin{definition}[Chain Intrinsic Work]
+  The \emph{intrinsic work} of a chain~\footnote{
+    A \emph{chain} (\emph{blockchain}) is a sequence of blocks.
+  }
+  $C$ is the sum of the
+  intrinsic work of all blocks in $C$.
+  It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
+\end{definition}
+
+In Algorithm~\ref{alg.backbone} we show the code of an honest party.
+First, the party is constructed using the \constructor function (Line~\ref{alg-backbone.constructor}).
+In every round, each party is executed by the environment using function \execute.
+
+At the beginning of each round, the honest party calls $\net.\receive()$ to get all
+the chains from the network (Line~\ref{alg-backbone.receive}). If a ``better''
+valid chain is found, then the party adopts it.
+This comparison for the ``better'' chain is performed by
+function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
+is the single point that we deviate from the original Bitcoin protocol.
+Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
+which also remains the same as the original protocol.
+
+\import{./}{algorithms/algorithm-honest.tex}
+\import{./}{algorithms/algorithm-pow.tex}
+
+We will now analyze the functionality of \maxvalid. The method receives as input
+a set of chains and returns the ``best'' chain based on a validation and
+chain adoption rule. The function iterates over all the provided chains
+and first checks their validity in Line~\ref{alg-maxvalid:validate}, using
+function \validate (Algorithm~\ref{alg.validate}. The \validate function remains unchanged compared to
 the original Bitcoin protocol.
+The chains that satisfy the validation rule,
+are compared with one another in order to find the chain
+with the most intrinsic work. Finally, in Line~\ref{alg-maxvalid:return}, we return the
+``best'' chain $C_{\mmax}$.
+
+This concludes the \poem construction.
+
+\import{./}{algorithms/algorithm-maxvalid.tex}
+\import{./}{algorithms/algorithm-validate.tex}
+
 
 
 %\import{./}{algorithms/algorithm-operators.tex}
-\import{./}{algorithms/algorithm-validate.tex}
-\import{./}{algorithms/algorithm-maxvalid.tex}
-\import{./}{algorithms/algorithm-honest.tex}
-\import{./}{algorithms/algorithm-pow.tex}
