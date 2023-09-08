@@ -61,16 +61,18 @@ model our hash function $H$ as a random oracle~\cite{ro}.
 \atnote{Maybe? The notion of \emph{intrinsic work} is first introduced in this paper.}
 
 \begin{definition}[Block Intrinsic Work]
-  The \emph{intrinsic work} of a block
-  \footnote{A block is any triple of the
-  form $B = (h, x, \ctr)$, where $s \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
-  The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.}
-  $B$ is denoted as $\work(B) = \kappa - \log H(B)$.
+  The \emph{intrinsic work} of a block~\footnote{
+    A block is any triple of the
+    form $B = (h, x, \ctr)$, where $s \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+    The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+  }
+  $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.
 \end{definition}
 
 \begin{definition}[Chain Intrinsic Work]
-  The \emph{intrinsic work} of a chain
-  \footnote{A \emph{chain} (\emph{blockchain}) is a sequence of blocks.}
+  The \emph{intrinsic work} of a chain~\footnote{
+    A \emph{chain} (\emph{blockchain}) is a sequence of blocks.
+  }
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
   It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
