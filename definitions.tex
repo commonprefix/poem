@@ -63,7 +63,7 @@ model our hash function $H$ as a random oracle~\cite{ro}.
 \begin{definition}[Block Intrinsic Work]
   The \emph{intrinsic work} of a block~\footnote{
     A block is any triple of the
-    form $B = (h, x, \ctr)$, where $s \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+    form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
     The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
   }
   $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.

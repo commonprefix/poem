@@ -1,10 +1,10 @@
 \begin{algorithm}[H]
   \caption{\label{alg.pow} The Proof-of-Work discovery algorithm}
   \begin{algorithmic}[1]
-    \Function{$\pow_{H,T,q}$}{$x, s$}
+    \Function{$\pow_{H,T,q}$}{$x, h$}
         \State{$ctr \getsrandomly \{0,1\}^\kappa$}
         \For{$i \gets 1 \text{ to } q$}
-            \Let{B}{s \concat x \concat ctr}
+            \Let{B}{h \concat x \concat ctr}
             \If{$H(B) \leq T$}
                 \State\Return{$B$}
             \EndIf
