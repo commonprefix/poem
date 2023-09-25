@@ -1,5 +1,40 @@
 \section{Analysis}
 
+\begin{definition}[Entropic Growth]
+  The \emph{Entropic Growth} property of
+  a \poem execution,
+  parametrized by the growth interval $s \in \mathbb{N}$
+  and the growth velocity $\tau \in \mathbb{R}^+$,
+  states that for
+  all honest parties $P$ and all rounds $r_1 + s \leq r_2$,
+  the chains $C_1, C_2$ of $P$ at rounds $r_1, r_2$ respectively
+  satisfy $\work(C_2[{|C_1|}{:}]) \geq s \tau \lg T$.
+\end{definition}
+
+\begin{definition}[Entropic Quality]
+  The \emph{Entropic Quality} property of
+  a \poem execution, parametrized by the \emph{quality chunk parameter} $\ell \in \mathbb{N}$
+  and \emph{quality concentration parameter} $\mu \in \mathbb{R}^+$
+  (with $\ell \mu \geq 1$)
+  states that for
+  all honest parties $P$ and all rounds $r$,
+  the chain $C$ of $P$ at round $r$
+  has the property that
+  for every $0 \leq \alpha < \work(C) - \ell \lg T$,
+  there is at least one honestly generated block in the chain
+  $[{\alpha}{:}{\alpha + \ell \lg T}] \lhd C$.
+\end{definition}
+
+\begin{definition}[Entropic Common Prefix]
+  The \emph{Entropic Common Prefix} property of
+  a \poem execution, parametrized by the \emph{common prefix parameter} $k \in \mathbb{N}$
+  states that for
+  all honest parties $P_1, P_2$
+  and all rounds $r_1 \leq r_2$,
+  the chains $C_1, C_2$ of $P_1, P_2$ at rounds $r_1, r_2$ respectively
+  satisfy $[{:}{-k \lg T}] \lhd C_1 \preceq C_2$.
+\end{definition}
+
 Consider an execution of the \poem protocol.
 
 We define a discrete and uniformly random variable $X_{r, i}$ as follows.
