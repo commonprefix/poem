@@ -24,11 +24,7 @@
             \State {\textsf{round}} $\leftarrow$ {\textsf{round}+1}
         \EndFunction
         \Function{$\textsf{Read}$}{}
-            \Let{x}{[\,]} \Comment{Instantiate transactions}
-            \For{$B \in  C$} \label{alg-backbone:k} \atnote{TBD: Cut $k$ blocks or bits of entropy?}
-                \Let{x}{x \concat  C.x} \Comment{Extract all transactions from each block in the chain}
-            \EndFor
-            \State\Return{$x$}
+            \State\Return$([{:}{-k \lg T}] \lhd C).x$
         \EndFunction
         \vskip8pt
     \end{algorithmic}

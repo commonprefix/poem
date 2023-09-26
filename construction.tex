@@ -25,6 +25,27 @@ model our hash function $H$ as a random oracle.
   It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
 \end{definition}
 
+\noindent
+\textbf{Blockchain notation.}
+A chain $C$ is a sequence of blocks. We write $[\alpha] \lhd C$
+to denote the $i^\text{th}$ block of $C$ such that
+$\work(C[{:}{i - 1}]) \leq \alpha < \work(C[{:}{i}])$.
+If $\alpha$ is negative, then $[\alpha] \lhd C$ is defined as
+the $i^\text{th}$ block of $C$ such that
+$\work(C[{i - 1}{:}]) \leq -\alpha < \work(C[{i}{:}])$.
+We write $[{\alpha}{:}{\beta}] \lhd C$ to denote
+$C[{i}{:}{j}]$ where $i$ is the index of $[\alpha] \lhd C$
+and $j$ is the index of $[\beta] \lhd C$ in $C$ respectively.
+The notation $[{\alpha}{:}] \lhd C$ means $C[{i}{:}]$,
+and the notation $[{:}\beta] \lhd C$ means $C[{:}{j}]$,
+where $i$ and $j$ are defined with respect to $\alpha$ and $\beta$
+respectively as above.
+Given a block $B$, we denote by $B.x$ the sequence of transactions
+included in $B$.
+Given a chain $C$, we denote by $C.x$
+the sequence of transactions in all the blocks of $C$ in order, namely
+${\big\lVert}_{B \in C} B.x$.
+
 In Algorithm~\ref{alg.backbone} we show the code of an honest party.
 First, the party is constructed using the \constructor function (Line~\ref{alg-backbone.constructor}).
 In every round, each party is executed by the environment using function \execute.
