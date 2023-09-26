@@ -34,12 +34,17 @@ If $\alpha$ is negative, then $[\alpha] \lhd C$ is defined as
 the $i^\text{th}$ block of $C$ such that
 $\work(C[{i - 1}{:}]) \leq -\alpha < \work(C[{i}{:}])$.
 We write $[{\alpha}{:}{\beta}] \lhd C$ to denote
-$C[{[\alpha] \lhd C}{:}{[\beta] \lhd C}]$.
-The notation $[{\alpha}{:}] \lhd C$ means $C[{[\alpha] \lhd C}{:}]$,
-and similarly $[{:}\beta] \lhd C$ means $C[{:}{[\beta] \lhd C}]$.
-Given a chain $C$, we write $C.x$ to denote the ledger of $C$,
-namely the sequence of transactions ${\big\lVert}_{B \in C} B.x$,
-where $B.x$ denotes the sequence of transactions included in block $B$.
+$C[{i}{:}{j}]$ where $i$ is the index of $[\alpha] \lhd C$
+and $j$ is the index of $[\beta] \lhd C$ in $C$ respectively.
+The notation $[{\alpha}{:}] \lhd C$ means $C[{i}{:}]$,
+and the notation $[{:}\beta] \lhd C$ means $C[{:}{j}]$,
+where $i$ and $j$ are defined with respect to $\alpha$ and $\beta$
+respectively as above.
+Given a block $B$, we denote by $B.x$ the sequence of transactions
+included in $B$.
+Given a chain $C$, we denote by $C.x$
+the sequence of transactions in all the blocks of $C$ in order, namely
+${\big\lVert}_{B \in C} B.x$.
 
 In Algorithm~\ref{alg.backbone} we show the code of an honest party.
 First, the party is constructed using the \constructor function (Line~\ref{alg-backbone.constructor}).
