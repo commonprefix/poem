@@ -7,8 +7,8 @@ where $h$ is a pointer to the previous block, $x$ contains a sequence of
 by the miner to satisfy the \emph{proof-of-work} inequality $H(B) \leq T$, where
 $H$ is a hash function and $T$ is a small \emph{target}. Any $B$ that satisfies this
 inequality is considered a valid block, whereas candidates that do not satisfy
-the inequality are invalid. In other words, the blocks that are valid are those
-whose hashes begin with a desired number of $0$s.
+the inequality are invalid. Simply put, valid blocks must have
+hashes that begin with a desired number of $0$s.
 These blocks form linked lists known as \emph{chains}.
 Among such chains, the \emph{longest}\footnote{The
 longest chain is chosen in the \emph{static population setting}, which is the
