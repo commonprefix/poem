@@ -1,6 +1,53 @@
 \section{Introduction}
 
-The Bitcoin protocol, proposed by Nakamoto~\cite{bitcoin}, was introduced as a
-solution to the consensus problem. It was first proven secure
-in the Bitcoin Backbone paper~\cite{backbone} and later studied under
-the variable difficulty setting~\cite{varbackbone}.
+In Bitcoin~\cite{bitcoin}, a population of \emph{miners}
+attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
+where $h$ is a pointer to the previous block, $x$ contains a sequence of
+\emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
+by the miner to satisfy the \emph{proof-of-work} inequality $H(B) \leq T$, where
+$H$ is a hash function and $T$ is a small \emph{target}. Any $B$ that satisfies this
+inequality is considered a valid block, whereas candidates that do not satisfy
+the inequality are invalid. Simply put, valid blocks must have
+hashes that begin with a desired number of $0$s.
+These blocks form linked lists known as \emph{chains}.
+Among such chains, the \emph{longest}\footnote{The
+longest chain is chosen in the \emph{static population setting}, which is the
+setting in which we work in this paper. In the real deployment of Bitcoin, the
+difficulty is dynamically adjusted, and the \emph{heaviest chain} is chosen (c.f.,
+~\cite{varbackbone}).} chain is chosen as the canonical one.
+
+Some blocks $B$ satisfy the proof-of-work inequality better than others.
+Namely, they satisfy not only $H(B) \leq T$, but also $H(B) \leq \frac{T}{2^\mu}$
+for some $\mu \in \mathbb{R}^+$, $\mu > 1$. Nevertheless, this information is ignored when choosing
+which chain to pick. We posit that this \emph{information}
+produced during the mining process corresponds to \emph{removing entropy} from the
+state space of the system (i.e., during mining, the set of future possible states
+of the execution as a whole shrinks).
+By modifying the fork choice rule of Bitcoin to take into account this information,
+we build a protocol which retains the provable security of Bitcoin, while achieving
+efficiency advantages over it: (a) it allows reducing the $k$ confirmation parameter,
+improving latency, and (b) in a multi-chain setting, it allows increasing the throughput
+of the system. In this paper, we prove that the modified protocol is secure in the
+single-chain setting.
+
+\noindent
+\textbf{Related work.}
+Bitcoin was first proven secure in the static population setting~\cite{backbone},
+and later also studied under in variable population setting~\cite{varbackbone}.
+The idea of using a more nuanced proof-of-work inequality in which some blocks
+are considered heavier than others was first put forth by Andrew Miller~\cite{highway},
+with the first complete protocol to utilize it being
+Proofs of Proof-of-Work~\cite{popow}. These were later refined multiple times
+to account for non-interactivity~\cite{nipopows}, backwards compatibility~\cite{velvet-nipopows},
+onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
+on-chain consumption~\cite{gasefficient-nipopows},
+bribing resilience~\cite{soft-power},
+and variable populations~\cite{dionyziz}.
+We are the first to modify the fork choice rule to take these refinements into
+account. Alternative mechanisms towards improving the latency and throughput
+of proof-of-work blockchains at the consensus
+layer include parallel chains~\cite{parallel-chains},
+separation of transaction/consensus blocks~\cite{prism},
+hybrid approaches between proof-of-work and proof-of-stake~\cite{byzcoin},
+and the use of microblocks~\cite{bitcoin-ng}. Several of these mechanisms
+are orthogonal and can be combined with our approach.
