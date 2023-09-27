@@ -53,16 +53,17 @@
 
 \begin{definition}[Block Work Interval]
   A block $B$ of chain $C$ has work interval
-  $I = \{\xi \geq 0: [\xi] \lhd C = B\}$.
+  $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
 \end{definition}
 
 %TODO: Define convergence opportunity & successful round
 
 \begin{lemma}[Entropic Pairing Lemma]
-  Suppose a block $B$ of a chain $C$ with work interval $I$
+  Suppose a block $B$ of a chain $C$ with work interval $I(B)$
   was computed by an honest party in a convergence opportunity.
-  For every $\xi \in I$ and every chain $C'$ of the execution,
-  block $B' = [\xi] \lhd C'$ is either $B$ or adversarial.
+  For every $\xi \in I(B)$ and every chain $C'$ of the execution,
+  block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
+  as long as $B' \neq \bot$.
   %TODO: Add explanation about random oracle observability
 \end{lemma}
 \begin{proof}
@@ -87,7 +88,7 @@
   $w + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
 \end{lemma}
 \begin{proof}
-  By induction on $r_2 - r_1 \geq 0$. For the basis ($r_1 = r_2$), observe that
+  By induction on $r_2$. For the inductive base ($r_2 = r_1$), observe that
   if at round $r_1$ an honest party has a chain $C$ of work $w$, then
   that party broadcasted $C$ at the end or round $r_1 - 1$. It follows that
   every honest party receives $C$ at round $r_1$ and adopts a chain with
@@ -96,8 +97,8 @@
   For the inductive step, note that by the inductive hypothesis,
   every honest party has received a chain of work at least $w' = w + \sum_{r = r_1}^{r_2 - 2}{X_r}$
   by round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
-  $X_{r_2 - 1} > 0$. Observe that an honest party queried the random oracle
-  with a chain of work $w' + X_{r_2 - 1}$ and broadcasted it to the network.
+  $X_{r_2 - 1} > 0$. Observe that an honest party successfully queried the random oracle
+  with a chain of work at least $w' + X_{r_2 - 1}$ and broadcasted it to the network.
   At round $r_2$, every honest party receives the chain and adopts a chain
   of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
 \end{proof}

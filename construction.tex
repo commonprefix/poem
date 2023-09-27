@@ -30,6 +30,7 @@ model our hash function $H$ as a random oracle.
 A chain $C$ is a sequence of blocks. We write $[\alpha] \lhd C$
 to denote the $i^\text{th}$ block of $C$ such that
 $\work(C[{:}{i - 1}]) < \alpha \leq \work(C[{:}{i}])$.
+If $\work(C) < \alpha$, then $[\alpha] \lhd C = \bot$.
 If $\alpha$ is negative, then $[\alpha] \lhd C$ is defined as
 the $i^\text{th}$ block of $C$ such that
 $\work(C[{i - 1}{:}]) < -\alpha \leq \work(C[{i}{:}])$.
