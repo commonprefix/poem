@@ -175,7 +175,8 @@ We define $f = \E[X_r]$.
     Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
     the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
     by honest parties at any later round should have at least $\max \Xi$ work.
-    Hence, $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
+    Hence, for every $\xi \in \Xi$ it holds that
+    $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
 
     We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
     or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
