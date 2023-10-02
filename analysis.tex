@@ -87,14 +87,20 @@ We define $f = \E[X_r]$.
 
 \atnote{Define f}
 \atnote{Define insertions, copies, and predictions}
+
+\begin{definition}[Causality]
+  An execution is \emph{causal} if no block (directly or indirectly) extends
+  one which is computed at a later or the same random oracle query.
+\end{definition}
+
 \begin{definition}[\poem Typical Execution]
   An execution of \poem is \emph{($\epsilon,\lambda$)-typical} (or just typical),
   for $\epsilon \in (0,1)$ and integer $\lambda > 4$, if for any set $S$ of at
   least $\lambda$ consecutive rounds, the following hold.
   \begin{itemize}
     \item $(1 - \epsilon) \E[X(S)] < X(S) < (1 + \epsilon) \E[X(S)]$ and $(1-\epsilon) \E[Y(S)] < Y(S)$.
-    \item $Z(S) < \E[Z(S)] + \epsilon\E[X(S)]$.
-    \item No insertions, no copies, and no predictions occurred.
+    \item $Z(S) < (1 + \epsilon)\E[Z(S)]$.
+    \item It is causal.
   \end{itemize}
 \end{definition}
 
