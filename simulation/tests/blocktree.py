@@ -28,14 +28,32 @@ class TestBlockTree(unittest.TestCase):
 
   def test_common_prefix(self):
     genesis = Block()
-    self.assertEqual(common_prefix_k(genesis), 0)
-    self.assertEqual(common_prefix_k(genesis, genesis), 0)
+    self.assertEqual(common_prefix_k([genesis]), 0)
+    self.assertEqual(common_prefix_k([genesis, genesis]), 0)
 
     Ba = genesis.extend()
     Bb = genesis.extend()
 
-    self.assertEqual(common_prefix_k(Ba, Bb), 1)
+    self.assertEqual(common_prefix_k([Ba, Bb]), 1)
 
     Ba1 = Ba.extend()
 
-    self.assertEqual(common_prefix_k(Ba1, Bb), 2)
+    self.assertEqual(common_prefix_k([Ba1, Bb]), 2)
+
+  def test_leaves(self):
+    genesis = Block()
+
+    Ba = genesis.extend()
+    Bb = genesis.extend()
+
+    leaves = list(genesis.leaves())
+
+    self.assertEqual(len(leaves), 2)
+    self.assertEqual(leaves[0], Ba)
+    self.assertEqual(leaves[1], Bb)
+
+    Ba1 = Ba.extend()
+
+    leaves = list(genesis.leaves())
+
+    self.assertEqual(len(leaves), 2)

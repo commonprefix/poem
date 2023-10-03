@@ -1,8 +1,7 @@
 from blocktree import Block, common_prefix_k
-from random import randint, random
 from numpy.random import binomial
 
-class Simulation:
+class BackboneSimulation:
   def __init__(self, f, L, n, q):
     self.f = f
     self.L = L
@@ -23,6 +22,8 @@ class Simulation:
     self.tips = [self.genesis]
 
   def simulate_execution(self):
+    safe_common_prefix = 0
+
     for r in range(self.L):
       successes = self.simulate_round(r)
 
@@ -40,21 +41,32 @@ class Simulation:
       if new_tips:
         self.tips = new_tips
 
-    return self.tips
+      # TODO: Use heavy–light decomposition to optimize this
+      safe_common_prefix = max(safe_common_prefix, common_prefix_k(self.tips))
+
+    return {
+      'tips': self.tips,
+      'common_prefix': safe_common_prefix,
+    }
 
   def simulate_round(self, r):
     return binomial(self.n - self.t, 1 - (1 - self.p)**self.q)
 
 kappa = 256
+hash_rate = 1
+q = 1
+f = 1/2 # probability of successful round
+L = 1000000
+n = 1000
+
+simulation = BackboneSimulation(f, L, n, q)
+execution = simulation.simulate_execution()
+tips = execution['tips']
+common_prefix = execution['common_prefix']
+
+print('Number of tips:', len(tips))
+print('Number of leaves:', len(list(simulation.genesis.leaves())))
+print('Height of the first chain:', tips[0].height)
+print('Minimum safe common prefix:', common_prefix)
 round_duration = 12 # seconds
-tera = 10**12
-hash_rate = 300 * tera # per second hash rate of one ASIC machine in SHA256
-q = hash_rate * round_duration # number of queries per round
-f = 1/50 # probability of successful round
-L = 100
-
-# calculated based on the observable Bitcoin hash rate (based on the block production rate of 1 block / 10 minutes)
-n = 4340278
-
-simulation = Simulation(f, L, n, q)
-print(simulation.simulate_execution()[0].height)
+print('Confirmation time:', common_prefix * round_duration / f, 'seconds')
