@@ -1,4 +1,7 @@
-from itertools import combinations
+from itertools import combinations, cycle
+from math import log2
+
+kappa = 256
 
 def LCA(C1, C2):
   if C2.height < C1.height:
@@ -16,6 +19,7 @@ def LCA(C1, C2):
 '''
 Returns the smallest k such that Common Prefix between these adopted tips holds.
 '''
+# TODO: Use heavy–light decomposition to optimize this
 def common_prefix_k(tips):
   cp = 0
 
@@ -25,19 +29,44 @@ def common_prefix_k(tips):
 
   return cp
 
+def heaviest_chain(tips):
+  return max(tips, key=lambda tip: tip.chain_work)
+
+def balanced_mining(tips, blocks):
+  for block, tip in zip(blocks, cycle(tips)):
+    tip.add_child(block)
+
+  if blocks:
+    return blocks
+  return tips
+
+class Work:
+  @staticmethod
+  def nakamoto(hash):
+    return 1
+
+  @staticmethod
+  def poem(hash):
+    return kappa - log2(hash)
+
 class Block:
-  def __init__(self):
+  def __init__(self, hash=None, block_work_function=Work.nakamoto):
     self.children = []
     self.parent = None
     self.height = 0
+    self.hash = hash
+    self.block_work_function = block_work_function
+    self.block_work = block_work_function(hash)
+    self.chain_work = self.block_work
 
   def add_child(self, child):
     self.children.append(child)
     child.parent = self
     child.height = self.height + 1
+    child.chain_work = self.chain_work + child.block_work
 
-  def extend(self):
-    child = Block()
+  def extend(self, *args, **kwargs):
+    child = Block(*args, **kwargs)
     self.add_child(child)
     return child
 

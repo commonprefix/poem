@@ -1,5 +1,5 @@
 import unittest
-from blocktree import Block, common_prefix_k, LCA
+from src.blocktree import Block, common_prefix_k, LCA, heaviest_chain
 
 class TestBlockTree(unittest.TestCase):
   def test_height(self):
@@ -57,3 +57,14 @@ class TestBlockTree(unittest.TestCase):
     leaves = list(genesis.leaves())
 
     self.assertEqual(len(leaves), 2)
+
+  def test_heaviest_chain(self):
+    genesis = Block()
+
+    Ba = genesis.extend()
+    Bb = genesis.extend()
+
+    Ba1 = Ba.extend()
+
+    self.assertEqual(heaviest_chain([Ba1, Bb]), Ba1)
+    self.assertEqual(heaviest_chain([Bb, Ba1]), Ba1)
