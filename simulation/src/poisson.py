@@ -14,7 +14,8 @@ from math import log, ceil, floor
 # g = (n - t)qp # expected number of honest blocks
 # g is Poisson lambda parameter; expected number of honest blocks produced per round
 # g = 0.5
-C = 100 # desired honest block tree size in number of blocks, in expectation
+C = 5 # desired honest block tree size in number of blocks, in expectation
+print('Chain size of', C)
 # The honest majority assumption states: t = (1 - delta)(n - t)
 # The adversarial chain is expected to grow at a rate of
 # (t / (n - t)) * g = (1 - delta)g
@@ -122,8 +123,21 @@ def find_poem_resilience(g, L):
     if average_adversarial_weight > average_honest_weight:
       return EiaR_beta
 
+backbone_resiliences = []
+poem_resiliences = []
+
 for g in np.arange(0.01, 2, 0.01):
   L = C / g # simulation lifetime to meet this expectation
   print('g =', g)
-  print('\tBackbone resilience: ', find_backbone_resilience(g, L))
-  print('\tPoEM resilience: ', find_poem_resilience(g, L))
+  backbone_resilience = find_backbone_resilience(g, L)
+  print('\tBackbone resilience: ', backbone_resilience)
+  poem_resilience = find_poem_resilience(g, L)
+  print('\tPoEM resilience: ', poem_resilience)
+  backbone_resiliences.append(backbone_resilience)
+  poem_resiliences.append(poem_resilience)
+
+print('Backbone resiliences:')
+print(backbone_resiliences)
+
+print('PoEM resiliences:')
+print(poem_resiliences)

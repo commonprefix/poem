@@ -1,3 +1,2 @@
 numpy==1.26.0
-Pygments @ file:///private/tmp/pygments-20230806-5921-1vpw7cv/Pygments-2.16.1
 six==1.16.0
