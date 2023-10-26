@@ -101,7 +101,7 @@ We calculate the Cumulative Distribution Function of $\HX_{r, i}$:
   \Pr[\hat A \geq 2^{\kappa - y}] = \\
   \int_{\min(2^{\kappa - y}, 2^\gamma)}^{2^\gamma}{\frac{1}{2^\kappa - 1} dx} + \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} = \\
   \begin{cases}
-    \frac{1}{2^\kappa - 1}(2^\gamma - 2^{\kappa - y}) + \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} & \text{if } \kappa - y \leq \gamma \\
+    \frac{1}{2^\kappa - 1}(2^\gamma - 2^{\kappa - y}) + \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} & \text{if } y \geq \kappa - \gamma \\
     \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} & \text{otherwise}
   \end{cases}
 \end{gather*}
@@ -112,14 +112,24 @@ We now calculate the Probability Density Function of $\HX_{r, i}$:
   \PDF[\HX_{r, i}](y) = \\
   \frac{d}{dy}\CDF[\HX_{r, i}](y) = \\
   \begin{cases}
-    \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} \delta(y) & \text{if } y = 0 \\
-    \frac{2^{\kappa - y} \ln 2}{2^\kappa - 1} & \text{if } \kappa - \gamma \leq y \leq \kappa \\
-    0 & \text{if } 0 < y < \kappa - \gamma \\
+    \frac{2^\kappa - 2^\gamma}{2^\kappa - 1} \delta(y) & \text{if } 0 < y < \kappa - \gamma \\
+    \frac{2^{\kappa - y} \ln 2}{2^\kappa - 1} & \text{if } \kappa - \gamma \leq y \leq \kappa
   \end{cases}
 \end{gather*}
 
 The function $\delta(y)$ is the Dirac delta function. We now calculate
 the expectation of $\HX_{r, i}$:
+
+\begin{gather*}
+  \E[\HX_{r, i}] = \\
+  \int_{0}^{\kappa} y \PDF[\HX_{r, i}](y) dy = \\
+  \int_{\kappa - \gamma}^{\kappa}{y \frac{2^{\kappa - y} \ln 2}{2^\kappa - 1} dy} = \\
+  \frac{2^\kappa \ln 2}{2^\kappa - 1} \int_{\kappa - \gamma}^{\kappa}{y 2^{- y} dy} = \\
+  \frac{2^\kappa}{2^\kappa - 1} (-y 2^{-y}\Big|_{\kappa - \gamma}^{\kappa} - \int_{\kappa - \gamma}^{\kappa}{-2^{- y} dy}) = \\
+  \frac{2^\kappa}{2^\kappa - 1} (-y 2^{-y} - \frac{2^{-y}}{\ln 2}) \Big|_{\kappa - \gamma}^{\kappa} = \\
+  \frac{-\kappa - \frac{1}{\ln2} - \gamma 2^\gamma + \kappa 2^\gamma + \frac{2^\gamma}{\ln 2}}{2^\kappa - 1} = \\
+  \frac{\kappa 2^\gamma - \gamma 2^\gamma + \kappa}{2^\kappa - 1} + \frac{2^\gamma - 1}{\ln 2 (2^\kappa - 1)}
+\end{gather*}
 
 % This random variable represents the output of a single query to the random oracle given
 % a new input. We calculate a lower bound for the expectation of $\work(A)$:
