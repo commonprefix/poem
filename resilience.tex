@@ -1,0 +1,115 @@
+\section{Resilience Analysis}
+
+Now that we have proven PoEM is secure, we now turn our attention to the benefits of PoEM as compared to the
+fork choice rule of traditional proof-of-work. We posit that the intrinsic work fork choice rule
+provides better adversarial resilience than the longest (or heaviest) fork choice rule.
+
+For this analysis, we work in a simplified model in which time is continuous
+and the cryptographic machinary of hash functions is abstracted away as a perfect
+stochastic processes (cf., the previous section where our model was discrete time
+and the imperfect stochastic process was constructed by a hash function modelled as
+a random oracle). This treatment was introduced in \emph{Everything is a Race}~\cite{eiar},
+where it was used to analyse longest-chain protocols, and
+allows us to focus on the essence of the problem.
+
+Consider an adversary controlling a $\beta$ fraction of the mining power, whereas the
+honest parties control a $1 - \beta$ fraction. Each honest party maintains a local chain,
+which is the chain with the most intrinsic work seen by that party so far.
+Each honest party continuously attempts to mine blocks on top of their currently
+adopted longest chain. As soon as a block is found, this block is broadcast to the
+network. The adversary can delay the delivery of these network messages by a duration
+up to $\Delta = 1$, and these delays can be different for different honest receipients.
+On the contrary, the adversary functions as one overarching entity.
+The adversary can mine on top of any chain she has seen so far, and withhold blocks
+which can be revealed at a later time. As soon as an honest party sees any
+block, the honest party re-broadcasts that block, and this block becomes known to
+all honest parties after a $\Delta$ duration. Hence, adversarial blocks revealed to one
+honest party become known to the whole honest population within a delay of $\Delta$.
+
+We model this process as a Poisson process with rate $g \in \mathcal{R}^+$ blocks per
+unit time for the honest parties and $g \frac{\beta}{1 - \beta}$ for the adversary. We
+assume that the population of honest parties is large, such that no honest party
+will have two successful events in an execution.
+
+In Bitcoin,
+as proven in the \emph{Everything is a Race} work~\cite[Theorem 5.1]{eiar}, there is
+an \emph{optimal} adversarial strategy that every other adversarial strategy can be reduced to.
+This optimal strategy is the private mining attacker: The adversary and honest parties
+all begin at genesis. The adversary mines a private chain, which she never reveals to the honest
+parties. The honest parties mine on their own honest subtree. This attack is victorious if,
+at the conclusion of the execution, the adversary was able to produce a private chain longer
+than the longest chain of any honest party, namely the height of the honest subtree. Since
+any other attack can be reduced to this attack, to show security it suffices that the expected
+growth rate of the adversary's private chain is less than the expected growth rate of the
+height of the honest subtree. In their work, they calculate the honest subtree growth rate to be
+$\frac{g}{1 + g}$. By taking the inequality $g \frac{beta}{1 - \beta} > \frac{g}{1 + g}$,
+requiring that the honest subtree growth rate is larger than the adversarial private chain
+growth rate, in expectation, they find that the maximum adversarial resilience in Bitcoin is
+$\beta < \frac{1}{g + 2}$.
+
+We use the same argument here, adapted to the entropic setting: Again, the honest parties mine
+blocks following a Poisson process with a block production rate of $g \in \mathbb{R}^+$, whereas
+the adversary mines blocks following a Poisson process with a block production rate of
+$g \frac{\beta}{1 - \beta}$. Each newly produced valid block $B$ has work $\work(B)$ which follows
+an exponential distribution with rate $\ln2$, and all of these works are mutually independent.
+
+\dznote{TODO: Make work ~ exponential + const. Consider different exponential rates, and calculate
+the different Chernoff bounds depending on the exp rate.}
+
+The adversary follows a private
+mining strategy and the honest parties mine on their own honest subtree. At the conclusion of the
+execution, the adversary is victorious if she holds a chain with more intrinsic work than any honest
+party.
+
+Consider a protocol execution $\Epsilon$. Let 
+
+\[
+  \chi^\Epsilon(t) = \begin{cases}
+    0 & \text{ if no honest party found a block at time } t\\
+    1 & \text{ if at least one honest party found a block at time } t
+  \end{cases}
+\]
+
+The function $\chi(t)$ is a Poisson process with rate $g$, where $\chi(t) = 1$
+indicates the Poisson successes. For any $t$ such that $\chi(t) = 1$, let $X(t)$ be a
+random variable distributed according to the exponential distribution with rate $\ln2$
+such that $\{ X(t) \}_{t \in \chi^{-1}(1)}$ are identically distributed and mutually
+independent. These $X(t)$ indicate the work of the block found at time $t$.
+
+First, we observe that the expected rate at which the intrinsic work of the private adversarial
+chain grows is $g \frac{\beta}{1 - \beta} \frac{1}{\ln2}$. This is because the expected work of a
+block is $\frac{1}{\ln2}$, and the adversary produces blocks at a rate of $g \frac{\beta}{1 - \beta}$.
+Consider an execution $\Epsilon$ during a snapshot taken at time $t$. Let
+$f^\Epsilon(t) = \max_{P \text{ honest}}{\work(C^P_t)}$ be the maximum intrinsic work of any honestly
+adopted chain at time $t$. We wish to calculate the expected growth rate of $f^\Epsilon(t)$, namely
+$\alpha = \E[\frac{f^\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all executions.
+
+For a given interval $[t - dt, t]$, let $X^{dt}(t) = \max X([t - dt, t])$. Note that, if
+$dt$ is small enough (namely, shorter than the shortest distance between two successive successes),
+then there will only be one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X^{dt}(t)$
+will take that value. The $\max$ function is irrelevant when we take $dt \to 0$.
+
+Given an execution $\Epsilon$, consider the family of functions (parameterized by $dt$):
+
+\[
+  f^{\Epsilon,dt}(t) = \begin{cases}
+             \max\{f^{\Epsilon,dt}(t - 1) + X^{dt}(t),&\\
+    \phantom{\max\{\}}      f^{\Epsilon,dt}(t - dt)\} & \text{, if } \exists t^* \in [t - dt, t]: \chi(t^*) = 1\\
+          f^{\Epsilon,dt}(t - dt) & \text{ otherwise }
+  \end{cases}\,.
+\]
+
+It holds that $f^\Epsilon(t) = \lim_{dt \to 0}{f^{\Epsilon,dt}(t)}$.
+Let $f(t) = \E[f^\Epsilon(t)]$ with the execution $\Epsilon$ randomly sampled from all executions.
+The rate of growth of $f(t)$ is constant, and the function takes the form $f(t) = \alpha t$.
+We can use the above family of functions to calculate $\alpha$.
+
+Notice that $\E[\lim_{dt \to 0} f^{\Epsilon,dt}(t)] = \lim_{dt \to 0} \E[f^{\Epsilon,dt}(t)]$.
+Therefore it suffices to calculate $\E[f^{\Epsilon,dt}(t)]$ for a given $dt$.
+Let $f^{dt}(t) = \E[f^{\Epsilon,dt}(t)]$. For this function, it holds that:
+
+\[
+  f^{dt}(t) = \Pr[\exists t^* \in [t - dt, t]: \chi(t^*) = 1](\Pr[f^{dt}(t - 1) + X^{dt}(t) > f^{dt}(t - dt)](f^{dt}(t - 1) + X^{dt}(t)) + (1 - \Pr[f^{dt}(t - 1) + X^{dt}(t) > f^{dt}(t - dt)])(f^{dt}(t - dt)))\\
+            + (1 - \Pr[\exists t^* \in [t - dt, t]: \chi(t^*) = 1])(f^{dt}(t - dt)) \\
+            % = (1 - e^{-g dt})()
+\]
