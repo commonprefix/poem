@@ -64,7 +64,7 @@ party.
 Consider a protocol execution $\Epsilon$. Let 
 
 \[
-  \chi^\Epsilon(t) = \begin{cases}
+  \chi_\Epsilon(t) = \begin{cases}
     0 & \text{ if no honest party found a block at time } t\\
     1 & \text{ if at least one honest party found a block at time } t
   \end{cases}
@@ -80,36 +80,88 @@ First, we observe that the expected rate at which the intrinsic work of the priv
 chain grows is $g \frac{\beta}{1 - \beta} \frac{1}{\ln2}$. This is because the expected work of a
 block is $\frac{1}{\ln2}$, and the adversary produces blocks at a rate of $g \frac{\beta}{1 - \beta}$.
 Consider an execution $\Epsilon$ during a snapshot taken at time $t$. Let
-$f^\Epsilon(t) = \max_{P \text{ honest}}{\work(C^P_t)}$ be the maximum intrinsic work of any honestly
-adopted chain at time $t$. We wish to calculate the expected growth rate of $f^\Epsilon(t)$, namely
-$\alpha = \E[\frac{f^\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all executions.
+$f_\Epsilon(t) = \max_{P \text{ honest}}{\work(C^P_t)}$ be the maximum intrinsic work of any honestly
+adopted chain at time $t$. We wish to calculate the expected growth rate of $f_\Epsilon(t)$, namely
+$\alpha = \E[\frac{f_\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all executions.
 
-For a given interval $[t - dt, t]$, let $X^{dt}(t) = \max X([t - dt, t])$. Note that, if
+For a given interval $[t - dt, t]$, let $X([t_1, t_2]) = \sum_{t \in [t_1, t_2]} X(t)$. Note that, if
 $dt$ is small enough (namely, shorter than the shortest distance between two successive successes),
-then there will only be one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X^{dt}(t)$
-will take that value. The $\max$ function is irrelevant when we take $dt \to 0$.
+then there will only be one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X([t - dt, t])$
+will take that value, namely $\lim_{dt \to 0} X_{dt}(t) \sim \Exp(\ln2)$.
+The $\max$ function is irrelevant when we take $dt \to 0$.
+Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$.
 
 Given an execution $\Epsilon$, consider the family of functions (parameterized by $dt$):
 
 \[
-  f^{\Epsilon,dt}(t) = \begin{cases}
-             \max\{f^{\Epsilon,dt}(t - 1) + X^{dt}(t),&\\
-    \phantom{\max\{\}}      f^{\Epsilon,dt}(t - dt)\} & \text{, if } \exists t^* \in [t - dt, t]: \chi(t^*) = 1\\
-          f^{\Epsilon,dt}(t - dt) & \text{ otherwise }
+  f_{\Epsilon,dt}(t) = \begin{cases}
+             \max\{f_{\Epsilon,dt}(t - 1) + X_{dt}(t),&\\
+    \phantom{\max\{\}}      f_{\Epsilon,dt}(t - dt)\} & \text{, if } \chi([t - dt, t]) \geq 1\\
+          f_{\Epsilon,dt}(t - dt) & \text{ otherwise }
   \end{cases}\,.
 \]
 
-It holds that $f^\Epsilon(t) = \lim_{dt \to 0}{f^{\Epsilon,dt}(t)}$.
-Let $f(t) = \E[f^\Epsilon(t)]$ with the execution $\Epsilon$ randomly sampled from all executions.
+It holds that $f_\Epsilon(t) = \lim_{dt \to 0}{f_{\Epsilon,dt}(t)}$.
+To see this, observe what happens during time $[t - dt, t]$ for small $dt$:
+Either a block is found, or not.
+If an honest block is found (namely, $\chi([t - dt, t]) \geq 1$), then the honest party who found the block
+extends their chain, which has length $f_{\Epsilon,dt}(t - 1)$, by a new block
+which has work $X([t - dt, t])$, giving rise to a new chain with work $f_{\Epsilon,dt}(t - 1) + X([t - dt, t])$.
+It is possible that this chain will be the chain with
+the most work yet (in case $f_{\Epsilon,dt}(t - 1) + X([t - dt, t]) > f_{\Epsilon,dt}(t - dt)$),
+or (contrary to Bitcoin), that there has been a better or equal chain found within the last $dt$ interval
+(in case $f_{\Epsilon,dt}(t - 1) + X([t - dt, t]) \leq f_{\Epsilon,dt}(t - dt)$).
+Let $f(t) = \E[f_\Epsilon(t)]$ with the execution $\Epsilon$ randomly sampled from all executions.
 The rate of growth of $f(t)$ is constant, and the function takes the form $f(t) = \alpha t$.
-We can use the above family of functions to calculate $\alpha$.
+We can use the above family of functions to calculate the value of $\alpha$.
 
-Notice that $\E[\lim_{dt \to 0} f^{\Epsilon,dt}(t)] = \lim_{dt \to 0} \E[f^{\Epsilon,dt}(t)]$.
-Therefore it suffices to calculate $\E[f^{\Epsilon,dt}(t)]$ for a given $dt$.
-Let $f^{dt}(t) = \E[f^{\Epsilon,dt}(t)]$. For this function, it holds that:
-
-\[
-  f^{dt}(t) = \Pr[\exists t^* \in [t - dt, t]: \chi(t^*) = 1](\Pr[f^{dt}(t - 1) + X^{dt}(t) > f^{dt}(t - dt)](f^{dt}(t - 1) + X^{dt}(t)) + (1 - \Pr[f^{dt}(t - 1) + X^{dt}(t) > f^{dt}(t - dt)])(f^{dt}(t - dt)))\\
-            + (1 - \Pr[\exists t^* \in [t - dt, t]: \chi(t^*) = 1])(f^{dt}(t - dt)) \\
-            % = (1 - e^{-g dt})()
-\]
+Notice that $\E[\lim_{dt \to 0} f_{\Epsilon,dt}(t)] = \lim_{dt \to 0} \E[f_{\Epsilon,dt}(t)]$.
+Therefore it suffices to calculate $\E[f_{\Epsilon,dt}(t)]$ for a given $dt$,
+and then take the limit for $dt \to 0$.
+Let $f_{dt}(t) = \E[f_{\Epsilon,dt}(t)]$.
+Let $p_{dt} = \Pr[\chi([t - dt, t]) \geq 1] = 1 - \Pr[\chi([t - dt, t]) = 0] = 1 - (1 - e^{-g dt}) = e^{-g dt}$, where
+the probability follows from the pmf of the Poisson process $\chi(t)$
+of block production,
+and let
+\begin{align*}
+  q \defeq \lim_{dt \to 0} \Pr[f_{dt}(t - 1) + X([t - dt, t]) < f_{dt}(t - dt)|\chi([t - dt, t]) \geq 1] =\\
+           \lim_{dt \to 0} \Pr[X([t - dt, t]) < f_{dt}(t - dt) - f_{dt}(t - 1)|\chi([t - dt, t]) \geq 1] = \\
+           \lim_{dt \to 0} \left( 1 - e^{-(\ln2) (f_{dt}(t - dt) - f_{dt}(t - 1))}\right) =
+           \lim_{dt \to 0} \left(1 - 2^{-(f_{dt}(t - dt) - f_{dt}(t - 1))}\right)
+  \,.
+\end{align*}
+The probability follows from the cdf of the exponential distribution of $\lim_{dt \to 0} X([t - dt, t])$.
+Observing $f(t) = \alpha t$, we get $q = \lim_{dt \to 0}\left(1 - 2^{-(\alpha(t - dt) - \alpha(t - 1))}\right)
+= \lim_{dt \to 0}\left(1 - 2^{\alpha (dt - 1)}\right) = 1 - 2^\alpha$.
+Letting $u = f_{dt}(t - dt) - f_{dt}(t - 1)$,
+\begin{align*}
+  F_{dt} &\defeq \E[X_{dt}(t)|\chi([t - dt, t]) \geq 1 \land X([t - dt, t]) > f_{dt}(t - dt) - f_{dt}(t - 1)]\\
+         &= \frac{\int_u^\infty x (\ln2) e^{-x \ln2} dx}{\int_u^\infty (\ln2) e^{-x \ln2} dx}
+          = \frac{\left(-x e^{-x \ln2} + \int{e^{-x \ln2} dx}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}\\
+         &= \frac{\left(-x e^{-x \ln2} - \frac{1}{\ln2} e^{-x \ln2}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}
+          = \frac{u e^{-u\ln2} + \frac{1}{\ln2} e^{-u \ln2}}{e^{-u \ln2}}\\
+         &= u + \frac{1}{\ln2}\,
+\end{align*}
+is the expected work of a block with the property that the chain it is the tip of has more work than any of the
+previously produced chains so far.
+\dznote{Shreekara, can you check that this makes sense? This looks like we're
+making an elementary mistake about Martingale-style sequences of distributions...}
+For $dt < 1$, it holds that
+\begin{align*}
+  f_{dt}(t) =
+      &p_{dt}\left(q_{dt}f_{dt}(t - dt) + (1 - q_{dt})(f_{dt}(t - 1) + F_{dt})\right)\\
+    + &(1 - p_{dt})f_{dt}(t - dt)\,.
+\end{align*}
+The multiplication $p_{dt} q_{dt} f_{dt} (t - 1)$ is valid because the event of getting a successful block
+during $[t - dt, t]$ is independent of the chain length at time $t - 1$, and likewise for the multiplication
+$p_{dt} q_{dt} f_{dt}(t - dt)$.
+Hence, taking $dt \to 0$, and solving $f(t) = \alpha t$, we get
+\begin{align*}
+  \alpha t = \lim_{dt \to 0} f_{dt}(t) \Rightarrow\\
+  \alpha t = \lim_{dt \to 0} (&p_{dt}\left(q_{dt}f_{dt}(t - dt) + (1 - q_{dt})(f_{dt}(t - 1) + F_{dt})\right)\\ + &(1 - p_{dt})f_{dt}(t - dt))\\
+  \alpha t = \lim_{dt \to 0} (&e^{-gdt}\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\ + &(1 - e^{-gdt})\alpha (t - dt))\\
+  \alpha t = \lim_{dt \to 0} &\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\
+  \alpha t = &\left((1 - 2^\alpha) \alpha t + 2^\alpha\left(\alpha (t - 1) + \alpha t - \alpha (t - 1) + \frac{1}{\ln2}\right)\right)\\
+  \alpha t = &\left((1 - 2^\alpha) \alpha t + 2^\alpha\left(\alpha t + \frac{1}{\ln2}\right)\right)\\
+  \alpha t = &\alpha t + 2^\alpha\frac{1}{\ln2}\\
+\end{align*}
