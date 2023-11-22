@@ -14,7 +14,7 @@ from math import log, ceil, floor
 # g = (n - t)qp # expected number of honest blocks
 # g is Poisson lambda parameter; expected number of honest blocks produced per round
 # g = 0.5
-C = 5 # desired honest block tree size in number of blocks, in expectation
+C = 100 # desired honest block tree size in number of blocks, in expectation
 print('Chain size of', C)
 # The honest majority assumption states: t = (1 - delta)(n - t)
 # The adversarial chain is expected to grow at a rate of
@@ -42,7 +42,7 @@ def simulate(g, L, get_work=lambda: 1):
     # Calculate the time at which this block will be received by all other honest parties
     block_arrival_time = block_time + 1 # Δ = 1
     events.append((block_time, 'mine', block_index))
-    events.append((block_arrival_time, 'receive', block_index))
+    events.append((block_arrival_time, 'receive', block_index)) # the optimal adversary delays as much as allowed
 
   events.sort()
   # Invariant: heaviest_chain_weight is the weight of the heaviest chain as seen by
@@ -71,11 +71,10 @@ def simulate(g, L, get_work=lambda: 1):
 
 MONTE_CARLO_ITERATIONS = 1000
 
-def find_backbone_resilience(g, L):
-  # Backbone
-  def backbone_get_work():
-    return 1
+def backbone_get_work():
+  return 1
 
+def find_backbone_resilience(g, L):
   for EiaR_beta in np.arange(0, 1, 0.01):
     weights = 0
     for _ in range(MONTE_CARLO_ITERATIONS):
@@ -87,14 +86,12 @@ def find_backbone_resilience(g, L):
     if average_adversarial_weight > average_honest_weight:
       return EiaR_beta
 
-def find_poem_resilience(g, L):
-  # PoEM
-  def poem_get_work():
-    return kappa - log(np.random.uniform(1, 2**kappa), 2)
+def poem_get_work():
+  return -log(np.random.uniform(0, 1), 2)
 
+def find_poem_resilience(g, L):
   for EiaR_beta in np.arange(0, 1, 0.01):
     weights = 0
-    kappa = 256
     for _ in range(MONTE_CARLO_ITERATIONS):
       weights += simulate(g, L, poem_get_work)
     # print('average poem honest heaviest chain weight is:', weights / MONTE_CARLO_ITERATIONS)
@@ -123,21 +120,30 @@ def find_poem_resilience(g, L):
     if average_adversarial_weight > average_honest_weight:
       return EiaR_beta
 
-backbone_resiliences = []
-poem_resiliences = []
+# backbone_resiliences = []
+# poem_resiliences = []
+# 
+def monte_carlo(f, iterations):
+  weights = 0
+  for _ in range(iterations):
+    weights += f()
+  return weights / iterations
 
 for g in np.arange(0.01, 2, 0.01):
   L = C / g # simulation lifetime to meet this expectation
   print('g =', g)
-  backbone_resilience = find_backbone_resilience(g, L)
-  print('\tBackbone resilience: ', backbone_resilience)
-  poem_resilience = find_poem_resilience(g, L)
-  print('\tPoEM resilience: ', poem_resilience)
-  backbone_resiliences.append(backbone_resilience)
-  poem_resiliences.append(poem_resilience)
+  poem_chain_weight = monte_carlo(lambda: simulate(g, L, poem_get_work), MONTE_CARLO_ITERATIONS)
+  print('\tPoEM honest chain growth rate: ', poem_chain_weight / L)
 
-print('Backbone resiliences:')
-print(backbone_resiliences)
-
-print('PoEM resiliences:')
-print(poem_resiliences)
+#   backbone_resilience = find_backbone_resilience(g, L)
+#   print('\tBackbone resilience: ', backbone_resilience)
+#   poem_resilience = find_poem_resilience(g, L)
+#   print('\tPoEM resilience: ', poem_resilience)
+#   backbone_resiliences.append(backbone_resilience)
+#   poem_resiliences.append(poem_resilience)
+#
+# print('Backbone resiliences:')
+# print(backbone_resiliences)
+#
+# print('PoEM resiliences:')
+# print(poem_resiliences)
