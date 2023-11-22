@@ -1,6 +1,7 @@
 import numpy as np
+from scipy.optimize import newton
 from pprint import pprint
-from math import log, ceil, floor
+from math import log, ceil, floor, e
 
 # In Bitcoin Backbone notation, where:
 #   p is the probability of a query being successful
@@ -14,7 +15,7 @@ from math import log, ceil, floor
 # g = (n - t)qp # expected number of honest blocks
 # g is Poisson lambda parameter; expected number of honest blocks produced per round
 # g = 0.5
-C = 100 # desired honest block tree size in number of blocks, in expectation
+C = 1000 # desired honest block tree size in number of blocks, in expectation
 print('Chain size of', C)
 # The honest majority assumption states: t = (1 - delta)(n - t)
 # The adversarial chain is expected to grow at a rate of
@@ -129,11 +130,23 @@ def monte_carlo(f, iterations):
     weights += f()
   return weights / iterations
 
+def get_poem_analytic_expressions(g):
+  def f(α):
+    return α * 2**α - g / log(2, e)
+
+  def f_prime(α):
+    return 2**α + α * log(2, e) * 2**α
+  
+  return f, f_prime
+
 for g in np.arange(0.01, 2, 0.01):
   L = C / g # simulation lifetime to meet this expectation
   print('g =', g)
   poem_chain_weight = monte_carlo(lambda: simulate(g, L, poem_get_work), MONTE_CARLO_ITERATIONS)
-  print('\tPoEM honest chain growth rate: ', poem_chain_weight / L)
+  print('\tEmpirical PoEM honest chain growth rate: ', poem_chain_weight / L)
+  f, f_prime = get_poem_analytic_expressions(g)
+  α = newton(f, g, f_prime)
+  print('\tAnalytic PoEM honest chain growth rate: ', α)
 
 #   backbone_resilience = find_backbone_resilience(g, L)
 #   print('\tBackbone resilience: ', backbone_resilience)
