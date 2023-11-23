@@ -86,8 +86,8 @@ $\alpha = \E[\frac{f_\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all execu
 
 For a given interval $[t - dt, t]$, let $X([t_1, t_2]) = \sum_{t \in [t_1, t_2]} X(t)$. Note that, if
 $dt$ is small enough (namely, shorter than the shortest distance between two successive successes),
-then there will only be one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X([t - dt, t])$
-will take that value, namely $\lim_{dt \to 0} X_{dt}(t) \sim \Exp(\ln2)$.
+then there will be at most one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X([t - dt, t])$
+will take that value, namely $\lim_{dt \to 0} X([t - dt, t]) \sim \Exp(\ln2)$.
 The $\max$ function is irrelevant when we take $dt \to 0$.
 Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$.
 
@@ -95,7 +95,7 @@ Given an execution $\Epsilon$, consider the family of functions (parameterized b
 
 \[
   f_{\Epsilon,dt}(t) = \begin{cases}
-             \max\{f_{\Epsilon,dt}(t - 1) + X_{dt}(t),&\\
+             \max\{f_{\Epsilon,dt}(t - 1) + X([t - dt, t]),&\\
     \phantom{\max\{\}}      f_{\Epsilon,dt}(t - dt)\} & \text{, if } \chi([t - dt, t]) \geq 1\\
           f_{\Epsilon,dt}(t - dt) & \text{ otherwise }
   \end{cases}\,.
@@ -132,10 +132,10 @@ and let
 \end{align*}
 The probability follows from the cdf of the exponential distribution of $\lim_{dt \to 0} X([t - dt, t])$.
 Observing $f(t) = \alpha t$, we get $q = \lim_{dt \to 0}\left(1 - 2^{-(\alpha(t - dt) - \alpha(t - 1))}\right)
-= \lim_{dt \to 0}\left(1 - 2^{\alpha (dt - 1)}\right) = 1 - 2^\alpha$.
+= \lim_{dt \to 0}\left(1 - 2^{\alpha (dt - 1)}\right) = 1 - 2^{-\alpha}$.
 Letting $u = f_{dt}(t - dt) - f_{dt}(t - 1)$,
 \begin{align*}
-  F_{dt} &\defeq \E[X_{dt}(t)|\chi([t - dt, t]) \geq 1 \land X([t - dt, t]) > f_{dt}(t - dt) - f_{dt}(t - 1)]\\
+  F_{dt} &\defeq \E[X([t - dt, t])|\chi([t - dt, t]) \geq 1 \land X([t - dt, t]) > u]\\
          &= \frac{\int_u^\infty x (\ln2) e^{-x \ln2} dx}{\int_u^\infty (\ln2) e^{-x \ln2} dx}
           = \frac{\left(-x e^{-x \ln2} + \int{e^{-x \ln2} dx}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}\\
          &= \frac{\left(-x e^{-x \ln2} - \frac{1}{\ln2} e^{-x \ln2}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}
@@ -161,7 +161,57 @@ Hence, taking $dt \to 0$, and solving $f(t) = \alpha t$, we get
   \alpha t = \lim_{dt \to 0} (&p_{dt}\left(q_{dt}f_{dt}(t - dt) + (1 - q_{dt})(f_{dt}(t - 1) + F_{dt})\right)\\ + &(1 - p_{dt})f_{dt}(t - dt))\\
   \alpha t = \lim_{dt \to 0} (&e^{-gdt}\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\ + &(1 - e^{-gdt})\alpha (t - dt))\\
   \alpha t = \lim_{dt \to 0} &\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\left((1 - 2^\alpha) \alpha t + 2^\alpha\left(\alpha (t - 1) + \alpha t - \alpha (t - 1) + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\left((1 - 2^\alpha) \alpha t + 2^\alpha\left(\alpha t + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\alpha t + 2^\alpha\frac{1}{\ln2}\\
+  \alpha t = &\left((1 - 2^{-\alpha}) \alpha t + 2^{-\alpha}\left(\alpha (t - 1) + \alpha t - \alpha (t - 1) + \frac{1}{\ln2}\right)\right)\\
+  \alpha t = &\left((1 - 2^{-\alpha}) \alpha t + 2^{-\alpha}\left(\alpha t + \frac{1}{\ln2}\right)\right)\\
+  \alpha t = &\alpha t + 2^{-\alpha}\frac{1}{\ln2}\\
 \end{align*}
+
+\section{Questions for Shreekara/Sriram}
+
+\subsection{A Question on Concentration}
+
+Consider a family of i.i.d. random variables $\{ X_i \}_{i \in [n]}$, where $n$ is a constant
+and each of $X_i$ is distributed according to the exponential distribution with rate $\lambda$.
+Let $X = \sum_{i \in [n]} X_i$ and $\mu = \E[X] = \frac{n}{\lambda}$.
+The Chernoff bound yields:
+
+\begin{align*}
+  \E[X < (1 - \epsilon)\mu] &\leq e^{-\Omega(\mu)}\\
+  \E[X > (1 + \epsilon)\mu] &\leq e^{-\Omega(\mu)}\,.
+\end{align*}
+
+\textbf{What are the exact expressions $\Omega(\mu)$ for each of the two bounds?}
+
+\subsection{A Question of Process}
+
+Let $L \in \mathbb{R}^+$ be a constant. Consider a Poisson process with rate $g$ defined by the following characteristic function: For $t \in [L]$, let
+\[
+  \chi(t) = \begin{cases}
+    1, & \text{ if the Poisson process has a success at time } t\\
+    0, & \text{ otherwise }
+  \end{cases}\,.
+\]
+
+Now, define the function $X(t)$ as follows. For $t \in [L]$, let
+\[
+  X(t) = \begin{cases}
+    \text{exponentially distributed with rate } \lambda, & \text{ if } \chi(t) = 1\\
+    0, & \text{ otherwise }
+  \end{cases}\,,
+\] with the family $\{ X(t) \}_{t \in [L]}$ being mutually independent.
+
+Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$ and $X([t_1, t_2]) = \sum_{t \in [t_1, t_2]} X(t)$.
+Note that $\E[\chi([t_1, t_2])] = (t_2 - t_1)g$.
+
+Define the following class of functions (one function for each $dt$):
+
+\[
+  f_{dt}(t) = \begin{cases}
+    \max(f_{dt}(t - 1) + X([t - dt, t]), f_{dt}(t - dt)), & \text{ if } \chi([t - dt, t]) \geq 1\\
+    f_{dt}(t - dt), & \text{ otherwise }
+  \end{cases}
+\]
+
+Let $f(t) = \lim_{dt \to 0} f_{dt}(t)$. For each experiment, the limit $\lim_{dt \to 0} f_{dt}(t)$ converges because, when $dt$ is small enough so that no two Poisson successes occur within any interval $[t - dt, t]$ for any $t$, the value $f_{dt}(t)$ does not change any more. So $f(t)$ is a well-defined random variable.
+
+\textbf{What is $\E[f(t)]$?}
