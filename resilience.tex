@@ -157,13 +157,6 @@ during $[t - dt, t]$ is independent of the chain length at time $t - 1$, and lik
 $p_{dt} q_{dt} f_{dt}(t - dt)$.
 Hence, taking $dt \to 0$, and solving $f(t) = \alpha t$, we get
 \begin{align*}
-  \alpha t = \lim_{dt \to 0} f_{dt}(t) \Rightarrow\\
-  \alpha t = \lim_{dt \to 0} (&p_{dt}\left(q_{dt}f_{dt}(t - dt) + (1 - q_{dt})(f_{dt}(t - 1) + F_{dt})\right)\\ + &(1 - p_{dt})f_{dt}(t - dt))\\
-  \alpha t = \lim_{dt \to 0} (&e^{-gdt}\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\ + &(1 - e^{-gdt})\alpha (t - dt))\\
-  \alpha t = \lim_{dt \to 0} &\left(q_{dt} \alpha (t - dt) + (1 - q_{dt})\left(\alpha (t - 1) + u + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\left((1 - 2^{-\alpha}) \alpha t + 2^{-\alpha}\left(\alpha (t - 1) + \alpha t - \alpha (t - 1) + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\left((1 - 2^{-\alpha}) \alpha t + 2^{-\alpha}\left(\alpha t + \frac{1}{\ln2}\right)\right)\\
-  \alpha t = &\alpha t + 2^{-\alpha}\frac{1}{\ln2}\\
 \end{align*}
 
 \section{Questions for Shreekara/Sriram}
