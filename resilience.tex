@@ -84,7 +84,7 @@ $f_\Epsilon(t) = \max_{P \text{ honest}}{\work(C^P_t)}$ be the maximum intrinsic
 adopted chain at time $t$. We wish to calculate the expected growth rate of $f_\Epsilon(t)$, namely
 $\alpha = \E[\frac{f_\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all executions.
 
-For a given interval $[t - dt, t]$, let $X([t_1, t_2]) = \sum_{t \in [t_1, t_2]} X(t)$. Note that, if
+For a given interval $[t_1, t_2]$, let $X([t_1, t_2]) = \max_{t \in [t_1, t_2]} X(t)$. Note that, if
 $dt$ is small enough (namely, shorter than the shortest distance between two successive successes),
 then there will be at most one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X([t - dt, t])$
 will take that value, namely $\lim_{dt \to 0} X([t - dt, t]) \sim \Exp(\ln2)$.
@@ -119,7 +119,7 @@ Notice that $\E[\lim_{dt \to 0} f_{\Epsilon,dt}(t)] = \lim_{dt \to 0} \E[f_{\Eps
 Therefore it suffices to calculate $\E[f_{\Epsilon,dt}(t)]$ for a given $dt$,
 and then take the limit for $dt \to 0$.
 Let $f_{dt}(t) = \E[f_{\Epsilon,dt}(t)]$.
-Let $p_{dt} = \Pr[\chi([t - dt, t]) \geq 1] = 1 - \Pr[\chi([t - dt, t]) = 0] = 1 - (1 - e^{-g dt}) = e^{-g dt}$, where
+Let $p_{dt} = \Pr[\chi([t - dt, t]) \geq 1] = 1 - \Pr[\chi([t - dt, t]) = 0] = 1 - e^{-g dt}$, where
 the probability follows from the pmf of the Poisson process $\chi(t)$
 of block production,
 and let
@@ -200,18 +200,38 @@ Now, define the function $X(t)$ as follows. For $t \in [L]$, let
   \end{cases}\,,
 \] with the family $\{ X(t) \}_{t \in [L]}$ being mutually independent.
 
-Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$ and $X([t_1, t_2]) = \sum_{t \in [t_1, t_2]} X(t)$.
+Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$ and $X([t_1, t_2]) = \max_{t \in [t_1, t_2]} X(t)$.
 Note that $\E[\chi([t_1, t_2])] = (t_2 - t_1)g$.
 
-Define the following class of functions (one function for each $dt$):
+Define the following class of functions (one function for each $dt < 1$):
 
 \[
   f_{dt}(t) = \begin{cases}
-    \max(f_{dt}(t - 1) + X([t - dt, t]), f_{dt}(t - dt)), & \text{ if } \chi([t - dt, t]) \geq 1\\
+    \max(f_{dt}(t - 1) + X([t - dt, t]), f_{dt}(t - dt)), & \text{ if } \chi([t - dt, t]) = 1\\
     f_{dt}(t - dt), & \text{ otherwise }
   \end{cases}
 \]
-
+With initial condition $f_{dt}(t) = 0$ for $t \leq 0$.
 Let $f(t) = \lim_{dt \to 0} f_{dt}(t)$. For each experiment, the limit $\lim_{dt \to 0} f_{dt}(t)$ converges because, when $dt$ is small enough so that no two Poisson successes occur within any interval $[t - dt, t]$ for any $t$, the value $f_{dt}(t)$ does not change any more. So $f(t)$ is a well-defined random variable.
 
 \textbf{What is $\E[f(t)]$?}
+
+\section{Whiteboard notes}
+\begin{align*}
+  f(t) =& \Pr[\chi([t - dt, t]) = 0] f(t - dt)\\
+      + &\Pr[\chi([t - dt, t]) \geq 1] [\\
+        &\Pr[f(t - dt) > f(t - 1) + X(t) | \chi([t - dt, t]) \geq 1] f(t - dt)\\
+      + &\Pr[f(t - dt) \leq f(t - 1) + X(t) | \chi([t - dt, t]) \geq 1]\\
+        &\E[f(t - 1) + X([t - dt, t]) | f(t - 1) + X([t - dt, t]) \geq f(t - dt) \land \chi([t - dt, t]) \geq 1]]\\
+  f(t) =& e^{-g dt} f(t - dt)\\&+ (1 - e^{-g dt}) [(1 - e^{-ln2 (f(t - dt) - f(t - 1))}) f(t - dt)\\ &+ e^{-ln2 (f(t - dt) - f(t - 1))} (f(t - 1) + \frac{1}{\ln2} + f(t - dt) - f(t - 1))]\\
+  \alpha t =& e^{-g dt} \alpha(t - dt)\\ &+ (1 - e^{-g dt}) [\alpha(t - dt) - 2^{\alpha (dt - 1)} \alpha (t - dt)\\ &+ 2^{\alpha(dt - 1)} \alpha (t - dt) + 2^{\alpha(dt - 1)} \frac{1}{\ln2}]\\
+  \alpha t =& e^{-g dt} \alpha (t - dt) + \alpha (t - dt) + \frac{2^{\alpha (dt - 1)}}{\ln2} - e^{-g dt} \alpha (t - dt) - \frac{e^{-g dt} 2^{\alpha (dt - 1)}}{\ln2}\\
+  \alpha t =& \alpha(t - dt) + \frac{2^{\alpha (dt - 1)}}{\ln2} (1 - e^{-g dt})\\
+  \alpha dt = & \frac{2^{\alpha (dt - 1)}}{\ln2} (1 - e^{-g dt})\\
+  \lim_{dt \to 0}& \frac{\alpha dt \ln2}{2^{\alpha (dt - 1)} (1 - e^{-g dt})} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{(2^{\alpha(dt - 1)})'(1 - e^{-g dt}) + 2^{\alpha(dt - 1)} (1 - e^{-g dt})'} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{\alpha (\ln2) 2^{\alpha(dt - 1)} (1 - e^{-g dt}) + 2^{\alpha(dt - 1)} g e^{-g dt}} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{2^{\alpha(dt - 1)} g e^{-g dt}} = 1\\
+  \frac{\alpha \ln2}{2^{-\alpha} g} = 1\\
+  \alpha 2^\alpha = \frac{g}{\ln2}
+\end{align*}
