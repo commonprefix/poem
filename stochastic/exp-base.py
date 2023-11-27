@@ -3,6 +3,7 @@ import numpy as np
 
 NUM_SAMPLES = 3 # 30
 MONTE_CARLO = 1000
+K = 0.01
 
 for λ in np.arange(0.1, 100, 0.1):
   honest_work = 0
@@ -11,12 +12,15 @@ for λ in np.arange(0.1, 100, 0.1):
     works = []
     for samples in range(NUM_SAMPLES):
       # λ = log(2, e)
-      works.append(1 + np.random.exponential(1/λ))
+
+      b = e ** λ
+      γ = -log(K, b)
+      works.append(γ + np.random.exponential(1/λ))
       # works.append(1)
       # works.append(np.random.exponential(1/λ))
     adv_work += sum(works)
     honest_work += max(works)
-    
+
   adv_work /= MONTE_CARLO
   honest_work /= MONTE_CARLO
 
