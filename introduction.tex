@@ -35,7 +35,7 @@ Additionally, we theoretically prove our new protocol is secure and calculate th
 bounds within which block production can be increased.
 
 \noindent
-\textbf{Construction overview.}
+\myparagraph[Construction overview]
 The classical Bitcoin protocol uses the longest chain fork choice. Among two different
 chains, the one with the most blocks is chosen as the canonical one. We modify this
 rule as follows: Each block counts for its intrinsic work $-\frac{\lg H(B)}{T}$,
@@ -89,7 +89,7 @@ rate, as compared to Bitcoin, without sacrificing adversarial resilience. The re
 allows for faster transaction confirmation.
 
 \noindent
-\textbf{Related work.}
+\myparagraph[Related work]
 Bitcoin was first proven secure in the static population setting~\cite{backbone},
 and later also studied under in the variable population setting~\cite{varbackbone}.
 The idea of using a more nuanced proof-of-work inequality in which some blocks

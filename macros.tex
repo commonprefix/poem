@@ -30,3 +30,12 @@
 \newcommand{\getsrandomly}{\overset{\$}{\gets}}
 \newcommand{\Epsilon}{\mathcal{E}}
 \newcommand{\Exp}{\textsf{Exp}}
+
+
+\newcommandx{\myparagraph}[1][1=]{
+\ifoakland
+  \subsubsection*{#1}
+\else
+  \textbf{#1}.
+\fi
+}
