@@ -7,11 +7,31 @@ We assume a synchronous communication network, where all honestly produced
 messages are delivered with a delay of one round (messages sent in a round
 arrive at the beginning of the next round).
 We also assume a static setting, where the protocol is executed by
-a fixed number of $n$ parties, unknown to the honest parties.
-The adversary controls $t$ of the parties.
+a fixed number of $n \in \mathbb{N}$ parties, unknown to the honest parties.
+The adversary controls $t < n$ of the parties.
 In a single round, all parties are allowed the same number $q$ of queries to
 a random oracle~\cite{ro} $H$. Hence, the adversary can perform $t q$ queries
 per round.
 Parties communicate through an unauthenticated network,
 meaning that the adversary can ``spoof''~\cite{douceur2002sybil}
 the source address of any message that is delivered.
+
+We work in the following variant of the Random Oracle model~\cite{ro}, in which
+the random oracle returns a \emph{real number} instead of $\kappa$ bits of output.
+One technicality with this model is that the real-number cannot directly be returned
+to the machine invoking the oracle. Instead, we allow the querying machine to choose which
+bit of the number to obtain.
+
+\begin{definition}[Real-Valued Random Oracle]
+  The \emph{real-valued random oracle} $H$ can be queried with a value $x$ and a bit index $j$.
+  When queried with $x$ for the first time,
+  it samples a value $y$ uniformly at random from the continuous interval $(0, 1)$,
+  and returns its $j$-th bit from the binary representation of the real number $y$.
+  It then remembers the pair $(x, y)$.
+  When queried with $x$ for a subsequent time, it returns the $j$-th bit
+  of the stored $y$.
+\end{definition}
+
+We denote by $H(x)[{i}{:}{j}]$ the query that obtains the slice of $H(x)$ from bit index $i$ to $j$.
+We liberally use the rest of the previously introduced slicing notation with the hash output,
+implying that the random oracle is queried with the desired number of bits.
