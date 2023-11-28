@@ -7,6 +7,8 @@ the end, and $Y[-1]$ in particular is the last. We use $Y[i{:}j]$ to denote the 
 consisting of the elements indexed from $i$ (inclusive) to $j$ (exclusive). The notation $Y[i{:}]$ means the
 subarray of $Y$ from $i$ onwards, while $Y[{:}j]$ means the subsequence of $Y$ up to (but not including) $j$.
 The notation $\concat$ denotes the concatenation of two strings.
+Given a sequence of strings $(Y_i)_{i \in [n]}$ we denote by $\big\lVert_{i \in [n]} Y_i$ the concatenation
+of all the strings in the sequence, in order.
 
 \begin{definition}[Distributed Ledger Protocol]
   A \emph{distributed ledger protocol} is an Interactive Turing Machine (ITM)
@@ -22,7 +24,7 @@ The notation $\concat$ denotes the concatenation of two strings.
 
 In a distributed ledger protocol execution, the notation
 $\Ledger[P][][r]$ denotes the output of $\lread()$
-invoked on party $P$ at the end of round $r$. 
+invoked on party $P$ at the end of round $r$.
 We denote that ledger
 $\Ledger[P_1][][r_1]$ is a prefix of ledger $\Ledger[P_2][][r_2]$,
 using the notation
