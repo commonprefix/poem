@@ -1,2 +1,9 @@
 \begin{abstract}
+  We propose a modification to the proof-of-work fork choice rule.
+  Instead of choosing the longest chain, we choose the chain with the most
+  \emph{intrinsic work}. The intrinsic work of a block is the number of
+  zeroes at the front of its hash. This modification allows us to increase
+  the block production rate without sacrificing adversarial resilience,
+  yielding a $2\times$ improvement in confirmation delay.
+  \atnote{Revisit the $2\times$ number when we know it.}
 \end{abstract}
