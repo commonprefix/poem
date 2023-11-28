@@ -5,8 +5,8 @@ attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
 where $h$ is a pointer to the previous block, $x$ contains a sequence of
 \emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
 by the miner to satisfy the \emph{proof-of-work} inequality $H(B) \leq T$, where
-$H$ is a hash function (with $\kappa$ bits of output)
-and $T$ is a small \emph{target}. Any $B$ that satisfies this
+$H$ is a hash function with output in the interval $(0, 1)$
+and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
 inequality is considered a valid block, whereas candidates that do not satisfy
 the inequality are invalid. Simply put, valid blocks must have
 hashes that begin with a desired number of $0$s.
@@ -49,8 +49,8 @@ $T$ is the nominal target of the block. In our protocol, we count the \emph{intr
 of each block, which is different from the nominal target $T$ and depends on the value $H(B) \leq T$.
 We perform our analysis in the static population model, and leave the analysis in the variable
 population model for future work.} target. Intuitively, this corresponds to counting the
-``number of zeroes'' at the front of the hash of each block. These zeroes are already guaranteed
-to be at least $-\lg{T}{2^\kappa}$, but can be more. The score of each block is \emph{how many extra zeroes}
+``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
+to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
 it has. The chain with the most total intrinsic work is chosen as the canonical chain.
 
 \begin{figure}
