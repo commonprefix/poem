@@ -1,25 +1,22 @@
 \section{Construction}
-In the \poem construction, only the chain adoption rule
+In the \poem construction, only the fork choice rule
 of the original Bitcoin protocol is modified.
-Honest parties, instead of adopting the longest chain, at the begining
+Honest parties, instead of adopting the longest chain, at the beginning
 of each round, now adopt the chain with the most intrinsic work.
 
 We let $\kappa$ be the security parameter and we
 model our hash function $H$ as a random oracle.
 
+A \emph{chain} $C$ is a sequence of blocks beginning with a designated
+block $G$, the genesis block.
+
 \begin{definition}[Block Intrinsic Work]
-  The \emph{intrinsic work} of a block~\footnote{
-    A block is any triple of the
-    form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
-    The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
-  }
-  $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.
+  The \emph{intrinsic work} of a block
+  $B$ is denoted as $\work(B) = -\lg H(B)$.
 \end{definition}
 
 \begin{definition}[Chain Intrinsic Work]
-  The \emph{intrinsic work} of a chain~\footnote{
-    A \emph{chain} (\emph{blockchain}) is a sequence of blocks.
-  }
+  The \emph{intrinsic work} of a chain
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
   It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
@@ -27,7 +24,7 @@ model our hash function $H$ as a random oracle.
 
 \noindent
 \myparagraph[Blockchain notation]
-A chain $C$ is a sequence of blocks. We write $[\alpha] \lhd C$
+For chain $C$, we write $[\alpha] \lhd C$
 to denote the $i^\text{th}$ block of $C$ such that
 $\work(C[{:}{i - 1}]) < \alpha \leq \work(C[{:}{i}])$.
 If $\work(C) < \alpha$, then $[\alpha] \lhd C = \bot$.
