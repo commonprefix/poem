@@ -49,10 +49,3 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
   A distributed ledger protocol is \emph{secure} if it is
   both safe and live$(u)$.
 \end{definition}
-
-\begin{definition}[Random Oracle]
-  The \emph{random oracle}~\cite{ro}, when queried with a value $x$ for the first time,
-  returns a value $y$, sampled uniformly at random from $\{0, 1\}^\kappa$,
-  and stores the pair $(x, y)$. If the oracle
-  is queried again with $x$, it returns the same $y$.
-\end{definition}
