@@ -4,8 +4,11 @@ of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
 of each round, now adopt the chain with the most intrinsic work.
 
-We let $\kappa$ be the security parameter and we
-model our hash function $H$ as a random oracle.
+A block is any triple of the
+form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+The $h$ is a reference to a previous block $B'$ and
+contains the first $\kappa$ bits of its hash $H(B')[{:}{\kappa}]$.
 
 A \emph{chain} $C$ is a sequence of blocks beginning with a designated
 block $G$, the genesis block.
