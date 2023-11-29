@@ -1,4 +1,57 @@
-\section{Model}
+\section{Definitions \& Model}
+
+\noindent
+\textbf{Notation.}
+Given a sequence $Y$, we address it using $Y[i]$ to mean the $i^\text{th}$ element (starting from $0$).
+We use $|Y|$ to denote the length of $Y$.
+Negative indices address elements from the end, so $Y[-i]$ is the $i^\text{th}$ element from
+the end, and $Y[-1]$ in particular is the last. We use $Y[i{:}j]$ to denote the subarray of $Y$
+consisting of the elements indexed from $i$ (inclusive) to $j$ (exclusive). The notation $Y[i{:}]$ means the
+subarray of $Y$ from $i$ onwards, while $Y[{:}j]$ means the subsequence of $Y$ up to (but not including) $j$.
+The notation $\concat$ denotes the concatenation of two strings.
+Given a sequence of strings $(Y_i)_{i \in [n]}$ we denote by $\big\lVert_{i \in [n]} Y_i$ the concatenation
+of all the strings in the sequence, in order.
+
+\begin{definition}[Distributed Ledger Protocol]
+  A \emph{distributed ledger protocol} is an Interactive Turing Machine (ITM)
+  which exposes the following methods:
+
+  \begin{itemize}
+    \item $\lwrite(\tx)$:
+      Takes user input by accepting some transaction \tx.
+    \item $\lread()$:
+      Produces user output in the form of a \emph{ledger} (a sequence of transactions)
+  \end{itemize}
+\end{definition}
+
+The distributed ledger protocol is executed by a set of $n$ parties.
+In a distributed ledger protocol execution, the notation
+$\Ledger[P][][r]$ denotes the output of $\lread()$
+invoked on party $P$ at the end of round $r$.
+We denote that ledger
+$\Ledger[P_1][][r_1]$ is a prefix of ledger $\Ledger[P_2][][r_2]$,
+using the notation
+$\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]$. When
+$(\Ledger[P_1][][r_1] \preccurlyeq \Ledger[P_2][][r_2]) \lor (\Ledger[P_2][][r_2] \preccurlyeq \Ledger[P_1][][r_1])$ holds,
+we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
+
+\begin{definition}[Safety]
+  A distributed ledger protocol is \emph{safe} if
+  for any honest parties $P_1, P_2$ and any rounds $r_1, r_2$, it holds that
+  $\Ledger[P_1][][r_1]~\sim~\Ledger[P_2][][r_2]$.
+\end{definition}
+
+\begin{definition}[Liveness]
+  A distributed ledger protocol is \emph{live}$(u)$ if
+  for any honest party that attempts to inject a transaction $\tx$
+  at round $r$, it holds that $\tx \in \Ledger[P][][r+u]$
+  for all honest parties $P$.
+\end{definition}
+
+\begin{definition}[Secure]
+  A distributed ledger protocol is \emph{secure} if it is
+  both safe and live$(u)$.
+\end{definition}
 
 We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
 The protocol execution commences in discrete rounds $1, 2, \ldots$, and has a total duration of
