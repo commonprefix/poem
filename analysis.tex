@@ -204,6 +204,143 @@ The Convolution theorem is used:
   \end{itemize}
 \end{definition}
 
+\begin{theorem}[Typicality]
+  An execution of \poem is $(\epsilon, \lambda)$-typical with
+  probability $1 - e^{-\Omega(\epsilon^2\lambda f - \log L)} - e^{-\Omega(\kappa - \log L)}$.
+  Namely, the execution is typical with overwhelming probability in $(\lambda, \kappa)$.
+\end{theorem}
+\begin{proof}
+\end{proof}
+
+% \begin{theorem}[Concentration of Gamma]
+%   Consider a family $\{ X_i \}_{i \in [n]}$ of i.i.d. random variables $X_i$ distributed as $\Exp(\lambda)$, $\lambda > 0$,
+%   and let $X = \sum_{i = 1}^{n}{X_i}$. Then, for any $0 < \epsilon < 1$, it holds that
+%   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-n(\epsilon - \ln(1 + \epsilon))}$,
+%   which is negligible in $n$.
+% \end{theorem}
+% \begin{proof}
+% %  First, we calculate the expectation:
+% %
+% %  \[
+% %    \E[X] = \E[\sum_{i = 1}^n X_i] = \sum_{i = 1}^n \E[X_i] = n \E[X_i] = \frac{n}{\lambda}
+% %  \]
+% %
+% %  Next, we calculate the moment generating function:
+% %
+% %  \[
+% %    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n} X_i] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}]
+% %    = \E[e^{t X_i}]^n = (\frac{\lambda}{\lambda - t})^n
+% %  \]
+% %
+% %  The third equality stems from the mutual independence of the family $\{ X_i \}_{i \in [n]}$,
+% %  whereas the last equality stems from the moment generating function of the exponential.
+%   $X$ is distributed as $\Gamma(\alpha=n, \beta=\lambda)$. Therefore
+%   $\E[X] = \frac{n}{\lambda}$ and the moment generating
+%   function is $\E[e^{tX}] = (\frac{\lambda}{\lambda - t})^n = e^{n\ln(\frac{\lambda}{\lambda - t})}$.
+%
+% % For all $0 < t < \lambda$,
+% % \begin{align*}
+% %   \Pr[X > \alpha] = \Pr[e^{tX} > e^{t\alpha}] \leq \frac{\E[e^{tX}]}{e^{t\alpha}}\,.
+% % \end{align*}
+% 
+% %  The first equality is by the fact that the exponential function is increasing,
+% %  whereas the second inequality is Markov's inequality.
+%   \begin{align*}
+%     \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{n}{\lambda}] \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{n}{\lambda}}\\
+%     = e^{n\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda}}\,.
+%   \end{align*}
+%
+%   The first inequality is by the generic Chernoff bound.
+%   To minimize the exponent over $t$, we differentiate it and equate to $0$:
+%
+%   \begin{align*}
+%     \frac{d}{dt}(\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{1}{\lambda}) &= 0\\
+%     \frac{d}{dt}{\ln\lambda - \ln(\lambda - t) - t(1 + \epsilon)\frac{1}{\lambda}} &= 0\\
+%     \frac{1}{\lambda - t} - (1 + \epsilon)\frac{1}{\lambda} &= 0\\
+%     \frac{1}{\lambda - t} &= (1 + \epsilon)\frac{1}{\lambda}\\
+%     \lambda - t &= \frac{\lambda}{1 + \epsilon}\\
+%     t &= \lambda(1 - \frac{1}{1 + \epsilon}) = \frac{\lambda \epsilon}{1 + \epsilon}\,.
+%   \end{align*}
+%
+%   We substitute $t$ in the exponent:
+% 
+%   \begin{align*}
+%     n \ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{\lambda}{\lambda - \frac{\lambda\epsilon}{1 + \epsilon}}) - \frac{\lambda \epsilon}{1 + \epsilon}(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{1}{1 - \frac{\epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(\frac{1}{\frac{1 + \epsilon - \epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(1 + \epsilon) - \epsilon n = \\
+%     -n (\epsilon - \ln(1 + \epsilon))\\
+%   \end{align*}
+% 
+%   The exponent is negative because
+%   \begin{align*}
+%     \epsilon - \ln(1 + \epsilon) > 0 \Leftrightarrow \\
+%     \epsilon > \ln(1 + \epsilon)\\
+%     e^{\epsilon} > 1 + \epsilon\,,
+%   \end{align*}
+%   which holds because $\epsilon > 0$.
+% \end{proof}
+
+\begin{theorem}
+  Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
+  all mutually independent,
+  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
+  Let $X_i = A_i B_i$, and $X = \sum_{i = 1}^n X_i$.
+  Then for any $0 < \epsilon < 1$, it holds that
+  $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$,
+  which is negligible in $n$.
+\end{theorem}
+\begin{proof}
+  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
+  $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
+
+  \begin{align*}
+    &\E[e^{t X_i}] = \E[e^{t A_i B_i}] =\\
+      &\E[e^{t A_i B_i}|A_i = 0] \Pr[A_i = 0]\\
+    + &\E[e^{t A_i B_i}|A_i = 1] \Pr[A_i = 1] = \\
+    \E[e^{t A_i B_i}|A_i = 0] (1 - p) + &\E[e^{t A_i B_i}|A_i = 1] p = \\
+    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + p \frac{\lambda}{\lambda - t}\,.
+  \end{align*}
+
+  \begin{align*}
+    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n X_i}] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}] = \\
+    \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
+  \end{align*}
+
+  For all $0 < t < 1$:
+
+  \begin{align*}
+    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
+    \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
+    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
+  \end{align*}
+
+  It suffices to show that the factor
+  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}$
+  in front of $n$ in the exponent is negative. Taking its derivative with respect to $t$:
+
+  \begin{align*}
+    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
+  \end{align*}
+  
+  At $t = 0$ we have $f(0) = 0$ and
+  \begin{align*}
+    f'(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
+    \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
+  \end{align*}
+
+  Since $f'$ is continuous at $0$ and $f'(0) < 0$, there must exist some $t^*$ such that for all
+  $0 < t < t^*$ it holds that $f'(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
+  by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
+  $f'(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t_0}$.
+  Since $t^* > 0$ and $f'(\xi) < 0$, therefore $f(t^*) < 0$.
+  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
+  gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
+\end{proof}
+
 \begin{definition}[Block Work Interval]
   A block $B$ of chain $C$ has \emph{work interval}
   $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
