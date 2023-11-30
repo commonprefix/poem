@@ -4,25 +4,31 @@ of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
 of each round, now adopt the chain with the most intrinsic work.
 
-A block is any triple of the
+A block is any triplet of the
 form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
 The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
 The $h$ is a reference to a previous block $B'$ and
-contains the first $\kappa$ bits of its hash $H(B')[{:}{\kappa}]$.
+contains the first $\kappa$ bits of its hash $H(B')[{:}{\kappa}]$
+(recall that, in the real-valued random oracle model, each hash
+output has an infinite real-valued bit expansion, but only the first
+$\kappa$ bits are included in this reference).
 
 A \emph{chain} $C$ is a sequence of blocks beginning with a designated
-block $G$, the genesis block.
+block $G$, the \emph{genesis block}.
 
 \begin{definition}[Block Intrinsic Work]
-  The \emph{intrinsic work} of a block
-  $B$ is denoted as $\work(B) = -\lg H(B)$.
+  The \emph{intrinsic work} of a block hash
+  $A$ is denoted as $\work(A) = -\lg A$.
 \end{definition}
+
+In this definition, the full hash value, interpreted as a real number in the interval
+$(0, 1)$, is used.
 
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
-  It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
+  It is denoted as $\work(C) = \sum_{B \in C}{\work(H(B))}$.
 \end{definition}
 
 \noindent
@@ -59,6 +65,11 @@ function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
 which also remains the same as the original protocol.
+If a block is found, this block is broadcast\footnote{We use the term \emph{broadcast}
+to mean the unreliable, best-effort anonymous manner of communication between honest parties that
+guarantees message delivery from one honest party to all other honest parties.
+This is called \emph{diffuse} in the Backbone series of works.}
+to the network using function $\net.\broadcast()$
 
 \import{./}{algorithms/algorithm-honest.tex}
 \import{./}{algorithms/algorithm-pow.tex}

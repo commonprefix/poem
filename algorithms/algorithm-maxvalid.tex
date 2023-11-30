@@ -3,9 +3,16 @@
   \begin{algorithmic}[1]
   \Function{$\maxvalid_{\mathcal{G}}$}{$\overline{C}$}
     \Let{C_\mmax}{\epsilon}
+    \Let{\maxwork}{0}
     \For{$C \in \overline{C}$}
-      \If{$\validate_{\mathcal{G}}(C) \land \work(C) > \work(C_\mmax)$} \label{alg-maxvalid:validate}
+      \If{$\lnot\validate_{\mathcal{G}}(C)$}
+        \Continue
+      \EndIf
+      
+      \Let{\thiswork}{\sum_{B \in C}\work(H(B)[{:}{\kappa}])}
+      \If{$\thiswork > \maxwork$} \label{alg-maxvalid:validate}
         \Let{C_\mmax}{C}
+        \Let{\maxwork}{\thiswork}
       \EndIf
     \EndFor
     \State\Return{$C_\mmax$}\label{alg-maxvalid:return}

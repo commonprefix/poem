@@ -78,7 +78,7 @@ bit of the number to obtain.
 \begin{definition}[Real-Valued Random Oracle]
   The \emph{real-valued random oracle} $H$ can be queried with a value $x$ and a bit index $j$.
   When queried with $x$ for the first time,
-  it samples a value $y$ uniformly at random from the continuous interval $(0, 1)$,
+  it samples a real value $y$ uniformly at random from the continuous interval $(0, 1)$,
   and returns its $j$-th bit from the binary representation of the real number $y$.
   It then remembers the pair $(x, y)$.
   When queried with $x$ for a subsequent time, it returns the $j$-th bit
@@ -88,3 +88,10 @@ bit of the number to obtain.
 We denote by $H(x)[{i}{:}{j}]$ the query that obtains the slice of $H(x)$ from bit index $i$ to $j$.
 We liberally use the rest of the previously introduced slicing notation with the hash output,
 implying that the random oracle is queried with the desired number of bits.
+
+\noindent
+\textbf{The $q$-bounded model.}
+Following the tradition of the Bitcoin Backbone~\cite{backbone} paper,
+during each round, each honest party is allowed to query the random oracle with $q$
+different $x$ values. Similarly, the adversary is allowed to query the random oracle
+with $t q$ different $x$ values.
