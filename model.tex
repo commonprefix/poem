@@ -61,10 +61,10 @@ messages are delivered with a delay of one round (messages sent in a round
 arrive at the beginning of the next round).
 We also assume a static setting, where the protocol is executed by
 a fixed number of $n \in \mathbb{N}$ parties, unknown to the honest parties.
+In the execution, each of the $n - t$ honest parties execute the Distributed Ledger
+Protocol.
 The adversary controls $t < n$ of the parties.
-In a single round, all parties are allowed the same number $q$ of queries to
-a random oracle~\cite{ro} $H$. Hence, the adversary can perform $t q$ queries
-per round.
+The adversary may behave arbitrarily.
 Parties communicate through an unauthenticated network,
 meaning that the adversary can ``spoof''~\cite{douceur2002sybil}
 the source address of any message that is delivered.
