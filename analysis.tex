@@ -372,6 +372,18 @@ The Convolution theorem is used:
   Both lead to a contradiction. \Qed
 \end{proof}
 
+% The following conjecture is likely true and will allow us to tighten the analysis:
+%
+% \begin{conjecture}[Entropic Pairing Conjecture]
+%   Consider any block $B$ of chain $C$ with work interval $I(B)$
+%   computed by an honest party during a round $r$ such that
+%   for every $B'$ which was honestly computed during round $r$,
+%   it holds that $\work(B) \geq \work(B')$.
+%   Then, for every $\xi \in I(B) \setminus I(B')$ and every chain $C'$ of the execution,
+%   block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
+%   as long as $B' \neq \bot$.
+% \end{conjecture}
+
 \begin{lemma}[Entropic Chain Growth Lemma]
   Suppose that at round $r_1$ an honest party has a chain of work $w$.
   Then, by round $r_2 \geq r_1$, every honest party adopts a chain of work at least
