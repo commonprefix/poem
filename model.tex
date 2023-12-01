@@ -60,11 +60,12 @@ We assume a synchronous communication network, where all honestly produced
 messages are delivered with a delay of one round (messages sent in a round
 arrive at the beginning of the next round).
 We also assume a static setting, where the protocol is executed by
-a fixed number of $n \in \mathbb{N}$ parties, unknown to the honest parties.
-In the execution, each of the $n - t$ honest parties execute the Distributed Ledger
-Protocol.
-The adversary controls $t < n$ of the parties.
-The adversary may behave arbitrarily.
+a fixed total number of $n \in \mathbb{N}$ parties, unknown to the honest parties.
+In the execution, the adversary controls $t < n$ of the parties,
+and each of the $n - t$ other parties are honest and execute the prescribed Distributed Ledger
+Protocol. We let the first $1, 2, \ldots, n - t$ parties be the honest parties
+and the last $n - t + 1, \ldots, n$ parties be the corrupted parties, which may behave arbitrarily.
+This choice is without loss of generality~\cite[Proposition 18]{backbone}.
 Parties communicate through an unauthenticated network,
 meaning that the adversary can ``spoof''~\cite{douceur2002sybil}
 the source address of any message that is delivered.
