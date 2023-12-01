@@ -242,7 +242,7 @@ The Convolution theorem is used:
 % % \begin{align*}
 % %   \Pr[X > \alpha] = \Pr[e^{tX} > e^{t\alpha}] \leq \frac{\E[e^{tX}]}{e^{t\alpha}}\,.
 % % \end{align*}
-% 
+%
 % %  The first equality is by the fact that the exponential function is increasing,
 % %  whereas the second inequality is Markov's inequality.
 %   \begin{align*}
@@ -263,7 +263,7 @@ The Convolution theorem is used:
 %   \end{align*}
 %
 %   We substitute $t$ in the exponent:
-% 
+%
 %   \begin{align*}
 %     n \ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda} = \\
 %     n \ln(\frac{\lambda}{\lambda - \frac{\lambda\epsilon}{1 + \epsilon}}) - \frac{\lambda \epsilon}{1 + \epsilon}(1 + \epsilon)\frac{n}{\lambda} = \\
@@ -272,7 +272,7 @@ The Convolution theorem is used:
 %     n \ln(1 + \epsilon) - \epsilon n = \\
 %     -n (\epsilon - \ln(1 + \epsilon))\\
 %   \end{align*}
-% 
+%
 %   The exponent is negative because
 %   \begin{align*}
 %     \epsilon - \ln(1 + \epsilon) > 0 \Leftrightarrow \\
@@ -308,7 +308,7 @@ The Convolution theorem is used:
     \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
   \end{align*}
 
-  For all $0 < t < 1$:
+  For all $0 < t < \lambda$:
 
   \begin{align*}
     \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
@@ -325,17 +325,17 @@ The Convolution theorem is used:
     \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
     \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
   \end{align*}
-  
+
   At $t = 0$ we have $f(0) = 0$ and
   \begin{align*}
     f'(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
     \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
   \end{align*}
 
-  Since $f'$ is continuous at $0$ and $f'(0) < 0$, there must exist some $t^*$ such that for all
+  Since $f'$ is continuous at $0$ and $f'(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
   $0 < t < t^*$ it holds that $f'(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
   by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
-  $f'(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t_0}$.
+  $f'(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
   Since $t^* > 0$ and $f'(\xi) < 0$, therefore $f(t^*) < 0$.
   This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
   gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
