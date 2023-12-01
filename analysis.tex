@@ -85,6 +85,31 @@ party queries during round $r$. Hence, $Z_{r} = \sum_{i = n - t + 1}^n \sum_{j =
 Given a set of rounds $S$, we define $X(S) = \sum_{r \in S} X_r$, $Y(S) = \sum_{r \in S} Y_r$
 and $Z(S) = \sum_{r \in S} Z_r$.
 
+We calculate the following expectations:
+\begin{align*}
+  \E[W_{r, i, j}] = \frac{1}{\ln2}\,.\\
+  \E[A_{r, i, j}] =\\
+  \E[A_{r, i, j} | C_{r, i, j} = 0] \Pr[C_{r, i, j} = 0] +\\
+  \E[A_{r, i, j} | C_{r, i, j} = 1] \Pr[C_{r, i, j} = 1] =\\
+  % \E[W_{r, i, j}] * \Pr[C_{r, i, j} = 1]
+  \frac{T}{\ln2}\,.\\
+  \E[Z(S)] =
+  % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
+  \frac{tq|S| T}{\ln2}\,.
+  \E[Y_{r}] = \,.
+\end{align*}
+
+The probability of a convergence opportunity is
+\begin{align*}
+  (1 - (1 - T)^q) (1 - T)^{q(n - t - 1)} (n - t) \geq \\
+  q(n - t) T (1 - T)^{q(n - t) - 1} > \\
+  q(n - t) T (1 - (q(n - t) - 1)T) > \\
+  q(n - t) T (1 - q(n - t)T)\,.
+\end{align*}
+The first expression is the probability that exactly one honest party is successful;
+the second that exactly one query is successful. The penultimate inequality is by
+Bernoulli's inequality.
+
 \begin{definition}[Causality]
   An execution is \emph{causal} if no block (directly or indirectly) extends
   one which is computed at a later or the same random oracle query.
