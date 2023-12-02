@@ -14,7 +14,8 @@ output has an infinite real-valued bit expansion, but only the first
 $\kappa$ bits are included in this reference).
 
 A \emph{chain} $C$ is a sequence of blocks beginning with a designated
-block $G$, the \emph{genesis block}.
+block $G$, the \emph{genesis block}. When a chain $C$ appears in the execution,
+we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 
 \begin{definition}[Block Intrinsic Work]
   The \emph{intrinsic work} of a block hash
