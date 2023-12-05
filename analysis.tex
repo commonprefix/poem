@@ -484,3 +484,66 @@ Therefore,
   Security follows from safety and liveness.
   \Qed
 \end{proof}
+
+\begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
+  In a PoEM execution, the probability that a block $B$
+  has $|\awork(B) - \work(B)| > 2^{-\kappa/2}$
+  is negligible in $\kappa$.
+\end{lemma}
+\begin{proof}
+  Consider the event $E$ in which for all blocks $B$ it holds that
+  $H(B) > \frac{1}{2^{\kappa/2}}$.
+  Let us calculate the probability of $\lnot E$. For $\lnot E$ to happen,
+  at least one block must have $H(B) < \frac{1}{2^{\kappa/2}}$.
+  For any block $B$, it holds that $\Pr[H(B) < \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
+  uniform distribution of $H(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
+  Since there are at most $nqL$ blocks in the execution, we have
+  $\Pr[\lnot E] = \Pr[\exists B: H(B) < \frac{1}{2^{\kappa/2}}] \leq \sum_{B} \Pr[H(B) < \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
+  which is negligible in $\kappa$,
+  so $E$ happens with overwhelming probability.
+
+  Consider a block $B$ of the execution, conditioned on the event $E$.
+  Then
+  
+  \begin{align*}
+        &|\awork(B) - \work(B)| = \work(B) - \awork(B) = -\lg{H(B)} - (-\lg{\aH(B)})\\
+    \leq& -\lg{\frac{1}{2^{\kappa/2}}} - (-\lg{\frac{1}{2^{\kappa/2}} + \frac{1}{2^\kappa}})\\
+       =& \frac{\kappa}{2} + \lg\frac{1 + 2^{-\kappa/2}}{2^{\kappa/2}}\\
+       =& \lg{1 + 2^{-\kappa/2}} \leq \ln{1 + 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
+  \end{align*}
+  \Qed
+\end{proof}
+
+\begin{corollary}[Chain Work Approximation]
+  In a PoEM execution, the probability that a chain $C$
+  has $|\awork(C) - \work(C)| > Lqn 2^{-\kappa/2}$
+  is negligible in $\kappa$.
+\end{corollary}
+\begin{proof}
+  This follows from a union bound of Lemma~\ref{lem:block-work-approximation} over all chains,
+  of which there are at most $Lqn$.
+  \Qed
+\end{proof}
+
+\begin{lemma}[Hash Separation]
+  Consider an execution of PoEM. Let $\HS$ that for all two (adversarial or honest) chains
+  $C_1, C_2$ appearing in the execution,
+  $\work(C_1) \leq \work(C_2) \Rightarrow \awork(C_1) \leq \awork(C_2)$.
+  Then, the probability that $\lnot \HS$ is negligible in $\kappa$.
+\end{lemma}
+\begin{proof}
+  There are at most $Lqn$ random oracle queries in the execution.
+  Let $\HS_j$ denote the event that $\HS$ holds for all chains appearing
+  before, or at, the $j$-th random oracle query, with $j = 0$ indicating
+  the beginning of the execution. We know that $\HS_0$ by definition.
+
+  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1}]$. Consider the $j$-th random oracle query.
+  If the query was unsuccessful, then $\HS_j$ holds. Otherwise, let $C_1$ be the chain
+  that the $j$-th random oracle query extends, let $B$ be the block mined on it,
+  let $C'_1 = C_1 B$, and let $w'_1 = \work(C'_1)$, $w_2 = \work(C_2)$.
+  Consider any other chain $C_2$ that has already appeared in the execution.
+  For $\awork(C_2)$ \dznote{todo...}
+
+  Then, $\Pr[\lnot \HS] = \Pr[\lnot \HS_{Lqn}]$, which is negligible.
+  \Qed
+\end{proof}

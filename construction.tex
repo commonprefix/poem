@@ -20,6 +20,8 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 \begin{definition}[Block Intrinsic Work]
   The \emph{intrinsic work} of a block hash
   $A$ is denoted as $\work(A) = -\lg A$.
+  The \emph{approximate intrinsic work} of a block hash $A$ is denoted
+  $\awork(A) = -\lg A[{:}{\kappa}]$.
 \end{definition}
 
 In this definition, the full hash value, interpreted as a real number in the interval
@@ -30,6 +32,8 @@ $(0, 1)$, is used.
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
   It is denoted as $\work(C) = \sum_{B \in C}{\work(H(B))}$.
+  The \emph{approximate intrinsic work} of a chain
+  is $\awork(C) = \sum_{B \in C}{\awork(H(B))}$.
 \end{definition}
 
 \noindent
