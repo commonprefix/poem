@@ -531,7 +531,7 @@ Therefore,
 \end{proof}
 
 \begin{lemma}[Hash Separation]
-  Consider an execution of PoEM. Let $\HS$ that for all two (adversarial or honest) chains
+  Consider an execution of PoEM. Let $\HS$ be the event that for all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution,
   $\work(C_1) \leq \work(C_2) \Rightarrow \awork(C_1) \leq \awork(C_2)$.
   Then, the probability that $\lnot \HS$ is negligible in $\kappa$.
@@ -540,14 +540,26 @@ Therefore,
   There are at most $Lqn$ random oracle queries in the execution.
   Let $\HS_j$ denote the event that $\HS$ holds for all chains appearing
   before, or at, the $j$-th random oracle query, with $j = 0$ indicating
-  the beginning of the execution. We know that $\HS_0$ by definition.
+  the beginning of the execution. We know that $\HS_0$ always holds by definition.
 
   We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1}]$. Consider the $j$-th random oracle query.
+  % \begin{align*}
+  %   \Pr[\lnot \HS_j | \HS_{j - 1}] =\\
+  %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}] + \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query unsuccessful}]\Pr[j \text{ query unsuccessful}] =\\
+  %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}]\\
+  % \end{align*}
   If the query was unsuccessful, then $\HS_j$ holds. Otherwise, let $C_1$ be the chain
   that the $j$-th random oracle query extends, let $B$ be the block mined on it,
-  let $C'_1 = C_1 B$, and let $w'_1 = \work(C'_1)$, $w_2 = \work(C_2)$.
+  and let $C'_1 = C_1 B$.
   Consider any other chain $C_2$ that has already appeared in the execution.
-  For $\awork(C_2)$ \dznote{todo...}
+  Let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1), w_2 = \work(C_2)$,
+  and $\aw, \aw_1, \aw'_1, \aw_2$ be their approximate works respectively.
+  Consider the case $w_1 \geq w_2$. Then $w_1 + w \geq w_2$, therefore $w_1' \geq w_2$.
+  Additionally, $\aw_1 \geq \aw_2$, therefore $\aw_1 + \aw \geq \aw_2$, and
+  $\aw_1' \geq \aw_2$. From this, it follows that $\HS_j$ holds.
+  Thus, it suffices to only consider the case where $w_1 < w_2$.
+
+  \dznote{TODO: Finish this proof...}
 
   Then, $\Pr[\lnot \HS] = \Pr[\lnot \HS_{Lqn}]$, which is negligible.
   \Qed
