@@ -25,7 +25,10 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 \end{definition}
 
 In this definition, the full hash value, interpreted as a real number in the interval
-$(0, 1)$, is used.
+$(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
+value. Said differently, $\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}$.
+Observe that $\aH(A) \leq H(A)$ and $\awork(A) \geq \work(A)$,
+and that $\awork(A) \geq \awork(B) \Leftrightarrow \work(A) \geq \work(B)$.
 
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain
