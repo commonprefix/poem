@@ -487,30 +487,35 @@ Therefore,
 
 \begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
   In a PoEM execution, the probability that a block $B$
-  has $|\awork(B) - \work(B)| > 2^{-\kappa/2}$
+  has $\awork(B) - \work(B) > 2^{-\kappa/2}$
   is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
   Consider the event $E$ in which for all blocks $B$ it holds that
   $H(B) > \frac{1}{2^{\kappa/2}}$.
   Let us calculate the probability of $\lnot E$. For $\lnot E$ to happen,
-  at least one block must have $H(B) < \frac{1}{2^{\kappa/2}}$.
-  For any block $B$, it holds that $\Pr[H(B) < \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
+  at least one block must have $H(B) \leq \frac{1}{2^{\kappa/2}}$.
+  For any block $B$, it holds that $\Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
   uniform distribution of $H(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
   Since there are at most $nqL$ blocks in the execution, we have
-  $\Pr[\lnot E] = \Pr[\exists B: H(B) < \frac{1}{2^{\kappa/2}}] \leq \sum_{B} \Pr[H(B) < \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
+  $\Pr[\lnot E] = \Pr[\exists B: H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \sum_B \Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
   which is negligible in $\kappa$,
   so $E$ happens with overwhelming probability.
 
   Consider a block $B$ of the execution, conditioned on the event $E$.
   Then
-  
   \begin{align*}
-        &|\awork(B) - \work(B)| = \work(B) - \awork(B) = -\lg{H(B)} - (-\lg{\aH(B)})\\
-    \leq& -\lg{\frac{1}{2^{\kappa/2}}} - (-\lg{\frac{1}{2^{\kappa/2}} + \frac{1}{2^\kappa}})\\
-       =& \frac{\kappa}{2} + \lg\frac{1 + 2^{-\kappa/2}}{2^{\kappa/2}}\\
-       =& \lg{1 + 2^{-\kappa/2}} \leq \ln{1 + 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
+        &\awork(B) - \work(B) = -\lg \aH(B) - (-\lg H(B))\\
+    \leq& -\lg(H(B) - \frac{1}{2^\kappa}) - (-\lg H(B))\\
+    \leq& -\lg{\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}} - (-\lg{\frac{1}{2^{\kappa/2}}})\\
+       =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
+       =& -\lg{1 - 2^{-\kappa/2}} \leq -\ln{1 - 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
   \end{align*}
+
+  The first inequality stems from the fact that $\aH(B)$ and $H(B)$ cannot
+  differ by more than $\frac{1}{2^\kappa}$. The second inequality stems from
+  the fact that the function $-\lg(x - \frac{1}{2^\kappa}) - (-\lg x)$ is
+  decreasing for $x > \frac{1}{2^\kappa}$.
   \Qed
 \end{proof}
 
