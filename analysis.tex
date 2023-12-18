@@ -533,16 +533,22 @@ Therefore,
 \begin{lemma}[Hash Separation]
   Consider an execution of PoEM. Let $\HS$ be the event that for all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution,
-  $\work(C_1) \leq \work(C_2) \Rightarrow \awork(C_1) \leq \awork(C_2)$.
+  $\work(C_1) < \work(C_2) \Rightarrow \awork(C_1) < \awork(C_2)$.
   Then, the probability that $\lnot \HS$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
   There are at most $Lqn$ random oracle queries in the execution.
+  Let $\COLL$ denote the event that there exist two random oracle queries with indices
+  $i$ and $j$ and outputs $A_i, A_j$ respectively in the execution such that
+  $\work(A_i) = \work(A_j)$. This implies that $A_i = A_j$. Due to the random
+  oracle being real-valued, $\Pr[\COLL] = 0$. Condition the following proof
+  on the event $\lnot \COLL$.
+
   Let $\HS_j$ denote the event that $\HS$ holds for all chains appearing
   before, or at, the $j$-th random oracle query, with $j = 0$ indicating
   the beginning of the execution. We know that $\HS_0$ always holds by definition.
 
-  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1}]$. Consider the $j$-th random oracle query.
+  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1} \land \lnot \COLL]$. Consider the $j$-th random oracle query.
   % \begin{align*}
   %   \Pr[\lnot \HS_j | \HS_{j - 1}] =\\
   %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}] + \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query unsuccessful}]\Pr[j \text{ query unsuccessful}] =\\
@@ -554,13 +560,16 @@ Therefore,
   Consider any other chain $C_2$ that has already appeared in the execution.
   Let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1), w_2 = \work(C_2)$,
   and $\aw, \aw_1, \aw'_1, \aw_2$ be their approximate works respectively.
-  Consider the case $w_1 \geq w_2$. Then $w_1 + w \geq w_2$, therefore $w_1' \geq w_2$.
-  Additionally, $\aw_1 \geq \aw_2$, therefore $\aw_1 + \aw \geq \aw_2$, and
-  $\aw_1' \geq \aw_2$. From this, it follows that $\HS_j$ holds.
-  Thus, it suffices to only consider the case where $w_1 < w_2$.
+  Consider the case $w_1 > w_2$. Then $w_1 + w > w_2$, therefore $w_1' > w_2$.
+  Additionally, by $\HS_{j - 1}$ we have $\aw_1 > \aw_2$, therefore $\aw_1 + \aw > \aw_2$, and
+  $\aw_1' > \aw_2$. From this, it follows that $\HS_j$ holds.
+  Thus, it suffices to only consider the case where $w_1 \leq w_2$.
+  From $\lnot \COLL$, we have that $w_1 < w_2$.
+
 
   \dznote{TODO: Finish this proof...}
 
-  Then, $\Pr[\lnot \HS] = \Pr[\lnot \HS_{Lqn}]$, which is negligible.
+  Then, $\Pr[\lnot \HS | \lnot \COLL] = \Pr[\lnot \HS_{Lqn} | \lnot \COLL]$, which is negligible.
+  Therefore, $\Pr[\lnot \HS] = \Pr[\lnot \HS | \lnot \COLL] \Pr[\lnot \COLL] + \Pr[\lnot \HS | \COLL] \Pr[\COLL] = \Pr[\lnot \HS | \lnot \COLL]$, which is negligible.
   \Qed
 \end{proof}
