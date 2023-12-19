@@ -486,9 +486,9 @@ Therefore,
 \end{proof}
 
 \begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
-  In a PoEM execution, the probability that a block $B$
-  has $\awork(B) - \work(B) > 2^{-\kappa/2}$
-  is negligible in $\kappa$.
+  In a PoEM execution, the probability that all blocks $B$
+  have $\awork(B) - \work(B) < 2^{-\kappa/2}$
+  is overwhelming in $\kappa$.
 \end{lemma}
 \begin{proof}
   Consider the event $E$ in which for all blocks $B$ it holds that
@@ -506,27 +506,31 @@ Therefore,
   Then
   \begin{align*}
         &\awork(B) - \work(B) = -\lg \aH(B) - (-\lg H(B))\\
-    \leq& -\lg(H(B) - \frac{1}{2^\kappa}) - (-\lg H(B))\\
+       <& -\lg(H(B) - \frac{1}{2^\kappa}) - (-\lg H(B))\\
     \leq& -\lg{\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}} - (-\lg{\frac{1}{2^{\kappa/2}}})\\
        =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
        =& -\lg{1 - 2^{-\kappa/2}} \leq -\ln{1 - 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
   \end{align*}
 
-  The first inequality stems from the fact that $\aH(B)$ and $H(B)$ cannot
-  differ by more than $\frac{1}{2^\kappa}$. The second inequality stems from
+  The first inequality stems from the fact that $\aH(B)$ and $H(B)$ must
+  differ by less than $\frac{1}{2^\kappa}$. The second inequality stems from
   the fact that the function $-\lg(x - \frac{1}{2^\kappa}) - (-\lg x)$ is
   decreasing for $x > \frac{1}{2^\kappa}$.
   \Qed
 \end{proof}
 
-\begin{corollary}[Chain Work Approximation]
-  In a PoEM execution, the probability that a chain $C$
-  has $|\awork(C) - \work(C)| > Lqn 2^{-\kappa/2}$
-  is negligible in $\kappa$.
+\begin{corollary}[Chain Work Approximation]\label{cor:chain-work-approximation}
+  In a PoEM execution, the probability that all chains $C$
+  have $\awork(C) - \work(C) < Lqn 2^{-\kappa/2}$
+  is overwhelming in $\kappa$.
 \end{corollary}
 \begin{proof}
-  This follows from a union bound of Lemma~\ref{lem:block-work-approximation} over all chains,
-  of which there are at most $Lqn$.
+  Conditioned on the event of Lemma~\ref{lem:block-work-approximation}, for all
+  chains $C$ it holds that
+  \begin{align*}
+    \awork(C) - \work(C) = \sum_{B \in C}{\awork(B) - \work(B)}
+    < \sum_{B \in C}{2^{-\kappa/2}} = |C| 2^{-\kappa/2} \leq Lqn 2^{-\kappa/2}\,.
+  \end{align*}
   \Qed
 \end{proof}
 
