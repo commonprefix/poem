@@ -573,6 +573,33 @@ Therefore,
   $\aw_1' > \aw_2$. From this, it follows that $\lnot \FLIP_{C_1,C_2}$ holds.
   Thus, it suffices to only consider the situation where $w_1 < w_2$.
 
+  We distinguish two cases:
+
+  \noindent
+  \textbf{Case 1: } $w_1 + w < w_2$.
+  If $w_1 + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
+  then
+  \begin{align*}
+    \aw_1 - \frac{nqL}{2^{\kappa/2}} + w &< w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\\
+    \aw_1 + w &< w_2 - \frac{1}{2^{\kappa/2}}\\
+    \aw_1 + \aw - \frac{1}{2^{\kappa/2}} &< w_2 - \frac{1}{2^{\kappa/2}}\\
+    \aw_1 + \aw &< w_2 \\
+    \aw'_1 &< w_2 \leq \aw_2\,.
+  \end{align*}
+  It follows that $\lnot \FLIP_{C_1,C_2}$.
+
+  The first inequality is obtained from the conditioning on $\CLOSE$,
+  noting that $\aw_1 - \frac{nqL}{2^{\kappa/2}} < w_1$ follows from
+  $\aw_1 - w_1 < Lqn 2^{-\kappa/2}$ (Corollary~\ref{cor:chain-work-approximation}).
+  The third inequality is also obtained from the conditioning on $\CLOSE$,
+  noting that $\aw - \frac{1}{2^{\kappa/2}} < w$ follows from
+  $\aw - w < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
+
+  \dznote{TODO: Finish this case by showing the negligibility of
+  $w_1 + w \geq w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$.}
+
+  \noindent
+  \textbf{Case 2: } $w_1 + w > w_2$.
 
   \dznote{TODO: Finish this proof...}
 
