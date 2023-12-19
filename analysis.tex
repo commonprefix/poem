@@ -542,17 +542,18 @@ Therefore,
 \end{lemma}
 \begin{proof}
   There are at most $Lqn$ random oracle queries in the execution.
-  Let $\COLL$ denote the event that there exist two random oracle queries with indices
-  $i$ and $j$ and outputs $A_i, A_j$ respectively in the execution such that
-  $\work(A_i) = \work(A_j)$. This implies that $A_i = A_j$. Due to the random
-  oracle being real-valued, $\Pr[\COLL] = 0$. Condition the following proof
-  on the event $\lnot \COLL$.
+  Consider the event $\CLOSE$ that the statement of Lemma~\ref{lem:block-work-approximation}
+  holds.
+  Then the statement of Corollary~\ref{cor:chain-work-approximation} also holds.
+  From the lemma we know that $\Pr[\CLOSE]$ is overwhelming.
+  The following proof will be conditioned on the event $\CLOSE$.
 
   Let $\HS_j$ denote the event that $\HS$ holds for all chains appearing
   before, or at, the $j$-th random oracle query, with $j = 0$ indicating
   the beginning of the execution. We know that $\HS_0$ always holds by definition.
 
-  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1} \land \lnot \COLL]$. Consider the $j$-th random oracle query.
+  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1} \land \CLOSE]$.
+  Consider the $j$-th random oracle query.
   % \begin{align*}
   %   \Pr[\lnot \HS_j | \HS_{j - 1}] =\\
   %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}] + \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query unsuccessful}]\Pr[j \text{ query unsuccessful}] =\\
@@ -573,7 +574,8 @@ Therefore,
 
   \dznote{TODO: Finish this proof...}
 
-  Then, $\Pr[\lnot \HS | \lnot \COLL] = \Pr[\lnot \HS_{Lqn} | \lnot \COLL]$, which is negligible.
-  Therefore, $\Pr[\lnot \HS] = \Pr[\lnot \HS | \lnot \COLL] \Pr[\lnot \COLL] + \Pr[\lnot \HS | \COLL] \Pr[\COLL] = \Pr[\lnot \HS | \lnot \COLL]$, which is negligible.
+  Then, $\Pr[\lnot \HS | \CLOSE] = \Pr[\lnot \HS_{Lqn} | \CLOSE]$, which is negligible.
+  Therefore, $\Pr[\lnot \HS] = \Pr[\lnot \HS | \CLOSE] \Pr[\CLOSE] + \Pr[\lnot \HS | \lnot \CLOSE] \Pr[\lnot \CLOSE] \leq \Pr[\lnot \HS | \CLOSE] + \Pr[\lnot \CLOSE]$, which is negligible as the sum
+  of two negligible quantities.
   \Qed
 \end{proof}
