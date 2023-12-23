@@ -534,6 +534,69 @@ Therefore,
   \Qed
 \end{proof}
 
+\begin{lemma}\label{lem:good-ranges}
+  Consider a causal PoEM execution $\mathcal{E}$ with $n$ parties, $q$ queries per round per party,
+  and total lifetime $L$.
+  Consider the $j$-th random oracle query in this execution.
+  If the query is successful, let $B$ indicate its produced block, let
+  $w = \work(B), \aw = \awork(B)$, and let $C$ be the
+  chain it extends, let $w_1 = \work(C), \aw_1 = \awork(B)$, and
+  $w_1' = \work(CB), \aw_1' = \awork(CB)$. Consider any other chain $C_i$ that appears in the
+  execution, and let $w_2 = \work(C_i), \aw_2 = \awork(C_i)$.
+  Let $\BADRANGE_{j,i}$ denote the event that
+  $w_1 < w_2$, and, furthermore, either
+  $w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2$ or
+  $w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}$.
+  Let $\BADRANGE$ denote the event that there exists some random oracle query $j$
+  and some chain $C_i$ in the execution such that $\BADRANGE_{j,i}$.
+  The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
+\end{lemma}
+\begin{proof}
+  Given that a $j$-th query takes place, its $w$ is distributed as $\Exp(\ln2)$,
+  so
+  \begin{align*}
+    \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
+    \Pr[w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w < w_2 - w_1 | w_1 < w_2] = \\
+    (1 - 2^{-(w_2 - w_1)}) - (1 - 2^{-(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}})}) = \\
+    2^{-(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}})} - 2^{-(w_2 - w_1)} = \\
+    2^{-(w_2 - w_1)} (2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1) \leq \\
+    2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1 < \\
+    \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
+  \end{align*}
+
+  The second relation is from the cumulative distribution function of the exponential distribution;
+  the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
+  Lemma~\ref{lem:bernoulli}, noting that $\frac{nqL + 1}{2^{\kappa/2}} < 1$.
+
+  Likewise, for the other direction,
+  \begin{align*}
+    \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
+    \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
+    (1 - 2^{-(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}})}) - (1 - 2^{-(w_2 - w_1)}) = \\
+    2^{-(w_2 - w_1)} - 2^{-(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}})} = \\
+    2^{-(w_2 - w_1)} (1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}}) \leq \\
+    1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}} < \\
+    \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
+  \end{align*}
+
+  \dznote{Why does the last inequality above hold? Maybe we need to augment Lemma~\ref{lem:bernoulli}
+  accordingly.}
+
+  Consequently,
+  \begin{align*}
+    \Pr[\BADRANGE_{j,i}] =\\
+    \Pr[\BADRANGE_{j,i}|w_1 < w_2]\Pr[w_1 < w_2] \leq\\
+    \Pr[\BADRANGE_{j,i}|w_1 < w_2] =
+    \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] +
+    \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] =
+    2 \frac{nqL + 1}{2^{\kappa/2}}\\
+  \end{align*}
+
+  Applying a union bound over all the queries $j$ and chains $i$ of the execution, we obtain
+  $\Pr[\BADRANGE] \leq 2 nqL \frac{nqL + 1}{2^{\kappa/2}}$, which is negligible in $\kappa$.
+  \Qed
+\end{proof}
+
 \begin{lemma}[Hash Separation]
   Consider an execution of PoEM. Let $\HS$ be the event that for all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution,
