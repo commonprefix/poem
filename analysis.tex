@@ -659,12 +659,34 @@ Therefore,
   $\aw - w < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
 
   \dznote{TODO: Finish this case by showing the negligibility of
-  $w_1 + w \geq w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$.}
+  $w_1 + w \geq w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$.
+  Use Lemma~\ref{lem:good-ranges} here.}
+
+  $\Pr[\lnot \HS_j | \HS_{j - 1} \land \CLOSE] = negl...$
+  $\Pr[\lnot \HS_{Lnq} | \HS_{Lnq - 1} \land \CLOSE] = negl...$
 
   \noindent
   \textbf{Case 2: } $w_1 + w > w_2$.
 
   \dznote{TODO: Finish this proof...}
+
+
+  \[
+    \Pr[\lnot \HS_0] = 0
+  \]
+
+  \[
+    \Pr[\lnot \HS_j | \CLOSE] = \Pr[\lnot \HS_{j} | \CLOSE \land \lnot \HS_{j-1}] \Pr[\lnot \HS_{j-1} | \CLOSE]
+    + \Pr[\lnot \HS_{j} | \CLOSE \land \HS_{j-1}] \Pr[\HS_{j-1} | \CLOSE] \leq
+    \Pr[\lnot \HS_{j-1} | \CLOSE] + \Pr[\lnot \HS_{j} | \CLOSE \land \HS_{j-1}]
+  \]
+
+  \[
+    \Pr[\lnot \HS_{2} | \CLOSE] = \Pr[\lnot \HS_{2} | \CLOSE \land \lnot \HS_{1}] \Pr[\lnot \HS_{1} | \CLOSE] +
+    \Pr[\lnot \HS_{2} | \CLOSE \land \HS_{1}] \Pr[\HS_{1} | \CLOSE] \leq
+    \Pr[\lnot \HS_{1} | \CLOSE] + \Pr[\lnot \HS_{2} | \CLOSE \land \HS_{1}]
+  \]
+  , which is negligible.
 
   Then, $\Pr[\lnot \HS | \CLOSE] = \Pr[\lnot \HS_{Lqn} | \CLOSE]$, which is negligible.
   Therefore, $\Pr[\lnot \HS] = \Pr[\lnot \HS | \CLOSE] \Pr[\CLOSE] + \Pr[\lnot \HS | \lnot \CLOSE] \Pr[\lnot \CLOSE] \leq \Pr[\lnot \HS | \CLOSE] + \Pr[\lnot \CLOSE]$, which is negligible as the sum
