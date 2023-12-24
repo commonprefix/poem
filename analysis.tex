@@ -568,7 +568,7 @@ Therefore,
   the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
   Lemma~\ref{lem:bernoulli}, noting that $\frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
-  Likewise, for the other direction,
+  Applying similar techniques for the other direction,
   \begin{align*}
     \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
     \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
@@ -578,9 +578,6 @@ Therefore,
     1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}} < \\
     \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
   \end{align*}
-
-  \dznote{Why does the last inequality above hold? Maybe we need to augment Lemma~\ref{lem:bernoulli}
-  accordingly.}
 
   Consequently,
   \begin{align*}
@@ -695,14 +692,20 @@ Therefore,
 \end{proof}
 
 \begin{lemma}[Bernoulli's Inequality]\label{lem:bernoulli}
-  For all $0 < y < 1$, it holds that $2^y - 1 < y$.
+  For all $0 < y < 1$, it holds that $2^y - 1 < y$
+  and $1 - 2^{-y} < y$.
 \end{lemma}
 \begin{proof}
-  It suffices to show that $(y + 1)^{1/y} > 2$,
+  For the first part,
+  it suffices to show that $(y + 1)^{1/y} > 2$,
   as this implies that $2^y < y + 1$ and, ultimately, $2^y - 1 < y$.
   The inequality $(y + 1)^{1/y} > 2$ holds due to Bernoulli's
   inequality ($(1 + x)^r > 1 + rx$ for all $x > 0$ and $r > 1$),
   when setting $x = y$ and $r = \frac{1}{y}$.
+
+  For the second part,
+  it suffices to show that $(1 - y)^{1/y} < \frac{1}{2}$.
+  \dznote{TODO: Finish this proof...}
   \Qed
 \end{proof}
 
