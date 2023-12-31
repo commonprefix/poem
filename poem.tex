@@ -7,26 +7,32 @@
 \newif\ifoakland
 
 % \todaytrue
-\oaklandtrue
+\ccstrue
 
+\iflncs
+  \onecolumntrue
+\fi
 \ifccs
   \twocolumntrue
 \fi
-\iflncs
-  \onecolumntrue
+\ifoakland
+  \twocolumntrue
 \fi
 
 \iflncs
   \documentclass[runningheads]{llncs}
 \fi
 \ifccs
-  \documentclass[sigconf, anonymous]{acmart}
+  \ifanonymous
+    \documentclass[sigconf, anonymous]{acmart}
+  \else
+    \documentclass[sigconf]{acmart}
+  \fi
   \input{ccs-preamble}
 \fi
 \ifoakland
   \documentclass[conference,compsoc]{IEEEtran}
   \input{oakland-preamble}
-  \twocolumntrue
 \fi
 
 \usepackage{graphicx}
@@ -44,6 +50,9 @@
 \fi
 \ifoakland
   \bibliographystyle{IEEEtran}
+\fi
+\ifccs
+  \bibliographystyle{ACM-Reference-Format}
 \fi
 \bibliography{pubs}
 \pdfbookmark[section]{References}{references}

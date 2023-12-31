@@ -1,4 +1,7 @@
 \import{./}{title.tex}
+\ifccs
+  \import{./}{abstract.tex}
+\fi
 \maketitle
 
 \iftoday
@@ -11,4 +14,7 @@
   \IEEEpeerreviewmaketitle
 \fi
 
-\import{./}{abstract.tex}
+\ifccs
+\else
+  \import{./}{abstract.tex}
+\fi
