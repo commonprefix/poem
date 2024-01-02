@@ -5,7 +5,8 @@ attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
 where $h$ is a pointer to the previous block, $x$ contains a sequence of
 \emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
 by the miner to satisfy the \emph{proof-of-work} inequality $H(B) \leq T$, where
-$H$ is a hash function and $T$ is a small \emph{target}. Any $B$ that satisfies this
+$H$ is a hash function with output in the interval $(0, 1)$
+and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
 inequality is considered a valid block, whereas candidates that do not satisfy
 the inequality are invalid. Simply put, valid blocks must have
 hashes that begin with a desired number of $0$s.
@@ -17,37 +18,99 @@ difficulty is dynamically adjusted, and the \emph{heaviest chain} is chosen (c.f
 ~\cite{varbackbone}).} chain is chosen as the canonical one.
 
 Some blocks $B$ satisfy the proof-of-work inequality better than others.
-Namely, they satisfy not only $H(B) \leq T$, but also $H(B) \leq \frac{T}{2^\mu}$
-for some $\mu \in \mathbb{R}^+$, $\mu > 1$. Nevertheless, this information is ignored when choosing
+Namely, they satisfy not only $H(B) \leq T$, but also $H(B) \leq \frac{T}{2^w}$
+for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are ignored when choosing
 which chain to pick. We posit that this \emph{information}
 produced during the mining process corresponds to \emph{removing entropy} from the
 state space of the system (i.e., during mining, the set of future possible states
 of the execution as a whole shrinks).
-By modifying the fork choice rule of Bitcoin to take into account this information,
-we build a protocol which retains the provable security of Bitcoin, while achieving
-efficiency advantages over it: (a) it allows reducing the $k$ confirmation parameter,
-improving latency, and (b) in a multi-chain setting, it allows increasing the throughput
-of the system. In this paper, we prove that the modified protocol is secure in the
-single-chain setting.
+In this paper, we introduce \emph{PoEM}.
+We modify the fork choice rule of Bitcoin to take this information into account.
+We build a protocol which retains the same level of security as Bitcoin, while achieving
+better confirmation latency, because the block production rate can be safely increased.
+We report on our production implementation of a real-world system
+in which we employ this new rule, and show that it achieves a $2\times$ \atnote{fix this number}
+improvement in confirmation latency by measuring the confirmation delay and security
+of an experimental deployment of our system.
+Additionally, we theoretically prove our new protocol is secure and calculate the safe
+bounds within which block production can be increased.
 
 \noindent
-\textbf{Related work.}
+\myparagraph[Construction overview]
+The classical Bitcoin protocol uses the longest chain fork choice. Among two different
+chains, the one with the most blocks is chosen as the canonical one. We modify this
+rule as follows: Each block counts for its intrinsic work $-\frac{\lg H(B)}{T}$,
+where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
+analysis is in the \emph{static population} model in which the difficulty
+and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone}.
+On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
+\emph{variable population} model~\cite{varbackbone}), and the \emph{heaviest chain} is chosen.
+The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
+$T$ is the nominal target of the block. In PoEM, we count the \emph{intrinsic work}
+of each block, which is different from the nominal target $T$ and depends on the value $H(B) \leq T$.
+We perform our analysis in the static population model, and leave the analysis in the variable
+population model for future work.} target. Intuitively, this corresponds to counting the
+``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
+to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
+it has. The chain with the most total intrinsic work is chosen as the canonical chain.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=0.6\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
+  \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
+           with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
+           all blocks in one sequence because she does not incur any network delay. The honest parties,
+           due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
+           In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
+           them were abandoned in Bitcoin and did not make it to the canonical longest chain
+           (top-most chain).
+           In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
+           work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
+           We illustrate the intrinsic work of a block by its size.}
+  \label{fig:poem-wasted-work}
+\end{figure*}
+
+To see the benefits of this rule, first observe that it provides a natural tie-breaking rule:
+If two honest parties observe the same block tree, they will agree on
+the canonical chain, regardless of the order of network message arrival. But the protocol
+really shines when the block production rate is increased to its limits. It is generally desirable
+to increase the block production rate, because it decreases the confirmation latency of transactions.
+However, when the expected block interarrival time approaches the network delay, multiple honest blocks
+can be produced in short succession without allowing for honest nodes to synchronize their views.
+As a result, multiple honest nodes may produce blocks at the same height, and only one of these will
+eventually make it to the canonical chain, while the others will be discarded. These discarded blocks
+do not contribute to the growth of the length of the honest chain. Our protocol is similar to Bitcoin in that,
+whenever multiple honest blocks are found simultaneously, only one of them survives in the canonical chain,
+and the rest are discarded. However, the surviving block is the \emph{heaviest} block among them, in terms of intrinsic
+work, as illustrated in Figure~\ref{fig:poem-wasted-work}. Hence, the discarded
+work is less. This gives an advantage to the honest
+parties when they are racing against a private mining attacker, since they can produce chains that grow
+at a faster rate. This intuition generalizes to arbitrary adversaries.
+The small change we introduce in the fork choice rule allows us to safely increase the block production
+rate, as compared to Bitcoin, without sacrificing adversarial resilience. The resulting protocol
+allows for faster transaction confirmation while retaining the same level of security.
+
+\noindent
+\myparagraph[Related work]
 Bitcoin was first proven secure in the static population setting~\cite{backbone},
-and later also studied under in variable population setting~\cite{varbackbone}.
+and later also studied under in the variable population setting~\cite{varbackbone}.
 The idea of using a more nuanced proof-of-work inequality in which some blocks
 are considered heavier than others was first put forth by Andrew Miller~\cite{highway},
 with the first complete protocol to utilize it being
 Proofs of Proof-of-Work~\cite{popow}. These were later refined multiple times
 to account for non-interactivity~\cite{nipopows}, backwards compatibility~\cite{velvet-nipopows},
 onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
-on-chain consumption~\cite{gasefficient-nipopows},
+gas consumption~\cite{gasefficient-nipopows},
 bribing resilience~\cite{soft-power},
 and variable populations~\cite{dionyziz}.
 We are the first to modify the fork choice rule to take these refinements into
-account. Alternative mechanisms towards improving the latency and throughput
+account. Previous modifications to the fork choice rule include the GHOST
+protocol~\cite{ghost}.
+Alternative mechanisms towards improving the latency and throughput
 of proof-of-work blockchains at the consensus
 layer include parallel chains~\cite{parallel-chains},
 separation of transaction/consensus blocks~\cite{prism},
 hybrid approaches between proof-of-work and proof-of-stake~\cite{byzcoin},
-and the use of microblocks~\cite{bitcoin-ng}. Several of these mechanisms
-are orthogonal and can be combined with our approach.
+and the use of microblocks~\cite{bitcoin-ng}. These mechanisms
+are orthogonal and can be combined with our approach, yielding even
+further performance gains.

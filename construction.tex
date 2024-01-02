@@ -1,33 +1,64 @@
 \section{Construction}
-In the \poem construction, only the chain adoption rule
+In the \poem construction, only the fork choice rule
 of the original Bitcoin protocol is modified.
-Honest parties, instead of adopting the longest chain, at the begining
+Honest parties, instead of adopting the longest chain, at the beginning
 of each round, now adopt the chain with the most intrinsic work.
 
-We let $\kappa$ be the security parameter and we
-model our hash function $H$ as a random oracle.
+A block is any triplet of the
+form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
+The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+The $h$ is a reference to a previous block $B'$ and
+contains the first $\kappa$ bits of its hash $H(B')[{:}{\kappa}]$
+(recall that, in the real-valued random oracle model, each hash
+output has an infinite real-valued bit expansion, but only the first
+$\kappa$ bits are included in this reference).
+
+A \emph{chain} $C$ is a sequence of blocks beginning with a designated
+block $G$, the \emph{genesis block}. When a chain $C$ appears in the execution,
+we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 
 \begin{definition}[Block Intrinsic Work]
-  The \emph{intrinsic work} of a block~\footnote{
-    A block is any triple of the
-    form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
-    The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
-  }
-  $B$ is denoted as $\work(B) = \kappa - \lg H(B)$.
+  The \emph{intrinsic work} of a block hash
+  $A$ is denoted as $\work(A) = -\lg A$.
+  The \emph{approximate intrinsic work} of a block hash $A$ is denoted
+  $\awork(A) = -\lg A[{:}{\kappa}]$.
 \end{definition}
 
+In this definition, the full hash value, interpreted as a real number in the interval
+$(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
+value. Said differently, for any $A \in (0, 1)$,
+$\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}$.
+Observe that $\aH(A) \leq H(A)$ and $\awork(A) \geq \work(A)$,
+and that $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
+
+\begin{lemma}\label{lemma:awork-rounding}
+  For all $A, B \in (0, 1)$, it holds that
+  $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
+\end{lemma}
+\begin{proof}
+  \begin{align*}
+                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B\\
+    \Rightarrow &\lg A \leq \lg B \Rightarrow A \leq B\\
+    \Rightarrow &2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor\\
+    \Rightarrow &\frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow \lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+    \Rightarrow &-\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+    \Rightarrow &\awork(A) \geq \awork(B)
+  \end{align*}
+  \Qed
+\end{proof}
+
 \begin{definition}[Chain Intrinsic Work]
-  The \emph{intrinsic work} of a chain~\footnote{
-    A \emph{chain} (\emph{blockchain}) is a sequence of blocks.
-  }
+  The \emph{intrinsic work} of a chain
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
-  It is denoted as $\work(C) = \sum_{B \in C}{\work(B)}$.
+  It is denoted as $\work(C) = \sum_{B \in C}{\work(H(B))}$.
+  The \emph{approximate intrinsic work} of a chain
+  is $\awork(C) = \sum_{B \in C}{\awork(H(B))}$.
 \end{definition}
 
 \noindent
-\textbf{Blockchain notation.}
-A chain $C$ is a sequence of blocks. We write $[\alpha] \lhd C$
+\myparagraph[Blockchain notation]
+For chain $C$, we write $[\alpha] \lhd C$
 to denote the $i^\text{th}$ block of $C$ such that
 $\work(C[{:}{i - 1}]) < \alpha \leq \work(C[{:}{i}])$.
 If $\work(C) < \alpha$, then $[\alpha] \lhd C = \bot$.
@@ -59,6 +90,11 @@ function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
 which also remains the same as the original protocol.
+If a block is found, this block is broadcast\footnote{We use the term \emph{broadcast}
+to mean the unreliable, best-effort anonymous manner of communication between honest parties that
+guarantees message delivery from one honest party to all other honest parties.
+This is called \emph{diffuse} in the Backbone series of works.}
+to the network using function $\net.\broadcast()$
 
 \import{./}{algorithms/algorithm-honest.tex}
 \import{./}{algorithms/algorithm-pow.tex}

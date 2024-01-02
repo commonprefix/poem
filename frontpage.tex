@@ -1,10 +1,20 @@
 \import{./}{title.tex}
+\ifccs
+  \import{./}{abstract.tex}
+\fi
 \maketitle
 
 \iftoday
-\noindent
-\makebox[\linewidth]{Jul 1, 2023}
-\makebox[\linewidth]{Last update: \today}
+  \noindent
+  \makebox[\linewidth]{Jul 1, 2023}
+  \makebox[\linewidth]{Last update: \today}
 \fi
 
-\import{./}{abstract.tex}
+\ifoakland
+  \IEEEpeerreviewmaketitle
+\fi
+
+\ifccs
+\else
+  \import{./}{abstract.tex}
+\fi

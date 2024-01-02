@@ -12,13 +12,13 @@
     \If{$C[0] \neq \mathcal{G}$} \label{alg-validate:gen}
       \State\Return$\false$
     \EndIf
-    \Let{\hat{h}}{H(C[0])}
+    \Let{\hat{h}}{H(C[0])[{:}{\kappa}]}
     \For{$B \in C[1{:}]$}
       \Let{(h, x, ctr)}{B}
-      \If{$H(B) > T \lor h \neq \hat{h}$} \label{alg-validate:pow}
+      \If{$H(B)[{:}{\kappa}] > T \lor h \neq \hat{h}$} \label{alg-validate:pow}
         \State\Return$\false$
       \EndIf
-      \Let{\hat{h}}{H(B)}
+      \Let{\hat{h}}{H(B)[{:}{\kappa}]}
     \EndFor
     \State\Return$\true$
   \EndFunction

@@ -1,5 +1,5 @@
 \begin{algorithm}[H]
-    \caption{\label{alg.backbone} The honest party. We make an implicit echoing assumption.}
+    \caption{\label{alg.backbone} The honest party.}
     \begin{algorithmic}[1]
      \Statex
      \State{$\mathcal{G}$}
@@ -10,20 +10,18 @@
             \State \textsf{round} $\leftarrow 1$
         \EndFunction
         \Function{$\execute_{\net}$}{$1^\kappa$}
-            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive} \Comment{Receive Chains from the network}
-            \State $\tilde C \leftarrow$ maxvalid$(C \cup \bar M)$ \label{alg-backbone.maxvalid} \Comment{Adopt Chain with most intrinsic work in the network}
-            %TODO: Fix typesetting
-            \If{$\tilde C \neq  C$}
-                \Let{ C}{\tilde C}
+            \CommentLine{Receive chains from the network}
+            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive} 
+            \State $C \leftarrow$ maxvalid$(C \cup \bar M)$ \label{alg-backbone.maxvalid} \Comment{Adopt heaviest chain}
+            \Let{x}{\textsc{input}()} \Comment{Take all transactions in mempool}
+            \Let{B}{\pow(x, H(C[-1])[{:}{\kappa}])} \Comment{Mine a new block}
+            \If{$B \neq \bot$} \Comment{Successful mining}
+                \Let{ C}{ C \concat B} \Comment{Add block to chain}
             \EndIf
-            \Let{x}{\textsc{Input}()} \Comment{Take all transactions in mempool}
-            \Let{B}{\textsf{PoW}(x, \tilde C)}
-            \If{$B \neq \bot$} \Comment{Successful Mining}
-                \Let{ C}{ C \concat B} \Comment{Add block to current longest chain}
-            \EndIf
+            \State $\net.\broadcast(C)$
             \State {\textsf{round}} $\leftarrow$ {\textsf{round}+1}
         \EndFunction
-        \Function{$\textsf{Read}$}{}
+        \Function{$\lread$}{}
             \State\Return$([{:}{-k}] \lhd C).x$
         \EndFunction
         \vskip8pt

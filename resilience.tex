@@ -1,0 +1,230 @@
+\section{Resilience Analysis}
+
+Now that we have proven PoEM is secure, we now turn our attention to the benefits of PoEM as compared to the
+fork choice rule of traditional proof-of-work. We posit that the intrinsic work fork choice rule
+provides better adversarial resilience than the longest (or heaviest) fork choice rule.
+
+For this analysis, we work in a simplified model in which time is continuous
+and the cryptographic machinary of hash functions is abstracted away as a perfect
+stochastic processes (cf., the previous section where our model was discrete time
+and the imperfect stochastic process was constructed by a hash function modelled as
+a random oracle). This treatment was introduced in \emph{Everything is a Race}~\cite{eiar},
+where it was used to analyse longest-chain protocols, and
+allows us to focus on the essence of the problem.
+
+Consider an adversary controlling a $\beta$ fraction of the mining power, whereas the
+honest parties control a $1 - \beta$ fraction. Each honest party maintains a local chain,
+which is the chain with the most intrinsic work seen by that party so far.
+Each honest party continuously attempts to mine blocks on top of their currently
+adopted longest chain. As soon as a block is found, this block is broadcast to the
+network. The adversary can delay the delivery of these network messages by a duration
+up to $\Delta = 1$, and these delays can be different for different honest receipients.
+On the contrary, the adversary functions as one overarching entity.
+The adversary can mine on top of any chain she has seen so far, and withhold blocks
+which can be revealed at a later time. As soon as an honest party sees any
+block, the honest party re-broadcasts that block, and this block becomes known to
+all honest parties after a $\Delta$ duration. Hence, adversarial blocks revealed to one
+honest party become known to the whole honest population within a delay of $\Delta$.
+
+We model this process as a Poisson process with rate $g \in \mathcal{R}^+$ blocks per
+unit time for the honest parties and $g \frac{\beta}{1 - \beta}$ for the adversary. We
+assume that the population of honest parties is large, such that no honest party
+will have two successful events in an execution.
+
+In Bitcoin,
+as proven in the \emph{Everything is a Race} work~\cite[Theorem 5.1]{eiar}, there is
+an \emph{optimal} adversarial strategy that every other adversarial strategy can be reduced to.
+This optimal strategy is the private mining attacker: The adversary and honest parties
+all begin at genesis. The adversary mines a private chain, which she never reveals to the honest
+parties. The honest parties mine on their own honest subtree. This attack is victorious if,
+at the conclusion of the execution, the adversary was able to produce a private chain longer
+than the longest chain of any honest party, namely the height of the honest subtree. Since
+any other attack can be reduced to this attack, to show security it suffices that the expected
+growth rate of the adversary's private chain is less than the expected growth rate of the
+height of the honest subtree. In their work, they calculate the honest subtree growth rate to be
+$\frac{g}{1 + g}$. By taking the inequality $g \frac{beta}{1 - \beta} > \frac{g}{1 + g}$,
+requiring that the honest subtree growth rate is larger than the adversarial private chain
+growth rate, in expectation, they find that the maximum adversarial resilience in Bitcoin is
+$\beta < \frac{1}{g + 2}$.
+
+We use the same argument here, adapted to the entropic setting: Again, the honest parties mine
+blocks following a Poisson process with a block production rate of $g \in \mathbb{R}^+$, whereas
+the adversary mines blocks following a Poisson process with a block production rate of
+$g \frac{\beta}{1 - \beta}$. Each newly produced valid block $B$ has work $\work(B)$ which follows
+an exponential distribution with rate $\ln2$, and all of these works are mutually independent.
+
+\dznote{TODO: Make work ~ exponential + const. Consider different exponential rates, and calculate
+the different Chernoff bounds depending on the exp rate.}
+
+The adversary follows a private
+mining strategy and the honest parties mine on their own honest subtree. At the conclusion of the
+execution, the adversary is victorious if she holds a chain with more intrinsic work than any honest
+party.
+
+Consider a protocol execution $\Epsilon$. Let 
+
+\[
+  \chi_\Epsilon(t) = \begin{cases}
+    0 & \text{ if no honest party found a block at time } t\\
+    1 & \text{ if at least one honest party found a block at time } t
+  \end{cases}
+\]
+
+The function $\chi(t)$ is a Poisson process with rate $g$, where $\chi(t) = 1$
+indicates the Poisson successes. For any $t$ such that $\chi(t) = 1$, let $X(t)$ be a
+random variable distributed according to the exponential distribution with rate $\ln2$
+such that $\{ X(t) \}_{t \in \chi^{-1}(1)}$ are identically distributed and mutually
+independent. These $X(t)$ indicate the work of the block found at time $t$.
+
+First, we observe that the expected rate at which the intrinsic work of the private adversarial
+chain grows is $g \frac{\beta}{1 - \beta} \frac{1}{\ln2}$. This is because the expected work of a
+block is $\frac{1}{\ln2}$, and the adversary produces blocks at a rate of $g \frac{\beta}{1 - \beta}$.
+Consider an execution $\Epsilon$ during a snapshot taken at time $t$. Let
+$f_\Epsilon(t) = \max_{P \text{ honest}}{\work(C^P_t)}$ be the maximum intrinsic work of any honestly
+adopted chain at time $t$. We wish to calculate the expected growth rate of $f_\Epsilon(t)$, namely
+$\alpha = \E[\frac{f_\Epsilon(t)}{t}]$ when $\Epsilon$ is sampled from all executions.
+
+For a given interval $[t_1, t_2]$, let $X([t_1, t_2]) = \max_{t \in [t_1, t_2]} X(t)$. Note that, if
+$dt$ is small enough (namely, shorter than the shortest distance between two successive successes),
+then there will be at most one $t^*$ in $[t - dt, t]$ for which $X(t^*) > 0$, and $X([t - dt, t])$
+will take that value, namely $\lim_{dt \to 0} X([t - dt, t]) \sim \Exp(\ln2)$.
+The $\max$ function is irrelevant when we take $dt \to 0$.
+Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$.
+
+Given an execution $\Epsilon$, consider the family of functions (parameterized by $dt$):
+
+\[
+  f_{\Epsilon,dt}(t) = \begin{cases}
+             \max\{f_{\Epsilon,dt}(t - 1) + X([t - dt, t]),&\\
+    \phantom{\max\{\}}      f_{\Epsilon,dt}(t - dt)\} & \text{, if } \chi([t - dt, t]) \geq 1\\
+          f_{\Epsilon,dt}(t - dt) & \text{ otherwise }
+  \end{cases}\,.
+\]
+
+It holds that $f_\Epsilon(t) = \lim_{dt \to 0}{f_{\Epsilon,dt}(t)}$.
+To see this, observe what happens during time $[t - dt, t]$ for small $dt$:
+Either a block is found, or not.
+If an honest block is found (namely, $\chi([t - dt, t]) \geq 1$), then the honest party who found the block
+extends their chain, which has length $f_{\Epsilon,dt}(t - 1)$, by a new block
+which has work $X([t - dt, t])$, giving rise to a new chain with work $f_{\Epsilon,dt}(t - 1) + X([t - dt, t])$.
+It is possible that this chain will be the chain with
+the most work yet (in case $f_{\Epsilon,dt}(t - 1) + X([t - dt, t]) > f_{\Epsilon,dt}(t - dt)$),
+or (contrary to Bitcoin), that there has been a better or equal chain found within the last $dt$ interval
+(in case $f_{\Epsilon,dt}(t - 1) + X([t - dt, t]) \leq f_{\Epsilon,dt}(t - dt)$).
+Let $f(t) = \E[f_\Epsilon(t)]$ with the execution $\Epsilon$ randomly sampled from all executions.
+The rate of growth of $f(t)$ is constant, and the function takes the form $f(t) = \alpha t$.
+We can use the above family of functions to calculate the value of $\alpha$.
+
+Notice that $\E[\lim_{dt \to 0} f_{\Epsilon,dt}(t)] = \lim_{dt \to 0} \E[f_{\Epsilon,dt}(t)]$.
+Therefore it suffices to calculate $\E[f_{\Epsilon,dt}(t)]$ for a given $dt$,
+and then take the limit for $dt \to 0$.
+Let $f_{dt}(t) = \E[f_{\Epsilon,dt}(t)]$.
+Let $p_{dt} = \Pr[\chi([t - dt, t]) \geq 1] = 1 - \Pr[\chi([t - dt, t]) = 0] = 1 - e^{-g dt}$, where
+the probability follows from the pmf of the Poisson process $\chi(t)$
+of block production,
+and let
+\begin{align*}
+  q \defeq \lim_{dt \to 0} \Pr[f_{dt}(t - 1) + X([t - dt, t]) < f_{dt}(t - dt)|\chi([t - dt, t]) \geq 1] =\\
+           \lim_{dt \to 0} \Pr[X([t - dt, t]) < f_{dt}(t - dt) - f_{dt}(t - 1)|\chi([t - dt, t]) \geq 1] = \\
+           \lim_{dt \to 0} \left( 1 - e^{-(\ln2) (f_{dt}(t - dt) - f_{dt}(t - 1))}\right) =
+           \lim_{dt \to 0} \left(1 - 2^{-(f_{dt}(t - dt) - f_{dt}(t - 1))}\right)
+  \,.
+\end{align*}
+The probability follows from the cdf of the exponential distribution of $\lim_{dt \to 0} X([t - dt, t])$.
+Observing $f(t) = \alpha t$, we get $q = \lim_{dt \to 0}\left(1 - 2^{-(\alpha(t - dt) - \alpha(t - 1))}\right)
+= \lim_{dt \to 0}\left(1 - 2^{\alpha (dt - 1)}\right) = 1 - 2^{-\alpha}$.
+Letting $u = f_{dt}(t - dt) - f_{dt}(t - 1)$,
+\begin{align*}
+  F_{dt} &\defeq \E[X([t - dt, t])|\chi([t - dt, t]) \geq 1 \land X([t - dt, t]) > u]\\
+         &= \frac{\int_u^\infty x (\ln2) e^{-x \ln2} dx}{\int_u^\infty (\ln2) e^{-x \ln2} dx}
+          = \frac{\left(-x e^{-x \ln2} + \int{e^{-x \ln2} dx}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}\\
+         &= \frac{\left(-x e^{-x \ln2} - \frac{1}{\ln2} e^{-x \ln2}\right)\Big|_u^\infty}{-e^{-x \ln2}\Big|_u^\infty}
+          = \frac{u e^{-u\ln2} + \frac{1}{\ln2} e^{-u \ln2}}{e^{-u \ln2}}\\
+         &= u + \frac{1}{\ln2}\,
+\end{align*}
+is the expected work of a block with the property that the chain it is the tip of has more work than any of the
+previously produced chains so far.
+\dznote{Shreekara, can you check that this makes sense? This looks like we're
+making an elementary mistake about Martingale-style sequences of distributions...}
+For $dt < 1$, it holds that
+\begin{align*}
+  f_{dt}(t) =
+      &p_{dt}\left(q_{dt}f_{dt}(t - dt) + (1 - q_{dt})(f_{dt}(t - 1) + F_{dt})\right)\\
+    + &(1 - p_{dt})f_{dt}(t - dt)\,.
+\end{align*}
+The multiplication $p_{dt} q_{dt} f_{dt} (t - 1)$ is valid because the event of getting a successful block
+during $[t - dt, t]$ is independent of the chain length at time $t - 1$, and likewise for the multiplication
+$p_{dt} q_{dt} f_{dt}(t - dt)$.
+Hence, taking $dt \to 0$, and solving $f(t) = \alpha t$, we get
+\begin{align*}
+\end{align*}
+
+\section{Questions for Shreekara/Sriram}
+
+\subsection{A Question on Concentration}
+
+Consider a family of i.i.d. random variables $\{ X_i \}_{i \in [n]}$, where $n$ is a constant
+and each of $X_i$ is distributed according to the exponential distribution with rate $\lambda$.
+Let $X = \sum_{i \in [n]} X_i$ and $\mu = \E[X] = \frac{n}{\lambda}$.
+The Chernoff bound yields:
+
+\begin{align*}
+  \E[X < (1 - \epsilon)\mu] &\leq e^{-\Omega(\mu)}\\
+  \E[X > (1 + \epsilon)\mu] &\leq e^{-\Omega(\mu)}\,.
+\end{align*}
+
+\textbf{What are the exact expressions $\Omega(\mu)$ for each of the two bounds?}
+
+\subsection{A Question of Process}
+
+Let $L \in \mathbb{R}^+$ be a constant. Consider a Poisson process with rate $g$ defined by the following characteristic function: For $t \in [L]$, let
+\[
+  \chi(t) = \begin{cases}
+    1, & \text{ if the Poisson process has a success at time } t\\
+    0, & \text{ otherwise }
+  \end{cases}\,.
+\]
+
+Now, define the function $X(t)$ as follows. For $t \in [L]$, let
+\[
+  X(t) = \begin{cases}
+    \text{exponentially distributed with rate } \lambda, & \text{ if } \chi(t) = 1\\
+    0, & \text{ otherwise }
+  \end{cases}\,,
+\] with the family $\{ X(t) \}_{t \in [L]}$ being mutually independent.
+
+Let $\chi([t_1, t_2]) = \sum_{t \in [t_1, t_2]} \chi(t)$ and $X([t_1, t_2]) = \max_{t \in [t_1, t_2]} X(t)$.
+Note that $\E[\chi([t_1, t_2])] = (t_2 - t_1)g$.
+
+Define the following class of functions (one function for each $dt < 1$):
+
+\[
+  f_{dt}(t) = \begin{cases}
+    \max(f_{dt}(t - 1) + X([t - dt, t]), f_{dt}(t - dt)), & \text{ if } \chi([t - dt, t]) = 1\\
+    f_{dt}(t - dt), & \text{ otherwise }
+  \end{cases}
+\]
+With initial condition $f_{dt}(t) = 0$ for $t \leq 0$.
+Let $f(t) = \lim_{dt \to 0} f_{dt}(t)$. For each experiment, the limit $\lim_{dt \to 0} f_{dt}(t)$ converges because, when $dt$ is small enough so that no two Poisson successes occur within any interval $[t - dt, t]$ for any $t$, the value $f_{dt}(t)$ does not change any more. So $f(t)$ is a well-defined random variable.
+
+\textbf{What is $\E[f(t)]$?}
+
+\section{Whiteboard notes}
+\begin{align*}
+  f(t) =& \Pr[\chi([t - dt, t]) = 0] f(t - dt)\\
+      + &\Pr[\chi([t - dt, t]) \geq 1] [\\
+        &\Pr[f(t - dt) > f(t - 1) + X(t) | \chi([t - dt, t]) \geq 1] f(t - dt)\\
+      + &\Pr[f(t - dt) \leq f(t - 1) + X(t) | \chi([t - dt, t]) \geq 1]\\
+        &\E[f(t - 1) + X([t - dt, t]) | f(t - 1) + X([t - dt, t]) \geq f(t - dt) \land \chi([t - dt, t]) \geq 1]]\\
+  f(t) =& e^{-g dt} f(t - dt)\\&+ (1 - e^{-g dt}) [(1 - e^{-ln2 (f(t - dt) - f(t - 1))}) f(t - dt)\\ &+ e^{-ln2 (f(t - dt) - f(t - 1))} (f(t - 1) + \frac{1}{\ln2} + f(t - dt) - f(t - 1))]\\
+  \alpha t =& e^{-g dt} \alpha(t - dt)\\ &+ (1 - e^{-g dt}) [\alpha(t - dt) - 2^{\alpha (dt - 1)} \alpha (t - dt)\\ &+ 2^{\alpha(dt - 1)} \alpha (t - dt) + 2^{\alpha(dt - 1)} \frac{1}{\ln2}]\\
+  \alpha t =& e^{-g dt} \alpha (t - dt) + \alpha (t - dt) + \frac{2^{\alpha (dt - 1)}}{\ln2} - e^{-g dt} \alpha (t - dt) - \frac{e^{-g dt} 2^{\alpha (dt - 1)}}{\ln2}\\
+  \alpha t =& \alpha(t - dt) + \frac{2^{\alpha (dt - 1)}}{\ln2} (1 - e^{-g dt})\\
+  \alpha dt = & \frac{2^{\alpha (dt - 1)}}{\ln2} (1 - e^{-g dt})\\
+  \lim_{dt \to 0}& \frac{\alpha dt \ln2}{2^{\alpha (dt - 1)} (1 - e^{-g dt})} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{(2^{\alpha(dt - 1)})'(1 - e^{-g dt}) + 2^{\alpha(dt - 1)} (1 - e^{-g dt})'} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{\alpha (\ln2) 2^{\alpha(dt - 1)} (1 - e^{-g dt}) + 2^{\alpha(dt - 1)} g e^{-g dt}} = 1\\
+  \lim_{dt \to 0}& \frac{\alpha \ln2}{2^{\alpha(dt - 1)} g e^{-g dt}} = 1\\
+  \frac{\alpha \ln2}{2^{-\alpha} g} = 1\\
+  \alpha 2^\alpha = \frac{g}{\ln2}
+\end{align*}

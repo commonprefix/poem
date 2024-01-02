@@ -1,11 +1,15 @@
-\newcommand{\pow}{\textsc{pow}\xspace}
+\newcommand{\pow}{\textsc{PoW}\xspace}
 \newcommand{\lwrite}{\textsc{write}\xspace}
 \newcommand{\lread}{\textsc{read}\xspace}
 \newcommand{\net}{\textsc{net}\xspace}
+\newcommand{\broadcast}{\textsc{broadcast}\xspace}
 \newcommand{\constructor}{\textsc{constructor}\xspace}
 \newcommand{\execute}{\textsc{execute}\xspace}
 \newcommand{\receive}{\textsc{receive}\xspace}
 \newcommand{\work}{\textsc{work}\xspace}
+\newcommand{\awork}{\widetilde{\textsc{work}}\xspace}
+\newcommand{\aH}{\widetilde{H}}
+\newcommand{\aw}{\widetilde{w}}
 \newcommand{\maxvalid}{\textsc{maxvalid}\xspace}
 \newcommand{\validate}{\textsc{validate}\xspace}
 \newcommand{\intrinsicDifficulty}{\textsf{intrinsicDifficulty}\xspace}
@@ -15,9 +19,19 @@
 \newcommand{\ssum}{\textsf{sum}\xspace}
 \newcommand{\mmax}{\textsf{max}\xspace}
 \newcommand{\round}{\textsf{round}\xspace}
+\newcommand{\HS}{\textsc{HS}\xspace}
+\newcommand{\COLL}{\textsc{COLL}\xspace}
+\newcommand{\FLIP}{\textsc{FLIP}\xspace}
+\newcommand{\CLOSE}{\textsc{CLOSE}\xspace}
+\newcommand{\BADRANGE}{\textsc{BADRANGE}\xspace}
 
 \newcommand{\true}{\textsf{true}}
 \newcommand{\false}{\textsf{false}}
+\newcommand{\maxwork}{\textsf{maxwork}}
+\newcommand{\thiswork}{\textsf{thiswork}}
+
+\newcommand{\Break}{\State\textsf{break}}
+\newcommand{\Continue}{\State\textsf{continue}}
 
 \newcommand{\poem}{\text{PoEM}\xspace}
 
@@ -28,3 +42,15 @@
 \newcommand{\concat}{\,\|\,}
 \newcommand{\HX}{\hat X}
 \newcommand{\getsrandomly}{\overset{\$}{\gets}}
+\newcommand{\Epsilon}{\mathcal{E}}
+\newcommand{\Exp}{\textsf{Exp}}
+\newcommand{\Bern}{\textsf{Bern}}
+
+
+\newcommandx{\myparagraph}[1][1=]{
+\ifoakland
+  \subsubsection*{#1}
+\else
+  \textbf{#1}.
+\fi
+}

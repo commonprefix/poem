@@ -23,7 +23,10 @@
 \usepackage{xargs}
 
 \usepackage{amsfonts}
-\usepackage{amssymb}
+\ifccs
+\else
+  \usepackage{amssymb}
+\fi
 \iftwocolumn
 	\usepackage{amsthm}
 \fi
@@ -43,7 +46,7 @@
 }
 
 \newcommand{\atnote}[1]{{\color{magenta}[Apostolos: {#1}]}}
-\newcommand{\dznote}[1]{{\color{Cerulean}[Dionysis: {#1}]}}
+\newcommand{\dznote}[1]{{\color{red}[Dionysis: {#1}]}}
 
 \usepackage{varwidth}
 \usepackage{enumitem}
@@ -176,27 +179,41 @@
 %page style set to plain
 %pagestyle{plain}
 
-\ifccs
-% \iftwocolumn
-%     \newtheorem{theorem}{Theorem}[section]
-%     \newtheorem{corollary}{Corollary}[theorem]
-%     \newtheorem{lemma}[theorem]{Lemma}
-%
-     \theoremstyle{remark}
-     \newtheorem*{remark}{Remark}
+% \ifccs
+% % \iftwocolumn
+% %     \newtheorem{theorem}{Theorem}[section]
+% %     \newtheorem{corollary}{Corollary}[theorem]
+% %     \newtheorem{lemma}[theorem]{Lemma}
+% %
+%      \theoremstyle{remark}
+%      \newtheorem*{remark}{Remark}
 
-     \newtheorem*{theorem*}{Theorem}
-     \newtheorem{conjecture}{Conjecture}[theorem]
+%      \newtheorem*{theorem*}{Theorem}
+%      \newtheorem{conjecture}{Conjecture}
 
-%     \theoremstyle{definition}
-%     \newtheorem{definition}{Definition}[section]
+% %     \theoremstyle{definition}
+% %     \newtheorem{definition}{Definition}[section]
+% % \fi
 % \fi
-\fi
 
 \iflncs
   \newenvironment{Claim}{claim}{claim}
   \newenvironment{Definition}{definition}{definition}
   \newenvironment{Conjecture}{conjecture}{conjecture}
+\fi
+
+\iftwocolumn
+  \newtheorem{theorem}{Theorem}[section]
+  \newtheorem{corollary}{Corollary}[theorem]
+  \newtheorem{lemma}{Lemma}[theorem]
+  \newtheorem{conjecture}{Conjecture}
+
+  \theoremstyle{remark}
+  \newtheorem*{remark}{Remark}
+
+  \newtheorem*{theorem*}{Theorem}
+  \theoremstyle{definition}
+  \newtheorem{definition}{Definition}[section]
 \fi
 
 \ifccs
