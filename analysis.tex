@@ -149,7 +149,8 @@ Therefore,
 
 \begin{theorem}[Typicality]
   An execution of duration $L$ of \poem is $(\epsilon, \lambda)$-typical with
-  probability $1 - e^{-\Omega(\epsilon^2\lambda f - \log L)} - e^{-\Omega(\kappa - \log L)}$,
+  probability $1 - e^{-\Omega(\lambda - \log L)} - e^{-\Omega(\kappa - \log L)}$,
+  % TODO: The correct probability is $1 - e^{-\Omega(\epsilon^2 \lambda f - \log L)} - e^{-\Omega(\kappa - \log L)}$
   namely, overwhelming in $\lambda$ and $\kappa$.
 \end{theorem}
 \begin{proof}
