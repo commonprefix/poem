@@ -71,7 +71,7 @@ Observe that $A_{r, i, j}$ can be expressed in the form $A_{r, i, j} = C_{r, i, 
 with independent boolean random variable $C_{r, i, j} \sim \Bern(T)$ indicating whether the query was successful
 and real random variable $W_{r, i, j} \sim \Exp(\ln2)$ measuring the work of the block found.
 
-We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{[n - t]} A_{r, i, j}$.
+We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{n - t} A_{r, i, j}$.
 If at round $r$ at least one honest party finds a valid block ($X_r > 0$),
 we say that round $r$ is a \emph{successful round}.
 Let $\overline{X}_r = \sum_{i = 1}^{n - t} \sum_{j = 1}^q A_{r,i,j}$ and
