@@ -536,7 +536,7 @@ Therefore,
 \end{proof}
 
 \begin{lemma}\label{lem:good-ranges}
-  Consider a causal PoEM execution $\mathcal{E}$ with $n$ parties, $q$ queries per round per party,
+  Consider a PoEM execution $\mathcal{E}$ with $n$ parties, $q$ queries per round per party,
   and total lifetime $L$.
   Consider the $j$-th random oracle query in this execution.
   If the query is successful, let $B$ indicate its produced block, let
@@ -548,8 +548,8 @@ Therefore,
   $w_1 < w_2$, and, furthermore, either
   $w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2$ or
   $w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}$.
-  Let $\BADRANGE$ denote the event that there exists some random oracle query $j$
-  and some chain $C_i$ in the execution such that $\BADRANGE_{j,i}$.
+  Let $\BADRANGE$ denote the event that there exists a random oracle query $j$
+  and a chain $C_i$ in the execution such that $\BADRANGE_{j,i}$.
   The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
