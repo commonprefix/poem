@@ -541,7 +541,7 @@ Therefore,
   Consider the $j$-th random oracle query in this execution.
   If the query is successful, let $B$ indicate its produced block, let
   $w = \work(B), \aw = \awork(B)$, and let $C$ be the
-  chain it extends, let $w_1 = \work(C), \aw_1 = \awork(B)$, and
+  chain it extends, let $w_1 = \work(C), \aw_1 = \awork(C)$, and
   $w_1' = \work(CB), \aw_1' = \awork(CB)$. Consider any other chain $C_i$ that appears in the
   execution, and let $w_2 = \work(C_i), \aw_2 = \awork(C_i)$.
   Let $\BADRANGE_{j,i}$ denote the event that both
@@ -567,7 +567,7 @@ Therefore,
 
   The second relation is from the cumulative distribution function of the exponential distribution;
   the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
-  Lemma~\ref{lem:bernoulli}, noting that $\frac{nqL + 1}{2^{\kappa/2}} < 1$.
+  Lemma~\ref{lem:bernoulli}, noting that $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
   Similarly for the other direction,
   \begin{align*}
@@ -591,7 +591,7 @@ Therefore,
   \end{align*}
 
   Applying a union bound over all the queries $j$ and chains $i$ of the execution, we obtain
-  $\Pr[\BADRANGE] \leq 2 nqL \frac{nqL + 1}{2^{\kappa/2}}$, which is negligible in $\kappa$.
+  $\Pr[\BADRANGE] \leq 2 (nqL)^2 \frac{nqL + 1}{2^{\kappa/2}}$, which is negligible in $\kappa$.
   \Qed
 \end{proof}
 
