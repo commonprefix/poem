@@ -569,7 +569,7 @@ Therefore,
   the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
   Lemma~\ref{lem:bernoulli}, noting that $\frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
-  Applying similar techniques for the other direction,
+  Similarly for the other direction,
   \begin{align*}
     \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
     \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
@@ -596,50 +596,55 @@ Therefore,
 \end{proof}
 
 \begin{lemma}[Hash Separation]
-  Consider an execution of PoEM. Let $\HS$ be the event that for all two (adversarial or honest) chains
+  Consider a causal execution of PoEM. Let $\HS$ be the event that for
+  all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution, if
   $\work(C_1) < \work(C_2)$, then $\awork(C_1) < \awork(C_2)$.
   The probability that $\lnot \HS$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
-  There are at most $Lqn$ random oracle queries in the execution.
-  Consider the event $\CLOSE$ that the statement of Lemma~\ref{lem:block-work-approximation}
-  holds.
-  Then the statement of Corollary~\ref{cor:chain-work-approximation} also holds.
-  From the lemma we know that $\Pr[\CLOSE]$ is overwhelming.
-  The following proof will be conditioned on the event $\CLOSE$.
+  % There are at most $Lqn$ random oracle queries in the execution.
+  Consider a causal execution of PoEM for which
+  the event $\CLOSE$ of Lemma~\ref{lem:block-work-approximation}
+  and the event $\lnot \BADRANGE$ of Lemma~\ref{lem:good-ranges}
+  both hold.
+  Observe that the statement of Corollary~\ref{cor:chain-work-approximation}
+  holds in this conditioning.
+  From the two lemmas we know that $\Pr[\CLOSE]$ and
+  $\Pr[\lnot \BADRANGE]$ are both overwhelming, therefore
+  $\Pr[\CLOSE \land \lnot \BADRANGE]$ is overwhelming.
+  Conditioned on this event, we will
+  show that the desired statement holds with probability $1$.
 
-  Let $\HS_j$ denote the event that $\HS$ holds for all chains appearing
+  Let $\HS_j$ denote the predicate that $\HS$ holds for all chains appearing
   before, or at, the $j$-th random oracle query, with $j = 0$ indicating
-  the beginning of the execution. We know that $\HS_0$ always holds by definition.
+  the beginning of the execution.
+  We will use induction on $j$ to show that for all $0 \leq j \leq Lnq$,
+  $\HS_j$ holds. We know that $\HS_0$ always holds by definition.
 
-  We now calculate $\Pr[\lnot \HS_j | \HS_{j - 1} \land \CLOSE]$.
-  Consider the $j$-th random oracle query.
-  % \begin{align*}
-  %   \Pr[\lnot \HS_j | \HS_{j - 1}] =\\
-  %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}] + \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query unsuccessful}]\Pr[j \text{ query unsuccessful}] =\\
-  %   \Pr[\lnot \HS_j | \HS_{j - 1} \land j \text{ query successful}]\Pr[j \text{ query successful}]\\
-  % \end{align*}
-  If the query was unsuccessful, then $\HS_j$ holds. Otherwise, let $C_1$ be the chain
+  Now, consider the $j$-th random oracle query and suppose $\HS_{j - 1}$ holds.
+  If the query was unsuccessful, then $\HS_j$ holds and we are done.
+  Otherwise, let $C_1$ be the chain
   that the $j$-th random oracle query extends, let $B$ be the block mined on it,
   let $C'_1 = C_1 B$, and let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1)$
   and $\aw, \aw_1, \aw'_1$ be the respective approximate works.
   Consider any other chain $C_2$ with work $w_2 = \work(C_2)$
   and approximate work $\aw_2$
   that has already appeared in the execution,
-  and consider the event $\FLIP_{C_1,C_2}$ that
+  and consider the undesirable event $\FLIP_{C_1,C_2}$ that
   $w'_1 < w_2 \land \aw'_1 \geq \aw_2$ or $w'_1 > w_2 \land \aw'_1 \leq \aw_2$.
-  Consider the case $w_1 \geq w_2$. Then, because $w > 0$, then $w_1 + w > w_2$, therefore $w_1' > w_2$.
+  If $w_1 \geq w_2$, then, because $w > 0$, therefore $w_1 + w > w_2$ and hence $w_1' > w_2$.
   Additionally, by $\HS_{j - 1}$ we have $\aw_1 > \aw_2$, therefore $\aw_1 + \aw > \aw_2$, and
-  $\aw_1' > \aw_2$. From this, it follows that $\lnot \FLIP_{C_1,C_2}$ holds.
+  $\aw_1' > \aw_2$. From this, it follows that $w_1 \geq w_2$ yields $\lnot \FLIP_{C_1,C_2}$.
   Thus, it suffices to only consider the situation where $w_1 < w_2$.
 
   We distinguish two cases:
 
   \noindent
   \textbf{Case 1: } $w_1 + w < w_2$.
-  If $w_1 + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
-  then
+  From the conditioning on $\lnot \BADRANGE$, we have
+  $w_1 + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
+  therefore
   \begin{align*}
     \aw_1 - \frac{nqL}{2^{\kappa/2}} + w &< w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\\
     \aw_1 + w &< w_2 - \frac{1}{2^{\kappa/2}}\\
@@ -647,48 +652,30 @@ Therefore,
     \aw_1 + \aw &< w_2 \\
     \aw'_1 &< w_2 \leq \aw_2\,.
   \end{align*}
-  It follows that $\lnot \FLIP_{C_1,C_2}$.
-
   The first inequality is obtained from the conditioning on $\CLOSE$,
   noting that $\aw_1 - \frac{nqL}{2^{\kappa/2}} < w_1$ follows from
   $\aw_1 - w_1 < Lqn 2^{-\kappa/2}$ (Corollary~\ref{cor:chain-work-approximation}).
   The third inequality is also obtained from the conditioning on $\CLOSE$,
   noting that $\aw - \frac{1}{2^{\kappa/2}} < w$ follows from
   $\aw - w < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
-
-  \dznote{TODO: Finish this case by showing the negligibility of
-  $w_1 + w \geq w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$.
-  Use Lemma~\ref{lem:good-ranges} here.}
-
-  $\Pr[\lnot \HS_j | \HS_{j - 1} \land \CLOSE] = negl...$
-  $\Pr[\lnot \HS_{Lnq} | \HS_{Lnq - 1} \land \CLOSE] = negl...$
+  It follows that $\lnot \FLIP_{C_1,C_2}$.
 
   \noindent
   \textbf{Case 2: } $w_1 + w > w_2$.
+  From the conditioning on $\lnot \BADRANGE$, we have
+  $w_1 + w > w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} > w_2 + \frac{nqL}{2^{\kappa/2}}$,
+  therefore
+  \begin{align*}
+    w_1 + w &> \aw_2 - \frac{nqL}{2^{\kappa/2}} + \frac{nqL}{2^{\kappa/2}}\\
+    w_1 + w &> \aw_2\\
+    \aw_1 + \aw &> \aw_2 \\
+    \aw'_1 &> \aw_2\,.
+  \end{align*}
+  Again, it follows that $\lnot \FLIP_{C_1,C_2}$.
 
-  \dznote{TODO: Finish this proof...}
-
-
-  \[
-    \Pr[\lnot \HS_0] = 0
-  \]
-
-  \[
-    \Pr[\lnot \HS_j | \CLOSE] = \Pr[\lnot \HS_{j} | \CLOSE \land \lnot \HS_{j-1}] \Pr[\lnot \HS_{j-1} | \CLOSE]
-    + \Pr[\lnot \HS_{j} | \CLOSE \land \HS_{j-1}] \Pr[\HS_{j-1} | \CLOSE] \leq
-    \Pr[\lnot \HS_{j-1} | \CLOSE] + \Pr[\lnot \HS_{j} | \CLOSE \land \HS_{j-1}]
-  \]
-
-  \[
-    \Pr[\lnot \HS_{2} | \CLOSE] = \Pr[\lnot \HS_{2} | \CLOSE \land \lnot \HS_{1}] \Pr[\lnot \HS_{1} | \CLOSE] +
-    \Pr[\lnot \HS_{2} | \CLOSE \land \HS_{1}] \Pr[\HS_{1} | \CLOSE] \leq
-    \Pr[\lnot \HS_{1} | \CLOSE] + \Pr[\lnot \HS_{2} | \CLOSE \land \HS_{1}]
-  \]
-  , which is negligible.
-
-  Then, $\Pr[\lnot \HS | \CLOSE] = \Pr[\lnot \HS_{Lqn} | \CLOSE]$, which is negligible.
-  Therefore, $\Pr[\lnot \HS] = \Pr[\lnot \HS | \CLOSE] \Pr[\CLOSE] + \Pr[\lnot \HS | \lnot \CLOSE] \Pr[\lnot \CLOSE] \leq \Pr[\lnot \HS | \CLOSE] + \Pr[\lnot \CLOSE]$, which is negligible as the sum
-  of two negligible quantities.
+  From this and $\HS_{j-1}$ it follows that $\HS_j$ holds.
+  Therefore, by induction, $\HS_{Lnq}$ holds, and hence $\HS$ holds.
+  Since our conditioning was on an overwhelming event, the lemma follows.
   \Qed
 \end{proof}
 
