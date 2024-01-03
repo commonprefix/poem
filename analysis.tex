@@ -507,15 +507,15 @@ Therefore,
   Then
   \begin{align*}
         &\awork(B) - \work(B) = -\lg \aH(B) - (-\lg H(B))\\
-       <& -\lg(H(B) - \frac{1}{2^\kappa}) - (-\lg H(B))\\
-    \leq& -\lg{\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}} - (-\lg{\frac{1}{2^{\kappa/2}}})\\
+       <& -\lg\left(H(B) - \frac{1}{2^\kappa}\right) - (-\lg H(B))\\
+    \leq& -\lg\left(\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}\right) - \left(-\lg{\frac{1}{2^{\kappa/2}}}\right)\\
        =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
        =& -\lg{1 - 2^{-\kappa/2}} \leq -\ln{1 - 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
   \end{align*}
 
   The first inequality stems from the fact that $\aH(B)$ and $H(B)$ must
   differ by less than $\frac{1}{2^\kappa}$. The second inequality stems from
-  the fact that the function $-\lg(x - \frac{1}{2^\kappa}) - (-\lg x)$ is
+  the fact that the function $-\lg\left(x - \frac{1}{2^\kappa}\right) - (-\lg x)$ is
   decreasing for $x > \frac{1}{2^\kappa}$.
   \Qed
 \end{proof}
