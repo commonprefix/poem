@@ -498,7 +498,7 @@ Therefore,
   at least one block must have $H(B) \leq \frac{1}{2^{\kappa/2}}$.
   For any block $B$, it holds that $\Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
   uniform distribution of $H(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
-  Since there are at most $nqL$ blocks in the execution, we have
+  Since there are at most $nqL$ blocks in the execution, by applying a union bound, we have
   $\Pr[\lnot E] = \Pr[\exists B: H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \sum_B \Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
   which is negligible in $\kappa$,
   so $E$ happens with overwhelming probability.
