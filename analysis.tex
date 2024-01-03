@@ -553,8 +553,8 @@ Therefore,
   The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
-  Given that a $j$-th query takes place, its $w$ is distributed as $\Exp(\ln2)$,
-  so
+  If the $j$-th query does takes place, its $w$ is distributed as $\Exp(\ln2)$,
+  so for every other chain $C_i$ in the execution for which $w_1 < w_2$ we have
   \begin{align*}
     \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
     \Pr[w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w < w_2 - w_1 | w_1 < w_2] = \\
