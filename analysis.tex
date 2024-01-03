@@ -679,7 +679,7 @@ Therefore,
   \Qed
 \end{proof}
 
-\begin{lemma}[Bernoulli's Inequality]\label{lem:bernoulli}
+\begin{lemma} \label{lem:bernoulli}
   For all $0 < y < 1$, it holds that $2^y - 1 < y$
   and $1 - 2^{-y} < y$.
 \end{lemma}
@@ -695,41 +695,36 @@ Therefore,
   it suffices to show that $(1 - y)^{1/y} < \frac{1}{2}$.
   Let $f(y) = (1 - y)^{1/y}$ and
   \begin{align*}
-    f'(y) = \frac{d}{dy} f(y) =\\
-    \frac{d}{dy} (1 - y)^{1/y} =\\
+    \frac{d}{dy} f(y) = \frac{d}{dy} (1 - y)^{1/y} = \frac{d}{dy} e^{\frac{1}{y}\ln(1 - y)} =\\
     (1 - y)^{1/y} \left(-\frac{1}{y (1 - y)} - \frac{\ln(1 - y)}{y^2}\right) =\\
     (1 - y)^{1/y} \left(\frac{y - (y - 1) \ln(1 - y)}{y^2(y - 1)}\right)
   \end{align*}
   Letting $\phi(y) = y - (y - 1) \ln(1 - y)$, we have
-  $f'(y) = (1 - y)^{1/y} \left(\frac{\phi(y)}{y^2(y - 1)}\right)$.
-  Observe that $\phi(y)$ is continues and differentiable for $y \in (0, 1)$.
+  $\frac{d}{dy} f(y) = (1 - y)^{1/y} \left(\frac{\phi(y)}{y^2(y - 1)}\right)$.
+  Observe that $\phi(y)$ is continuous and differentiable for $y \in (0, 1)$.
   It holds that
   \begin{align*}
-    \phi'(y) = \frac{d}{dy} \phi(y) =\\
-    \frac{d}{dy} (y - (y - 1) \ln(1 - y)) =\\
+    \frac{d}{dy} \phi(y) = \frac{d}{dy} (y - (y - 1) \ln(1 - y)) =\\
     \frac{d}{dy} (y - y \ln(1 - y) + \ln(1 - y)) =\\
     1 - \ln(1 - y) + \frac{y}{1 - y} - \frac{1}{1 - y} =\\
     1 - \ln(1 - y) - \frac{1 - y}{1 - y} = -\ln(1 - y)
   \end{align*}
-  Hence, for $y \in (0, 1)$, it holds that $\phi'(y) > 0$ and
+  Hence, for $y \in (0, 1)$, it holds that $\frac{d}{dy} \phi(y) > 0$ and
   $\phi(y)$ is increasing. Because $\phi(0) = 0$,
   it holds that $\phi(y) > 0$ for $y \in (0, 1)$.
-  Therefore, for $y \in (0, 1)$, it holds that $f'(y) < 0$
+  Therefore, for $y \in (0, 1)$, it holds that $\frac{d}{dy} f(y) < 0$
   and $f(y)$ is decreasing.
 
   Setting $\omega = - \frac{1}{y}$, we have
   \begin{align*}
-    \lim_{y \to 0}f(y) =\\
-    \lim_{y \to 0}(1 - y)^{\frac{1}{y}} =\\
-    \lim_{\omega \to -\infty}(1 + \omega)^{-\omega} =\\
-    \frac{1}{\lim_{\omega \to -\infty}(1 + \omega)^{\omega}} =\\
-    \frac{1}{e} < \frac{1}{2}
+    \lim_{y \to 0}f(y) = \lim_{y \to 0}(1 - y)^{\frac{1}{y}} = \lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{-\omega} =\\
+    \frac{1}{\lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{\omega}} = \frac{1}{e}
   \end{align*}
 
-  For an arbitrary $0 < \epsilon < \frac{1}{2} - \frac{1}{e}$, there exists a $\delta > 0$
-  such that for all $y \in (0, \delta)$, it holds that
-  $f(y) - \frac{1}{e} <  \epsilon \Leftrightarrow f(y) < \frac{1}{2}$.
-  Hence, for $y \in (0, 1)$, because $f(y)$ is continues and decreasing, it holds that
+  Pick an arbitrary $0 < \epsilon < \frac{1}{2} - \frac{1}{e}$. By the definition of the limit,
+  there exists a $\delta > 0$ such that for all $y \in (0, \delta)$, it holds that
+  $|f(y) - \frac{1}{e}| <  \epsilon \Leftrightarrow f(y) < \frac{1}{2}$.
+  Hence, for $y \in (0, 1)$, because $f(y)$ is continuous and decreasing, it holds that
   $f(y) < \frac{1}{2}$.
   \Qed
 \end{proof}
