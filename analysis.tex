@@ -487,9 +487,9 @@ Therefore,
 \end{proof}
 
 \begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
-  In a PoEM execution, the probability that all blocks $B$
-  have $\awork(B) - \work(B) < 2^{-\kappa/2}$
-  is overwhelming in $\kappa$.
+  In a PoEM execution, consider the event $\CLOSE$ that all blocks $B$
+  have $\awork(B) - \work(B) < 2^{-\kappa/2}$.
+  The probability $\Pr[\CLOSE]$ is overwhelming in $\kappa$.
 \end{lemma}
 \begin{proof}
   Consider the event $E$ in which for all blocks $B$ it holds that
