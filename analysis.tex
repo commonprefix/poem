@@ -544,7 +544,7 @@ Therefore,
   chain it extends, let $w_1 = \work(C), \aw_1 = \awork(B)$, and
   $w_1' = \work(CB), \aw_1' = \awork(CB)$. Consider any other chain $C_i$ that appears in the
   execution, and let $w_2 = \work(C_i), \aw_2 = \awork(C_i)$.
-  Let $\BADRANGE_{j,i}$ denote the event that
+  Let $\BADRANGE_{j,i}$ denote the event that both
   $w_1 < w_2$, and, furthermore, either
   $w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2$ or
   $w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}$.
@@ -558,10 +558,10 @@ Therefore,
   \begin{align*}
     \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
     \Pr[w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w < w_2 - w_1 | w_1 < w_2] = \\
-    (1 - 2^{-(w_2 - w_1)}) - (1 - 2^{-(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}})}) = \\
-    2^{-(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}})} - 2^{-(w_2 - w_1)} = \\
-    2^{-(w_2 - w_1)} (2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1) \leq \\
-    2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1 < \\
+    (1 - 2^{-(w_2 - w_1)}) - (1 - 2^{-\left(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)}) = \\
+    2^{-\left(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)} - 2^{-(w_2 - w_1)} = \\
+    2^{-(w_2 - w_1)} (2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1) \leq
+    2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1 <
     \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
   \end{align*}
 
@@ -573,21 +573,21 @@ Therefore,
   \begin{align*}
     \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
     \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
-    (1 - 2^{-(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}})}) - (1 - 2^{-(w_2 - w_1)}) = \\
-    2^{-(w_2 - w_1)} - 2^{-(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}})} = \\
-    2^{-(w_2 - w_1)} (1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}}) \leq \\
-    1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}} < \\
+    (1 - 2^{-\left(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)}) - (1 - 2^{-(w_2 - w_1)}) = \\
+    2^{-(w_2 - w_1)} - 2^{-\left(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)} = \\
+    2^{-(w_2 - w_1)} (1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}}) \leq
+    1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}} <
     \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
   \end{align*}
 
   Consequently,
   \begin{align*}
-    \Pr[\BADRANGE_{j,i}] =\\
-    \Pr[\BADRANGE_{j,i}|w_1 < w_2]\Pr[w_1 < w_2] \leq\\
-    \Pr[\BADRANGE_{j,i}|w_1 < w_2] =
-    \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] +
-    \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] =
-    2 \frac{nqL + 1}{2^{\kappa/2}}\\
+      &\Pr[\BADRANGE_{j,i}]
+    = \Pr[\BADRANGE_{j,i}|w_1 < w_2]\Pr[w_1 < w_2]\\
+    \leq & \Pr[\BADRANGE_{j,i}|w_1 < w_2]\\
+    = &\Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] +\\
+      &\Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2]\\
+    = &2 \frac{nqL + 1}{2^{\kappa/2}}\\
   \end{align*}
 
   Applying a union bound over all the queries $j$ and chains $i$ of the execution, we obtain
@@ -597,9 +597,9 @@ Therefore,
 
 \begin{lemma}[Hash Separation]
   Consider an execution of PoEM. Let $\HS$ be the event that for all two (adversarial or honest) chains
-  $C_1, C_2$ appearing in the execution,
-  $\work(C_1) < \work(C_2) \Rightarrow \awork(C_1) < \awork(C_2)$.
-  Then, the probability that $\lnot \HS$ is negligible in $\kappa$.
+  $C_1, C_2$ appearing in the execution, if
+  $\work(C_1) < \work(C_2)$, then $\awork(C_1) < \awork(C_2)$.
+  The probability that $\lnot \HS$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
   There are at most $Lqn$ random oracle queries in the execution.
