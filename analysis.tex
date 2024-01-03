@@ -303,15 +303,15 @@ Therefore,
 
   At $t = 0$ we have $f(0) = 0$ and
   \begin{align*}
-    f'(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
     \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
   \end{align*}
 
-  Since $f'$ is continuous at $0$ and $f'(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
-  $0 < t < t^*$ it holds that $f'(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
+  $0 < t < t^*$ it holds that $\frac{d}{dt} f(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
   by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
-  $f'(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
-  Since $t^* > 0$ and $f'(\xi) < 0$, therefore $f(t^*) < 0$.
+  $\frac{d}{dt} f(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
+  Since $t^* > 0$ and $\frac{d}{dt} f(\xi) < 0$, therefore $f(t^*) < 0$.
   This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
   gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
 
@@ -337,15 +337,15 @@ Therefore,
 
   At $t = 0$ we have $f(0) = 0$ and
   \begin{align*}
-    f'(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
     \frac{p}{\lambda}(1 - 1 + \epsilon) = \frac{\epsilon p}{\lambda} > 0\,.
   \end{align*}
 
-  Since $f'$ is continuous at $0$ and $f'(0)>  0$, there must exist some $t^* < 0$ such that for all
-  $t^* < t < 0$ it holds that $f'(t) > 0$. Because $f$ is continuous and differentiable in $[t^*, 0]$,
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0)>  0$, there must exist some $t^* < 0$ such that for all
+  $t^* < t < 0$ it holds that $\frac{d}{dt} f(t) > 0$. Because $f$ is continuous and differentiable in $[t^*, 0]$,
   by the Mean Value Theorem, there must exist some $\xi \in (t^*, 0)$ such that
-  $f'(\xi) = \frac{f(0) - f(t^*)}{0 - t^*} = \frac{f(t^*)}{t^*}$.
-  Since $t^* < 0$ and $f'(\xi) > 0$, therefore $f(t^*) < 0$.
+  $\frac{d}{dt} f(\xi) = \frac{f(0) - f(t^*)}{0 - t^*} = \frac{f(t^*)}{t^*}$.
+  Since $t^* < 0$ and $\frac{d}{dt} f(\xi) > 0$, therefore $f(t^*) < 0$.
   This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
   gives us a bound for which $\Pr[X < (1 - \epsilon)\E[X]] < e^{-\Omega(n)}$.
   \Qed
