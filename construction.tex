@@ -29,19 +29,17 @@ $(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of
 value. Said differently, for any $A \in (0, 1)$,
 $\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}$.
 Observe that $\aH(A) \leq H(A)$ and $\awork(A) \geq \work(A)$,
-and that $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
+and that $\work(A) \geq \work(B) \rightarrow \awork(A) \geq \awork(B)$.
 
 \begin{lemma}\label{lemma:awork-rounding}
   For all $A, B \in (0, 1)$, it holds that
-  $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
+  $\work(A) \geq \work(B) \rightarrow \awork(A) \geq \awork(B)$.
 \end{lemma}
 \begin{proof}
   \begin{align*}
-                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B\\
-    \Rightarrow &\lg A \leq \lg B \Rightarrow A \leq B\\
-    \Rightarrow &2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor\\
-    \Rightarrow &\frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow \lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
-    \Rightarrow &-\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B \Rightarrow \lg A \leq \lg B\\
+    \Rightarrow &A \leq B \Rightarrow 2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor \Rightarrow \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+    \Rightarrow &\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
     \Rightarrow &\awork(A) \geq \awork(B)
   \end{align*}
   \Qed
