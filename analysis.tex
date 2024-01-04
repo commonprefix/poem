@@ -358,8 +358,6 @@ Therefore,
   $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
 \end{definition}
 
-%TODO: Define convergence opportunity & successful round
-
 \begin{lemma}[Entropic Pairing Lemma] \label{lem:pairing}
   Suppose a block $B$ of a chain $C$ with work interval $I(B)$
   was computed by an honest party in a convergence opportunity.
@@ -417,6 +415,13 @@ Therefore,
   of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
 \end{proof}
 
+\atnote{Define Chained Work}
+
+\begin{conjecture}[Entropic Patience] \label{lem:patience}
+  In a typical execution, any chained work $w \geq 2 \lambda f$ is computed
+  in more than $\lambda = \frac{w}{2 f}$ consecutive rounds.
+\end{conjecture}
+
 \begin{lemma}[Entropic Common Prefix Lemma]
   Suppose at round $r$ of a typical execution an honest party has a chain
   $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
@@ -463,14 +468,6 @@ Therefore,
     Therefore, by Lemma~\ref{lem:typical-bounds},
     $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
 \end{proof}
-
-\atnote{Define Chained Work}
-
-
-\begin{conjecture}[Entropic Patience] \label{lem:patience}
-  In a typical execution, any chained work $w \geq 2 \lambda f$ is computed
-  in more than $\lambda = \frac{w}{2 f}$ consecutive rounds.
-\end{conjecture}
 
 \begin{conjecture}[\poem is Safe]
   Typical executions of \poem are safe.
