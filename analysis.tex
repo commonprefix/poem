@@ -816,7 +816,18 @@ of blocks and chains do not fall
   Typical executions of \poem are safe.
 \end{conjecture}
 \begin{proof}
-  \atnote{TODO: Prove}
+  Consider any two honest parties $P_1, P_2$ and
+  any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
+  adopt at rounds $r_1, r_2$ respectively.
+  From Entropic Common Prefix, it follows that:
+  \begin{itemize}
+    \item if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preceq C_2$.
+    \item if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preceq C_1$.
+  \end{itemize}
+  In both cases, it follows that $[{:}{-k}] \lhd C_1 \sim [{:}{-k}] \lhd C_2$.
+  Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
+  \lread is invoked on parties $P_1, P_2$ after rounds $r_1, r_2$ respectively,
+  it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
 \begin{conjecture}[\poem is Live]
