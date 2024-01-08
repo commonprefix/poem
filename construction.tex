@@ -67,9 +67,10 @@ In every round, each party is executed by the environment using function \execut
 our time model).
 
 At the beginning of each round, the honest party calls $\net.\receive()$ to get all
-the chains from the network (Line~\ref{alg-backbone.receive}). If a ``better''
-valid chain is found, then the party adopts it.
-This comparison for the ``better'' chain is performed by
+the chains from the network (Line~\ref{alg-backbone.receive}).
+It then adopts the ``best'' valid chain seen so far (including the chain
+he already has).
+This comparison for the ``best'' chain is performed by
 function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
