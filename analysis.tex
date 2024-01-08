@@ -1,5 +1,7 @@
 \section{Analysis}
 
+We now prove the security of PoEM.
+
 \begin{definition}[Entropic Growth]
   The \emph{Entropic Growth} property of
   a \poem execution,
@@ -34,22 +36,6 @@
   the chains $C_1, C_2$ of $P_1, P_2$ at rounds $r_1, r_2$ respectively
   satisfy $[{:}{-k}] \lhd C_1 \preceq C_2$.
 \end{definition}
-
-\begin{theorem}[Entropic Growth] \atnote{TODO: Prove}
-  Typical executions of \poem satisfy the Entropic Growth property
-  with $s = \lambda$ and $\tau = (1 - \epsilon)f$.
-\end{theorem}
-
-\begin{theorem}[Entropic Quality] \atnote{TODO: Prove}
-  Typical executions of \poem satisfy the Entropic Quality property
-  with $\ell = 2 \lambda f$ and
-  $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
-\end{theorem}
-
-\begin{theorem}[Entropic Common Prefix] \atnote{TODO: Prove}
-  Typical executions of \poem satisfy the Entropic Common Prefix property
-  with $k = 2 \lambda f$.
-\end{theorem}
 
 In the analysis we are going to assume honest majority.
 
@@ -149,341 +135,55 @@ Therefore,
   \end{itemize}
 \end{definition}
 
-\begin{theorem}[Typicality]
-  An execution of duration $L$ of \poem is $(\epsilon, \lambda)$-typical with
-  probability $1 - e^{-\Omega(\lambda - \log L)} - e^{-\Omega(\kappa - \log L)}$,
-  % TODO: The correct probability is $1 - e^{-\Omega(\epsilon^2 \lambda f - \log L)} - e^{-\Omega(\kappa - \log L)}$
-  namely, overwhelming in $\lambda$ and $\kappa$.
-\end{theorem}
+We will now prove that typical executions occur with overwhelming probability.
+Towards this purpose, we will need a couple of auxiliary lemmas.
+
+In the following arguments, we connect the \emph{real valued}
+random oracle, evaluated using the $\work(B) \in \mathbb{R}^+$
+function (an ideal quantity
+unobservable by any Turing Machine, as it cannot process real-valued
+inputs), and its $\kappa$-bit \emph{discrete approximation} $\awork(B)$ (observable by
+a Turing Machine by invoking $H(B)[{:}{\kappa}]$). We show that the
+difference between these two quantities is immaterial for polynomially-bound
+computations, namely they notably diverge only with negligible probability.
+This connection between real-valued and discrete-valued
+random variables will allow us to conduct our analysis using real-valued
+random variables and, in particular, random variables distributed according to the
+\emph{continuous} exponential distribution. These distributions lend themselves
+to easier tools than conducting a cumbersome analysis in the discrete domain.
+The following lemmas that translate between the continuous and discrete worlds
+will allow us to later utilize our continuous results in the discrete
+realization of the protocol.
+
+First, we make a few observations about the relationship
+between the real and the approximate work of blocks and chains.
+Observe that for hash input $A$, we have
+$\aH(A) \leq H(A)$ and for block $B$ we have
+$\awork(B) \geq \work(B)$,
+and for blocks $B_1, B_2$ we have
+$\work(B_1) \geq \work(B_2) \rightarrow \awork(B_1) \geq \awork(B_2)$.
+Furthermore, taking approximate works preserves
+the order of blocks in the following fashion.
+
+\begin{lemma}\label{lemma:awork-rounding}
+  For all $A, B \in (0, 1)$, it holds that
+  $\work(A) \geq \work(B) \rightarrow \awork(A) \geq \awork(B)$.
+\end{lemma}
 \begin{proof}
-  For each $S$ with $|S| = \lambda$,
   \begin{align*}
-    \Pr[X(S) < (1 - \epsilon)\E[\underbar{X}(S)]] &\leq\\
-    \Pr[\underbar{X}(S) < (1 - \epsilon)\E[\underbar{X}(S)]] &\leq
-    e^{-\Omega(\lambda)} \,.\\
-    \Pr[X(S) > (1 + \epsilon)\E[\overline{X}(S)]] &\leq\\
-    \Pr[\overline{X}(S) > (1 + \epsilon)\E[\overline{X}(S)]] &\leq
-    e^{-\Omega(\lambda)} \,.\\
-    \Pr[Y(S) < (1 - \epsilon)\E[Y(S)]] \leq e^{-\Omega(\lambda)} &\,.\\
-    \Pr[Z(S) > (1 + \epsilon)\E[Z(S)]] \leq e^{-\Omega(\lambda)} &\,.\\
+                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B \Rightarrow \lg A \leq \lg B\\
+    \Rightarrow &A \leq B \Rightarrow 2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor \Rightarrow \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+    \Rightarrow &\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
+    \Rightarrow &\awork(A) \geq \awork(B)
   \end{align*}
-  The $e^{-\Omega(\lambda)}$ bounds are obtained by applying
-  Theorem~\ref{thm:bern-exp} to each of the random variables
-  $\underbar{X}(S), \overline{X}(S), Y(S)$ and $Z(S)$, each
-  of which is the sum of $\Theta(\lambda)$ i.i.d. random variables\
-  distributed according to $\Bern(p) \times \Exp(\ln2)$ for
-  some respective $p \in (0, 1)$.
-  Applying a union bound for all $S$ (of which there are $L - \lambda + 1$),
-  we obtain that typicality
-  points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
-  hold with probability $1 - e^{-\Omega(\lambda)+\ln L}$.
-  If typicality points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
-  hold for all $S$ with $|S| = \lambda$, then they hold for all $S$ with
-  $|S| \geq \lambda$.
-
-  The probability bound for causality follows from the stochastic nature
-  of the Random Oracle and is proven in~\cite{backbone}.
-
-  Lastly, Hash Separation follows from Lemma~\ref{lem:hash-separation}.
   \Qed
 \end{proof}
 
-% \begin{theorem}[Concentration of Gamma]
-%   Consider a family $\{ X_i \}_{i \in [n]}$ of i.i.d. random variables $X_i$ distributed as $\Exp(\lambda)$, $\lambda > 0$,
-%   and let $X = \sum_{i = 1}^{n}{X_i}$. Then, for any $0 < \epsilon < 1$, it holds that
-%   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-n(\epsilon - \ln(1 + \epsilon))}$,
-%   which is negligible in $n$.
-% \end{theorem}
-% \begin{proof}
-% %  First, we calculate the expectation:
-% %
-% %  \[
-% %    \E[X] = \E[\sum_{i = 1}^n X_i] = \sum_{i = 1}^n \E[X_i] = n \E[X_i] = \frac{n}{\lambda}
-% %  \]
-% %
-% %  Next, we calculate the moment generating function:
-% %
-% %  \[
-% %    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n} X_i] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}]
-% %    = \E[e^{t X_i}]^n = (\frac{\lambda}{\lambda - t})^n
-% %  \]
-% %
-% %  The third equality stems from the mutual independence of the family $\{ X_i \}_{i \in [n]}$,
-% %  whereas the last equality stems from the moment generating function of the exponential.
-%   $X$ is distributed as $\Gamma(\alpha=n, \beta=\lambda)$. Therefore
-%   $\E[X] = \frac{n}{\lambda}$ and the moment generating
-%   function is $\E[e^{tX}] = (\frac{\lambda}{\lambda - t})^n = e^{n\ln(\frac{\lambda}{\lambda - t})}$.
-%
-% % For all $0 < t < \lambda$,
-% % \begin{align*}
-% %   \Pr[X > \alpha] = \Pr[e^{tX} > e^{t\alpha}] \leq \frac{\E[e^{tX}]}{e^{t\alpha}}\,.
-% % \end{align*}
-%
-% %  The first equality is by the fact that the exponential function is increasing,
-% %  whereas the second inequality is Markov's inequality.
-%   \begin{align*}
-%     \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{n}{\lambda}] \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{n}{\lambda}}\\
-%     = e^{n\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda}}\,.
-%   \end{align*}
-%
-%   The first inequality is by the generic Chernoff bound.
-%   To minimize the exponent over $t$, we differentiate it and equate to $0$:
-%
-%   \begin{align*}
-%     \frac{d}{dt}(\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{1}{\lambda}) &= 0\\
-%     \frac{d}{dt}{\ln\lambda - \ln(\lambda - t) - t(1 + \epsilon)\frac{1}{\lambda}} &= 0\\
-%     \frac{1}{\lambda - t} - (1 + \epsilon)\frac{1}{\lambda} &= 0\\
-%     \frac{1}{\lambda - t} &= (1 + \epsilon)\frac{1}{\lambda}\\
-%     \lambda - t &= \frac{\lambda}{1 + \epsilon}\\
-%     t &= \lambda(1 - \frac{1}{1 + \epsilon}) = \frac{\lambda \epsilon}{1 + \epsilon}\,.
-%   \end{align*}
-%
-%   We substitute $t$ in the exponent:
-%
-%   \begin{align*}
-%     n \ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda} = \\
-%     n \ln(\frac{\lambda}{\lambda - \frac{\lambda\epsilon}{1 + \epsilon}}) - \frac{\lambda \epsilon}{1 + \epsilon}(1 + \epsilon)\frac{n}{\lambda} = \\
-%     n \ln(\frac{1}{1 - \frac{\epsilon}{1 + \epsilon}}) - \epsilon n = \\
-%     n \ln(\frac{1}{\frac{1 + \epsilon - \epsilon}{1 + \epsilon}}) - \epsilon n = \\
-%     n \ln(1 + \epsilon) - \epsilon n = \\
-%     -n (\epsilon - \ln(1 + \epsilon))\\
-%   \end{align*}
-%
-%   The exponent is negative because
-%   \begin{align*}
-%     \epsilon - \ln(1 + \epsilon) > 0 \Leftrightarrow \\
-%     \epsilon > \ln(1 + \epsilon)\\
-%     e^{\epsilon} > 1 + \epsilon\,,
-%   \end{align*}
-%   which holds because $\epsilon > 0$.
-% \end{proof}
-
-\begin{theorem}[Concentration of $\Bern \times \Exp$]\label{thm:bern-exp}
-  Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
-  all mutually independent,
-  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
-  Let $X_i = A_i B_i$, and $X = \sum_{i = 1}^n X_i$.
-  Then for any $0 < \epsilon < 1$, it holds that
-  $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$ and
-  $\Pr[X < (1 - \epsilon) \E[X]] < e^{-\Omega(n)}$,
-  which is negligible in $n$.
-\end{theorem}
-\begin{proof}
-  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
-  $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
-
-  \begin{align*}
-    &\E[e^{t X_i}] = \E[e^{t A_i B_i}] =\\
-      &\E[e^{t A_i B_i}|A_i = 0] \Pr[A_i = 0]\\
-    + &\E[e^{t A_i B_i}|A_i = 1] \Pr[A_i = 1] = \\
-    \E[e^{t A_i B_i}|A_i = 0] (1 - p) + &\E[e^{t A_i B_i}|A_i = 1] p = \\
-    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + p \frac{\lambda}{\lambda - t}\,.
-  \end{align*}
-
-  \begin{align*}
-    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n X_i}] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}] = \\
-    \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
-  \end{align*}
-
-  For all $0 < t < \lambda$:
-
-  \begin{align*}
-    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
-    \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
-    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
-  \end{align*}
-
-  Consider the factor
-  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}$
-  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
-
-  \begin{align*}
-    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda} = \\
-    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
-    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
-  \end{align*}
-
-  At $t = 0$ we have $f(0) = 0$ and
-  \begin{align*}
-    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
-    \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
-  \end{align*}
-
-  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
-  $0 < t < t^*$ it holds that $\frac{d}{dt} f(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
-  by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
-  $\frac{d}{dt} f(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
-  Since $t^* > 0$ and $\frac{d}{dt} f(\xi) < 0$, therefore $f(t^*) < 0$.
-  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
-  gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
-
-  For all $t < 0$:
-
-  \begin{align*}
-    \Pr[X < (1 - \epsilon)\E[X]] = \Pr[X < (1 - \epsilon)\frac{np}{\lambda}]\\
-    % = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
-    % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
-    \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
-    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 - \epsilon)\frac{p}{\lambda}}
-  \end{align*}
-
-  Consider the factor
-  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda}$
-  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
-
-  \begin{align*}
-    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} = \\
-    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)\frac{p}{\lambda} = \\
-    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 - \epsilon)\frac{p}{\lambda}
-  \end{align*}
-
-  At $t = 0$ we have $f(0) = 0$ and
-  \begin{align*}
-    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
-    \frac{p}{\lambda}(1 - 1 + \epsilon) = \frac{\epsilon p}{\lambda} > 0\,.
-  \end{align*}
-
-  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0)>  0$, there must exist some $t^* < 0$ such that for all
-  $t^* < t < 0$ it holds that $\frac{d}{dt} f(t) > 0$. Because $f$ is continuous and differentiable in $[t^*, 0]$,
-  by the Mean Value Theorem, there must exist some $\xi \in (t^*, 0)$ such that
-  $\frac{d}{dt} f(\xi) = \frac{f(0) - f(t^*)}{0 - t^*} = \frac{f(t^*)}{t^*}$.
-  Since $t^* < 0$ and $\frac{d}{dt} f(\xi) > 0$, therefore $f(t^*) < 0$.
-  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
-  gives us a bound for which $\Pr[X < (1 - \epsilon)\E[X]] < e^{-\Omega(n)}$.
-  \Qed
-\end{proof}
-
-\begin{definition}[Block Work Interval]
-  A block $B$ of chain $C$ has \emph{work interval}
-  $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
-\end{definition}
-
-\begin{lemma}[Entropic Pairing Lemma] \label{lem:pairing}
-  Suppose a block $B$ of a chain $C$ with work interval $I(B)$
-  was computed by an honest party in a convergence opportunity.
-  For every $\xi \in I(B)$ and every chain $C'$ of the execution,
-  block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
-  as long as $B' \neq \bot$.
-  %TODO: Add explanation about random oracle observability
-\end{lemma}
-\begin{proof}
-  Consider an execution as in the statement and suppose, towards a contradiction,
-  that block $B'$ is not $B$ and is honestly computed.
-  %TODO: Maybe define honestly computed block.
-  Since $B$ was computed in a convergence opportunity, $B$ and $B'$
-  cannot have been computed in the same round. Let $r$ be the earliest round
-  on which $B$ or $B'$ was computed. Since it was computed by
-  an honest party, at round $r + 1$, every other honest party receives
-  a chain with work greater or equal to $\xi$.
-  It follows that every block computed
-  after round $r$ will be extending a chain with work more than $\xi$.
-  If $B$ is computed after round $r$, it holds that $\xi \not \in I$.
-  If $B'$ is computed after round $r$, it holds that $B' \neq [\xi] \lhd C'$.
-  Both lead to a contradiction. \Qed
-\end{proof}
-
-% The following conjecture is likely true and will allow us to tighten the analysis:
-%
-% \begin{conjecture}[Entropic Pairing Conjecture]
-%   Consider any block $B$ of chain $C$ with work interval $I(B)$
-%   computed by an honest party during a round $r$ such that
-%   for every $B'$ which was honestly computed during round $r$,
-%   it holds that $\work(B) \geq \work(B')$.
-%   Then, for every $\xi \in I(B) \setminus I(B')$ and every chain $C'$ of the execution,
-%   block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
-%   as long as $B' \neq \bot$.
-% \end{conjecture}
-
-\begin{lemma}[Entropic Chain Growth Lemma]
-  Suppose that at round $r_1$ an honest party has a chain of work $w$.
-  Then, by round $r_2 \geq r_1$, every honest party adopts a chain of work at least
-  $w + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
-\end{lemma}
-\begin{proof}
-  By induction on $r_2$. For the inductive base ($r_2 = r_1$), observe that
-  if at round $r_1$ an honest party has a chain $C$ of work $w$, then
-  that party broadcasted $C$ at the end or round $r_1 - 1$. It follows that
-  every honest party receives $C$ at round $r_1$ and adopts a chain with
-  greater or equal work.
-
-  For the inductive step, note that by the inductive hypothesis,
-  every honest party has received a chain of work at least $w' = w + \sum_{r = r_1}^{r_2 - 2}{X_r}$
-  by round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
-  $X_{r_2 - 1} > 0$. Observe that an honest party successfully queried the random oracle
-  with a chain of work at least $w' + X_{r_2 - 1}$ and broadcasted it to the network.
-  At round $r_2$, every honest party receives the chain and adopts a chain
-  of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
-\end{proof}
-
-\atnote{Define Chained Work}
-
-\begin{conjecture}[Entropic Patience] \label{lem:patience}
-  In a typical execution, any chained work $w \geq 2 \lambda f$ is computed
-  in more than $\lambda = \frac{w}{2 f}$ consecutive rounds.
-\end{conjecture}
-
-\begin{lemma}[Entropic Common Prefix Lemma]
-  Suppose at round $r$ of a typical execution an honest party has a chain
-  $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
-  Then, $[{:}{-w}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-w}] \lhd C_2 \preccurlyeq C_1$
-  for $w = 2 \lambda f$.
-\end{lemma}
-\begin{proof}
-    Consider an execution as in the statement and suppose,
-    towards a contradiction, that $[{:}{-w}] \lhd C_1 \not \preccurlyeq C_2$
-    or $[{:}{-w}] \lhd C_2 \not \preccurlyeq C_1$.
-    Consider the last block $B^*$ with index $i^*$ on the common prefix of
-    $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
-    be the round at which it was computed; if no such block exists let $r^* = 0$.
-    Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
-    $Z(S) \geq Y(S)$.
-
-    We show this by pairing all work of blocks computed by honest parties during
-    convergence opportunities in $S$ with adversarial work computed during $S$.
-    Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
-    during $S$, and $\Xi = \{\xi \in I(B): B \in \mathcal{Y}(S)\}$.
-
-    Note that $\min{\Xi} > \max{I(B^*)}$ because the chain ending in block $B^*$
-    was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
-    are extending a chain with greater or equal work.
-    Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
-    the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
-    by honest parties at any later round should have at least $\max \Xi$ work.
-    Hence, for every $\xi \in \Xi$ it holds that
-    $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
-
-    We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
-    or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
-    common prefix of $C_1$ and $C_2$ ($[\xi] \lhd C_1 = [\xi] \lhd C_2$),
-    then it is adversarial by the definition of $B^*$. Otherwise,
-    there is one block in $C_1$ and another one in $C_2$, and by
-    Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
-    $[\xi] \lhd C_2$ cannot both be honest.
-    This completes the proof of the claim $Z(S) \geq Y(S)$.
-
-    It holds that all chained work $\work(C_2[{i^*} {:}]) \geq w$
-    was produced during $S$.
-    Hence, from Lemma~\ref{lem:patience}, $|S| > \lambda$ and
-    the properties of a typical execution apply.
-    Therefore, by Lemma~\ref{lem:typical-bounds},
-    $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
-\end{proof}
-
-\begin{conjecture}[\poem is Safe]
-  Typical executions of \poem are safe.
-\end{conjecture}
-
-\begin{conjecture}[\poem is Live]
-  Typical executions of \poem are live.
-\end{conjecture}
-
-\begin{corollary}[\poem is Secure]
-  Typical executions of \poem are secure.
-\end{corollary}
-\begin{proof}
-  Security follows from safety and liveness.
-  \Qed
-\end{proof}
+Showing that the order of \emph{chains}
+is preserved under approximate work is a bit more involved,
+and we will work towards it next.
+Towards this, we observe that the approximate work of a block is
+close to its real work.
 
 \begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
   In a PoEM execution, consider the event $\CLOSE$ that all blocks $B$
@@ -519,6 +219,8 @@ Therefore,
   \Qed
 \end{proof}
 
+The approximate work of a chain is also close to the real work of a chain.
+
 \begin{corollary}[Chain Work Approximation]\label{cor:chain-work-approximation}
   In a PoEM execution, the probability that all chains $C$
   have $\awork(C) - \work(C) < Lqn 2^{-\kappa/2}$
@@ -533,6 +235,61 @@ Therefore,
   \end{align*}
   \Qed
 \end{proof}
+
+The following fact will become immediately useful.
+
+\begin{lemma} \label{lem:bernoulli}
+  For all $0 < y < 1$, it holds that $2^y - 1 < y$
+  and $1 - 2^{-y} < y$.
+\end{lemma}
+\begin{proof}
+  For the first part,
+  it suffices to show that $(y + 1)^{1/y} > 2$,
+  as this implies that $2^y < y + 1$ and, ultimately, $2^y - 1 < y$.
+  The inequality $(y + 1)^{1/y} > 2$ holds due to Bernoulli's
+  inequality ($(1 + x)^r > 1 + rx$ for all $x > 0$ and $r > 1$),
+  when setting $x = y$ and $r = \frac{1}{y}$.
+
+  For the second part,
+  it suffices to show that $(1 - y)^{1/y} < \frac{1}{2}$.
+  Let $f(y) = (1 - y)^{1/y}$ and
+  \begin{align*}
+    \frac{d}{dy} f(y) = \frac{d}{dy} (1 - y)^{1/y} = \frac{d}{dy} e^{\frac{1}{y}\ln(1 - y)} =\\
+    (1 - y)^{1/y} \left(-\frac{1}{y (1 - y)} - \frac{\ln(1 - y)}{y^2}\right) =\\
+    (1 - y)^{1/y} \left(\frac{y - (y - 1) \ln(1 - y)}{y^2(y - 1)}\right)
+  \end{align*}
+  Letting $\phi(y) = y - (y - 1) \ln(1 - y)$, we have
+  $\frac{d}{dy} f(y) = (1 - y)^{1/y} \left(\frac{\phi(y)}{y^2(y - 1)}\right)$.
+  Observe that $\phi(y)$ is continuous and differentiable for $y \in (0, 1)$.
+  It holds that
+  \begin{align*}
+    \frac{d}{dy} \phi(y) = \frac{d}{dy} (y - (y - 1) \ln(1 - y)) =\\
+    \frac{d}{dy} (y - y \ln(1 - y) + \ln(1 - y)) =\\
+    1 - \ln(1 - y) + \frac{y}{1 - y} - \frac{1}{1 - y} =\\
+    1 - \ln(1 - y) - \frac{1 - y}{1 - y} = -\ln(1 - y)
+  \end{align*}
+  Hence, for $y \in (0, 1)$, it holds that $\frac{d}{dy} \phi(y) > 0$ and
+  $\phi(y)$ is increasing. Because $\phi(0) = 0$,
+  it holds that $\phi(y) > 0$ for $y \in (0, 1)$.
+  Therefore, for $y \in (0, 1)$, it holds that $\frac{d}{dy} f(y) < 0$
+  and $f(y)$ is decreasing.
+
+  Setting $\omega = - \frac{1}{y}$, we have
+  \begin{align*}
+    \lim_{y \to 0}f(y) = \lim_{y \to 0}(1 - y)^{\frac{1}{y}} = \lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{-\omega} =\\
+    \frac{1}{\lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{\omega}} = \frac{1}{e}
+  \end{align*}
+
+  Pick an arbitrary $0 < \epsilon < \frac{1}{2} - \frac{1}{e}$. By the definition of the limit,
+  there exists a $\delta > 0$ such that for all $y \in (0, \delta)$, it holds that
+  $|f(y) - \frac{1}{e}| <  \epsilon \Leftrightarrow f(y) < \frac{1}{2}$.
+  Hence, for $y \in (0, 1)$, because $f(y)$ is continuous and decreasing, it holds that
+  $f(y) < \frac{1}{2}$.
+  \Qed
+\end{proof}
+
+We are now ready to prove a technical lemma which shows that works
+of blocks and chains do not fall
 
 \begin{lemma}\label{lem:good-ranges}
   Consider a PoEM execution $\mathcal{E}$ with $n$ parties, $q$ queries per round per party,
@@ -678,53 +435,16 @@ Therefore,
   \Qed
 \end{proof}
 
-\begin{lemma} \label{lem:bernoulli}
-  For all $0 < y < 1$, it holds that $2^y - 1 < y$
-  and $1 - 2^{-y} < y$.
-\end{lemma}
+\dznote{Handle the case of equality}
+
+\begin{corollary}[Approximate Fork Choice]
+  In Hash Separated executions of PoEM, for any two chains $C_1, C_2$
+  it holds that $\awork(C_1) < \awork(C_2) \rightarrow \work(C_1) < \work(C_2)$.
+\end{corollary}
 \begin{proof}
-  For the first part,
-  it suffices to show that $(y + 1)^{1/y} > 2$,
-  as this implies that $2^y < y + 1$ and, ultimately, $2^y - 1 < y$.
-  The inequality $(y + 1)^{1/y} > 2$ holds due to Bernoulli's
-  inequality ($(1 + x)^r > 1 + rx$ for all $x > 0$ and $r > 1$),
-  when setting $x = y$ and $r = \frac{1}{y}$.
-
-  For the second part,
-  it suffices to show that $(1 - y)^{1/y} < \frac{1}{2}$.
-  Let $f(y) = (1 - y)^{1/y}$ and
-  \begin{align*}
-    \frac{d}{dy} f(y) = \frac{d}{dy} (1 - y)^{1/y} = \frac{d}{dy} e^{\frac{1}{y}\ln(1 - y)} =\\
-    (1 - y)^{1/y} \left(-\frac{1}{y (1 - y)} - \frac{\ln(1 - y)}{y^2}\right) =\\
-    (1 - y)^{1/y} \left(\frac{y - (y - 1) \ln(1 - y)}{y^2(y - 1)}\right)
-  \end{align*}
-  Letting $\phi(y) = y - (y - 1) \ln(1 - y)$, we have
-  $\frac{d}{dy} f(y) = (1 - y)^{1/y} \left(\frac{\phi(y)}{y^2(y - 1)}\right)$.
-  Observe that $\phi(y)$ is continuous and differentiable for $y \in (0, 1)$.
-  It holds that
-  \begin{align*}
-    \frac{d}{dy} \phi(y) = \frac{d}{dy} (y - (y - 1) \ln(1 - y)) =\\
-    \frac{d}{dy} (y - y \ln(1 - y) + \ln(1 - y)) =\\
-    1 - \ln(1 - y) + \frac{y}{1 - y} - \frac{1}{1 - y} =\\
-    1 - \ln(1 - y) - \frac{1 - y}{1 - y} = -\ln(1 - y)
-  \end{align*}
-  Hence, for $y \in (0, 1)$, it holds that $\frac{d}{dy} \phi(y) > 0$ and
-  $\phi(y)$ is increasing. Because $\phi(0) = 0$,
-  it holds that $\phi(y) > 0$ for $y \in (0, 1)$.
-  Therefore, for $y \in (0, 1)$, it holds that $\frac{d}{dy} f(y) < 0$
-  and $f(y)$ is decreasing.
-
-  Setting $\omega = - \frac{1}{y}$, we have
-  \begin{align*}
-    \lim_{y \to 0}f(y) = \lim_{y \to 0}(1 - y)^{\frac{1}{y}} = \lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{-\omega} =\\
-    \frac{1}{\lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{\omega}} = \frac{1}{e}
-  \end{align*}
-
-  Pick an arbitrary $0 < \epsilon < \frac{1}{2} - \frac{1}{e}$. By the definition of the limit,
-  there exists a $\delta > 0$ such that for all $y \in (0, \delta)$, it holds that
-  $|f(y) - \frac{1}{e}| <  \epsilon \Leftrightarrow f(y) < \frac{1}{2}$.
-  Hence, for $y \in (0, 1)$, because $f(y)$ is continuous and decreasing, it holds that
-  $f(y) < \frac{1}{2}$.
+  Towards a contradiction, suppose that $\awork(C_1) < \awork(C_2)$, but
+  $\work(C_1) \geq \work(C_2)$. From Hash Separation, it follows that
+  $\awork(C_1) \geq \awork(C_2)$, which is a contradiction.
   \Qed
 \end{proof}
 
@@ -739,5 +459,377 @@ Therefore,
   Note that, for large enough $\kappa$, the exponent $\frac{nqL + 1}{2^{\kappa/2}}$
   falls within the range $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$,
   so the lemma is applicable.
+  \Qed
+\end{proof}
+
+\begin{theorem}[Concentration of $\Bern \times \Exp$]\label{thm:bern-exp}
+  Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
+  all mutually independent,
+  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
+  Let $X_i = A_i B_i$, and $X = \sum_{i = 1}^n X_i$.
+  Then for any $0 < \epsilon < 1$, it holds that
+  $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$ and
+  $\Pr[X < (1 - \epsilon) \E[X]] < e^{-\Omega(n)}$,
+  which is negligible in $n$.
+\end{theorem}
+\begin{proof}
+  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
+  $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
+
+  \begin{align*}
+    &\E[e^{t X_i}] = \E[e^{t A_i B_i}] =\\
+      &\E[e^{t A_i B_i}|A_i = 0] \Pr[A_i = 0]\\
+    + &\E[e^{t A_i B_i}|A_i = 1] \Pr[A_i = 1] = \\
+    \E[e^{t A_i B_i}|A_i = 0] (1 - p) + &\E[e^{t A_i B_i}|A_i = 1] p = \\
+    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + p \frac{\lambda}{\lambda - t}\,.
+  \end{align*}
+
+  \begin{align*}
+    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n X_i}] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}] = \\
+    \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
+  \end{align*}
+
+  For all $0 < t < \lambda$:
+
+  \begin{align*}
+    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
+    \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
+    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
+  \end{align*}
+
+  Consider the factor
+  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}$
+  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
+
+  \begin{align*}
+    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
+  \end{align*}
+
+  At $t = 0$ we have $f(0) = 0$ and
+  \begin{align*}
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
+    \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
+  \end{align*}
+
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
+  $0 < t < t^*$ it holds that $\frac{d}{dt} f(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
+  by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
+  $\frac{d}{dt} f(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
+  Since $t^* > 0$ and $\frac{d}{dt} f(\xi) < 0$, therefore $f(t^*) < 0$.
+  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
+  gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
+
+  For all $t < 0$:
+
+  \begin{align*}
+    \Pr[X < (1 - \epsilon)\E[X]] = \Pr[X < (1 - \epsilon)\frac{np}{\lambda}]\\
+    % = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
+    % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
+    \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
+    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 - \epsilon)\frac{p}{\lambda}}
+  \end{align*}
+
+  Consider the factor
+  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda}$
+  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
+
+  \begin{align*}
+    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} = \\
+    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)\frac{p}{\lambda} = \\
+    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 - \epsilon)\frac{p}{\lambda}
+  \end{align*}
+
+  At $t = 0$ we have $f(0) = 0$ and
+  \begin{align*}
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
+    \frac{p}{\lambda}(1 - 1 + \epsilon) = \frac{\epsilon p}{\lambda} > 0\,.
+  \end{align*}
+
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0)>  0$, there must exist some $t^* < 0$ such that for all
+  $t^* < t < 0$ it holds that $\frac{d}{dt} f(t) > 0$. Because $f$ is continuous and differentiable in $[t^*, 0]$,
+  by the Mean Value Theorem, there must exist some $\xi \in (t^*, 0)$ such that
+  $\frac{d}{dt} f(\xi) = \frac{f(0) - f(t^*)}{0 - t^*} = \frac{f(t^*)}{t^*}$.
+  Since $t^* < 0$ and $\frac{d}{dt} f(\xi) > 0$, therefore $f(t^*) < 0$.
+  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
+  gives us a bound for which $\Pr[X < (1 - \epsilon)\E[X]] < e^{-\Omega(n)}$.
+  \Qed
+\end{proof}
+
+\begin{theorem}[Typicality]
+  An execution of duration $L$ of \poem is $(\epsilon, \lambda)$-typical with
+  probability $1 - e^{-\Omega(\lambda - \log L)} - e^{-\Omega(\kappa - \log L)}$,
+  % TODO: The correct probability is $1 - e^{-\Omega(\epsilon^2 \lambda f - \log L)} - e^{-\Omega(\kappa - \log L)}$
+  namely, overwhelming in $\lambda$ and $\kappa$.
+\end{theorem}
+\begin{proof}
+  For each $S$ with $|S| = \lambda$,
+  \begin{align*}
+    \Pr[X(S) < (1 - \epsilon)\E[\underbar{X}(S)]] &\leq\\
+    \Pr[\underbar{X}(S) < (1 - \epsilon)\E[\underbar{X}(S)]] &\leq
+    e^{-\Omega(\lambda)} \,.\\
+    \Pr[X(S) > (1 + \epsilon)\E[\overline{X}(S)]] &\leq\\
+    \Pr[\overline{X}(S) > (1 + \epsilon)\E[\overline{X}(S)]] &\leq
+    e^{-\Omega(\lambda)} \,.\\
+    \Pr[Y(S) < (1 - \epsilon)\E[Y(S)]] \leq e^{-\Omega(\lambda)} &\,.\\
+    \Pr[Z(S) > (1 + \epsilon)\E[Z(S)]] \leq e^{-\Omega(\lambda)} &\,.\\
+  \end{align*}
+  The $e^{-\Omega(\lambda)}$ bounds are obtained by applying
+  Theorem~\ref{thm:bern-exp} to each of the random variables
+  $\underbar{X}(S), \overline{X}(S), Y(S)$ and $Z(S)$, each
+  of which is the sum of $\Theta(\lambda)$ i.i.d. random variables\
+  distributed according to $\Bern(p) \times \Exp(\ln2)$ for
+  some respective $p \in (0, 1)$.
+  Applying a union bound for all $S$ (of which there are $L - \lambda + 1$),
+  we obtain that typicality
+  points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
+  hold with probability $1 - e^{-\Omega(\lambda)+\ln L}$.
+  If typicality points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
+  hold for all $S$ with $|S| = \lambda$, then they hold for all $S$ with
+  $|S| \geq \lambda$.
+
+  The probability bound for causality follows from the stochastic nature
+  of the Random Oracle and is proven in~\cite{backbone}.
+
+  Lastly, Hash Separation follows from Lemma~\ref{lem:hash-separation}.
+  \Qed
+\end{proof}
+
+% \begin{theorem}[Concentration of Gamma]
+%   Consider a family $\{ X_i \}_{i \in [n]}$ of i.i.d. random variables $X_i$ distributed as $\Exp(\lambda)$, $\lambda > 0$,
+%   and let $X = \sum_{i = 1}^{n}{X_i}$. Then, for any $0 < \epsilon < 1$, it holds that
+%   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-n(\epsilon - \ln(1 + \epsilon))}$,
+%   which is negligible in $n$.
+% \end{theorem}
+% \begin{proof}
+% %  First, we calculate the expectation:
+% %
+% %  \[
+% %    \E[X] = \E[\sum_{i = 1}^n X_i] = \sum_{i = 1}^n \E[X_i] = n \E[X_i] = \frac{n}{\lambda}
+% %  \]
+% %
+% %  Next, we calculate the moment generating function:
+% %
+% %  \[
+% %    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n} X_i] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}]
+% %    = \E[e^{t X_i}]^n = (\frac{\lambda}{\lambda - t})^n
+% %  \]
+% %
+% %  The third equality stems from the mutual independence of the family $\{ X_i \}_{i \in [n]}$,
+% %  whereas the last equality stems from the moment generating function of the exponential.
+%   $X$ is distributed as $\Gamma(\alpha=n, \beta=\lambda)$. Therefore
+%   $\E[X] = \frac{n}{\lambda}$ and the moment generating
+%   function is $\E[e^{tX}] = (\frac{\lambda}{\lambda - t})^n = e^{n\ln(\frac{\lambda}{\lambda - t})}$.
+%
+% % For all $0 < t < \lambda$,
+% % \begin{align*}
+% %   \Pr[X > \alpha] = \Pr[e^{tX} > e^{t\alpha}] \leq \frac{\E[e^{tX}]}{e^{t\alpha}}\,.
+% % \end{align*}
+%
+% %  The first equality is by the fact that the exponential function is increasing,
+% %  whereas the second inequality is Markov's inequality.
+%   \begin{align*}
+%     \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{n}{\lambda}] \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{n}{\lambda}}\\
+%     = e^{n\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda}}\,.
+%   \end{align*}
+%
+%   The first inequality is by the generic Chernoff bound.
+%   To minimize the exponent over $t$, we differentiate it and equate to $0$:
+%
+%   \begin{align*}
+%     \frac{d}{dt}(\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{1}{\lambda}) &= 0\\
+%     \frac{d}{dt}{\ln\lambda - \ln(\lambda - t) - t(1 + \epsilon)\frac{1}{\lambda}} &= 0\\
+%     \frac{1}{\lambda - t} - (1 + \epsilon)\frac{1}{\lambda} &= 0\\
+%     \frac{1}{\lambda - t} &= (1 + \epsilon)\frac{1}{\lambda}\\
+%     \lambda - t &= \frac{\lambda}{1 + \epsilon}\\
+%     t &= \lambda(1 - \frac{1}{1 + \epsilon}) = \frac{\lambda \epsilon}{1 + \epsilon}\,.
+%   \end{align*}
+%
+%   We substitute $t$ in the exponent:
+%
+%   \begin{align*}
+%     n \ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{\lambda}{\lambda - \frac{\lambda\epsilon}{1 + \epsilon}}) - \frac{\lambda \epsilon}{1 + \epsilon}(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{1}{1 - \frac{\epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(\frac{1}{\frac{1 + \epsilon - \epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(1 + \epsilon) - \epsilon n = \\
+%     -n (\epsilon - \ln(1 + \epsilon))\\
+%   \end{align*}
+%
+%   The exponent is negative because
+%   \begin{align*}
+%     \epsilon - \ln(1 + \epsilon) > 0 \Leftrightarrow \\
+%     \epsilon > \ln(1 + \epsilon)\\
+%     e^{\epsilon} > 1 + \epsilon\,,
+%   \end{align*}
+%   which holds because $\epsilon > 0$.
+% \end{proof}
+
+
+\begin{definition}[Block Work Interval]
+  A block $B$ of chain $C$ has \emph{work interval}
+  $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
+\end{definition}
+
+\begin{lemma}[Entropic Pairing Lemma] \label{lem:pairing}
+  Consider a typical execution of PoEM.
+  Suppose a block $B$ of a chain $C$ with work interval $I(B)$
+  was computed by an honest party in a convergence opportunity.
+  For every $\xi \in I(B)$ and every chain $C'$ of the execution,
+  block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
+  as long as $B' \neq \bot$.
+\end{lemma}
+\begin{proof}
+  Consider an execution as in the statement and suppose, towards a contradiction,
+  that block $B'$ is not $B$ and is honestly computed.
+  Since $B$ was computed in a convergence opportunity, $B$ and $B'$
+  cannot have been computed in the same round. Let $r$ be the earliest round
+  on which $B$ or $B'$ was computed, and $C$ be the chain whose tip this block is.
+  Since it was computed by
+  an honest party, at round $r + 1$, every other honest party receives
+  a chain with work greater or equal to $\xi$.
+
+  \textbf{Claim: } Every block computed after round $r$ will be extending a
+  chain with work at least $\xi$. To see this, consider a chain $C^*$ that an honest
+  party is extending after $r$. Since the party has adopted $C^*$, by the heaviest
+  chain rule, $\awork(C^*) \geq \awork(C)$. By Hash Separation, $\work(C^*) \geq \work(C) \geq \xi$.
+
+  If $B$ is computed after round $r$, it holds that $\xi \not \in I$ (noting that $\work(B) > 0$).
+  If $B'$ is computed after round $r$, it holds that $B' \neq [\xi] \lhd C'$.
+  Both lead to a contradiction. \Qed
+\end{proof}
+
+% The following conjecture is likely true and will allow us to tighten the analysis:
+%
+% \begin{conjecture}[Entropic Pairing Conjecture]
+%   Consider any block $B$ of chain $C$ with work interval $I(B)$
+%   computed by an honest party during a round $r$ such that
+%   for every $B'$ which was honestly computed during round $r$,
+%   it holds that $\work(B) \geq \work(B')$.
+%   Then, for every $\xi \in I(B) \setminus I(B')$ and every chain $C'$ of the execution,
+%   block $B' = [\xi] \lhd C'$ is either $B$ or adversarial,
+%   as long as $B' \neq \bot$.
+% \end{conjecture}
+
+\begin{lemma}[Entropic Chain Growth Lemma]
+  Suppose that at round $r_1$ an honest party has a chain of work $w$.
+  Then, by round $r_2 \geq r_1$, every honest party adopts a chain of work at least
+  $w + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
+\end{lemma}
+\begin{proof}
+  By induction on $r_2$. For the inductive base ($r_2 = r_1$), observe that
+  if at round $r_1$ an honest party has a chain $C$ of work $w$, then
+  that party broadcasted $C$ at the end or round $r_1 - 1$. It follows that
+  every honest party receives $C$ at round $r_1$ and adopts a chain with
+  greater or equal work.
+
+  For the inductive step, note that by the inductive hypothesis,
+  every honest party has received a chain of work at least $w' = w + \sum_{r = r_1}^{r_2 - 2}{X_r}$
+  by round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
+  $X_{r_2 - 1} > 0$. Observe that an honest party successfully queried the random oracle
+  with a chain of work at least $w' + X_{r_2 - 1}$ and broadcasted it to the network.
+  At round $r_2$, every honest party receives the chain and adopts a chain
+  of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
+\end{proof}
+
+\begin{conjecture}[Typical Bounds] \label{lem:typical-bounds}
+  In typical PoEM executions, for any set $S$ of at least $\lambda$ consecutive rounds,
+  it holds that $Y(S) > Z(S)$.
+\end{conjecture}
+\begin{proof}
+  \dznote{TODO: Prove these bounds}
+\end{proof}
+
+\atnote{Define Chained Work}
+
+\begin{theorem}[Entropic Growth] \atnote{TODO: Prove}
+  Typical executions of \poem satisfy the Entropic Growth property
+  with $s = \lambda$ and $\tau = (1 - \epsilon)f$.
+\end{theorem}
+
+\begin{conjecture}[Entropic Patience] \label{lem:patience}
+  In a typical execution, any chained work $k \geq 2 \lambda f$ is computed
+  in more than $\lambda = \frac{k}{2 f}$ consecutive rounds.
+\end{conjecture}
+
+\begin{lemma}[Entropic Common Prefix Lemma]
+  Suppose at round $r$ of a PoEM typical execution an honest party has a chain
+  $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
+  Then, $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
+  for $k = 2 \lambda f$.
+\end{lemma}
+\begin{proof}
+    Consider an execution as in the statement and suppose,
+    towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
+    or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
+    Consider the last block $B^*$ with index $i^*$ on the common prefix of
+    $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
+    be the round at which it was computed; if no such block exists let $r^* = 0$.
+    Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
+    $Z(S) \geq Y(S)$.
+
+    We show this by pairing all work of blocks computed by honest parties during
+    convergence opportunities in $S$ with adversarial work computed during $S$.
+    Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
+    during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
+
+    Note that, if $\Xi \neq \emptyset$, then $\min{\Xi} > \max{I(B^*)}$
+    because the chain ending in block $B^*$
+    was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
+    are extending a chain with greater or equal work.
+    Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
+    the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
+    by honest parties at any later round should have at least $\max \Xi$ work.
+    Hence, for every $\xi \in \Xi$ it holds that
+    $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
+
+    We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
+    or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
+    common prefix of $C_1$ and $C_2$ ($[\xi] \lhd C_1 = [\xi] \lhd C_2$),
+    then it is adversarial by the definition of $B^*$. Otherwise,
+    there is one block in $C_1$ and another one in $C_2$, and by
+    Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
+    $[\xi] \lhd C_2$ cannot both be honest.
+    This completes the proof of the claim $Z(S) \geq Y(S)$.
+
+    It holds that all chained work $\work(C_2[{i^*} {:}]) \geq k$
+    was produced during $S$.
+    Hence, from Lemma~\ref{lem:patience}, $|S| > \lambda$ and
+    the properties of a typical execution apply.
+    Therefore, by Lemma~\ref{lem:typical-bounds},
+    $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
+\end{proof}
+
+\begin{theorem}[Entropic Common Prefix] \atnote{TODO: Prove}
+  Typical executions of \poem satisfy the Entropic Common Prefix property
+  with $k = 2 \lambda f$.
+\end{theorem}
+
+\begin{theorem}[Entropic Quality] \atnote{TODO: Prove}
+  Typical executions of \poem satisfy the Entropic Quality property
+  with $\ell = 2 \lambda f$ and
+  $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
+\end{theorem}
+
+\begin{conjecture}[\poem is Safe]
+  Typical executions of \poem are safe.
+\end{conjecture}
+\begin{proof}
+  \atnote{TODO: Prove}
+\end{proof}
+
+\begin{conjecture}[\poem is Live]
+  Typical executions of \poem are live.
+\end{conjecture}
+\begin{proof}
+  \atnote{TODO: Prove}
+\end{proof}
+
+\begin{corollary}[\poem is Secure]
+  Typical executions of \poem are secure.
+\end{corollary}
+\begin{proof}
+  Security follows from safety and liveness.
   \Qed
 \end{proof}
