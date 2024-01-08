@@ -78,7 +78,9 @@ ${\big\lVert}_{B \in C} B.x$.
 
 In Algorithm~\ref{alg.backbone} we show the code of an honest party.
 First, the party is constructed using the \constructor function (Line~\ref{alg-backbone.constructor}).
-In every round, each party is executed by the environment using function \execute.
+In every round, each party is executed by the environment using function \execute
+(note that this function is due to the lockstep round-based nature of
+our time model).
 
 At the beginning of each round, the honest party calls $\net.\receive()$ to get all
 the chains from the network (Line~\ref{alg-backbone.receive}). If a ``better''
@@ -101,12 +103,21 @@ We will now analyze the functionality of \maxvalid. The method receives as input
 a set of chains and returns the ``best'' chain based on a validation and
 chain adoption rule. The function iterates over all the provided chains
 and first checks their validity in Line~\ref{alg-maxvalid:validate}, using
-function \validate (Algorithm~\ref{alg.validate}. The \validate function remains unchanged compared to
+function \validate (Algorithm~\ref{alg.validate}). The \validate function remains unchanged compared to
 the original Bitcoin protocol.
-The chains that satisfy the validation rule,
+The chains that satisfy the validation rule
 are compared with one another in order to find the chain
 with the most intrinsic work. Finally, in Line~\ref{alg-maxvalid:return}, we return the
 ``best'' chain $C_{\mmax}$.
+
+When the time comes to report the stable chain
+(function $\lread$ in Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.read}),
+the honest party removes the unstable part of the chain, namely
+the last $k$ bits of work from the chain, and reports
+the remaining chain as stable. Note that, contrary to Bitcoin,
+the variable $k$ is measured in bits of work, and not in blocks
+(looking ahead, $k$ will be shown to be polynomial in the
+security parameter $\kappa$).
 
 This concludes the \poem construction.
 
