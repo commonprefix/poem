@@ -107,7 +107,7 @@ We calculate the following expectations:
   \E[A_{r, i, j} | C_{r, i, j} = 1] \Pr[C_{r, i, j} = 1] =\\
   % \E[W_{r, i, j}] * \Pr[C_{r, i, j} = 1]
   \frac{T}{\ln2}\,.\\
-  \E[Z_r] = \frac{tqT}{\ln2} < \frac{(1 + \frac{\delta}{2})f\frac{t}{n - t}}{\ln2}\,.
+  \E[Z_r] = \frac{tqT}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2} \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound} \,.
   % \E[Z(S)] =
   % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
   % \frac{tq|S| T}{\ln2}\,.
@@ -129,7 +129,7 @@ Observe that $Y_r \sim \Bern((n - t)(1 - T)^{(n - t - 1)q}(1 - (1 - T)^q)) \Exp(
 
 Therefore,
 \begin{align*}
-  \E[Y_r] > \frac{q(n - t)T(1 - q(n - T)T)}{\ln2} \geq \frac{f(1 - f)}{\ln2} > \frac{(1 - \frac{\delta}{3})f}{\ln2}\,.\\
+  \E[Y_r] > \frac{q(n - t)T(1 - q(n - T)T)}{\ln2} \geq \frac{f(1 - f)}{\ln2} > \frac{(1 - \frac{\delta}{3})f}{\ln2} \stepcounter{equation}\tag{\theequation}\label{eq.ex-y-bound}\,.\\
   \E[\underbar{X}_r] = \frac{1 - (1 - T)^{(n - t)q}}{\ln2}\,.\\
   \E[\overline{X}_r] = \frac{(n - t)qT}{\ln2}\,.
 \end{align*}
@@ -146,10 +146,32 @@ For the inequality concerning $\E[Y_r]$, the derivation is analogous to~\cite{ba
   for $\epsilon \in (0,1)$ and integer $\lambda > 4$, if for any set $S$ of at
   least $\lambda$ consecutive rounds, the following hold.
   \begin{itemize}
-    \item $(1 - \epsilon) \E[\underbar{X}(S)] < X(S) < (1 + \epsilon) \E[\overline{X}(S)]$ and $(1-\epsilon) \E[Y(S)] < Y(S)$.\label{item:typicality-x-y}
-    \item $Z(S) < (1 + \epsilon)\E[Z(S)]$.\label{item:typicality-z}
-    \item It is causal.\label{item:typicality-causal}
-    \item It has hash separation.\dznote{Define hash separation}.\label{item:typicality-hash-separation}
+    \item
+    \begin{minipage}{\linewidth}%
+      \vspace{-\abovedisplayskip}%
+      \begin{align}%
+        (1 - \epsilon) \E[\underbar{X}(S)] < X(S) < (1 + \epsilon) \E[\overline{X}(S)] \label{eq.typical-x}%
+      \end{align}%
+    \end{minipage}
+
+    \item
+    \begin{minipage}{\linewidth}%
+      \vspace{-\abovedisplayskip}%
+      \begin{align}%
+        (1 - \epsilon) \E[Y(S)] < Y(S) \label{eq.typical-y}%
+      \end{align}%
+    \end{minipage}
+
+    \item
+    \begin{minipage}{\linewidth}%
+      \vspace{-\abovedisplayskip}%
+      \begin{align}%
+        Z(S) < (1 + \epsilon)\E[Z(S)] \label{eq.typical-z}%
+      \end{align}%
+    \end{minipage}
+
+    \item It is causal.
+    \item It has hash separation.
   \end{itemize}
 \end{definition}
 
@@ -613,8 +635,8 @@ of blocks and chains do not fall
   distributed according to $\Bern(p) \times \Exp(\ln2)$ for
   some respective $p \in (0, 1)$.
   Applying a union bound for all $S$ (of which there are $L - \lambda + 1$),
-  we obtain that typicality
-  points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
+  we obtain that typicality Eq.~\ref{eq.typical-x}, Eq.~\ref{eq.typical-y}
+  and Eq.~\ref{eq.typical-z}
   hold with probability $1 - e^{-\Omega(\lambda)+\ln L}$.
   If typicality points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
   hold for all $S$ with $|S| = \lambda$, then they hold for all $S$ with
@@ -769,7 +791,20 @@ of blocks and chains do not fall
   it holds that $Y(S) > Z(S)$.
 \end{conjecture}
 \begin{proof}
-  \dznote{TODO: Prove these bounds}
+  \begin{align*}
+    Y(S) &\geq (1 - \epsilon)\E[Y(S)]\\
+         &> (1 - \epsilon) f (1 - f) \frac{|S|}{\ln2}
+          > (1 - \frac{\delta}{3}) f \frac{|S|}{\ln2}
+          > (1 - \frac{2\delta}{3}) f \frac{|S|}{\ln2}\\
+         &> (1 + \epsilon)\E[Z(S)] \geq Z(S)\,.
+  \end{align*}
+
+  The first inequality follows from typical Eq.~\ref{eq.typical-y},
+  the second from the bound in Eq.~\ref{eq.ex-y-bound},
+  the third from setting $\epsilon = f = \frac{\delta}{6}$,
+  the penultimate from the bound in Eq.~\ref{eq.ex-z-bound},
+  and the last one from typical Eq.~\ref{eq.typical-z}.
+  \Qed
 \end{proof}
 
 \atnote{Define Chained Work}
