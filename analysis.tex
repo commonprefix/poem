@@ -55,10 +55,10 @@ Observe that $A_{r, i, j}$ can be expressed in the form $A_{r, i, j} = C_{r, i, 
 with independent boolean random variable $C_{r, i, j} \sim \Bern(T)$ indicating whether the query was successful
 and real random variable $W_{r, i, j} \sim \Exp(\ln2)$ measuring the work of the block found.
 
-We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{n - t} A_{r, i, j}$,
-and let $f = \E[X_{r}]$.
+We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{n - t} A_{r, i, j}$.
 If at round $r$ at least one honest party finds a valid block ($X_r > 0$),
 we say that round $r$ is a \emph{successful round}.
+We let $f = \Pr[X_r > 0] = 1 - (1 - T)^{q(n - t)}$.
 Let $\overline{X}_r = \sum_{i = 1}^{n - t} \sum_{j = 1}^q A_{r,i,j}$ and
 \[
   \underbar{X}_r = \begin{cases}
@@ -108,10 +108,13 @@ We calculate the following expectations:
   \E[A_{r, i, j} | C_{r, i, j} = 1] \Pr[C_{r, i, j} = 1] =\\
   % \E[W_{r, i, j}] * \Pr[C_{r, i, j} = 1]
   \frac{T}{\ln2}\,.\\
-  \E[Z(S)] =
+  \E[Z_r] = \frac{tqT}{\ln2} < \frac{(1 + \frac{\delta}{2})f\frac{t}{n - t}}{\ln2}\,.
+  % \E[Z(S)] =
   % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
-  \frac{tq|S| T}{\ln2}\,.
+  % \frac{tq|S| T}{\ln2}\,.
 \end{align*}
+
+For the inequality concerning $\E[Z_r]$, we used the derivation in~\cite{backbone}.
 
 The probability of a convergence opportunity is
 \begin{align*}
@@ -127,10 +130,12 @@ Observe that $Y_r \sim \Bern((n - t)(1 - T)^{(n - t - 1)q}(1 - (1 - T)^q)) \Exp(
 
 Therefore,
 \begin{align*}
-  \E[Y_r] > \frac{q(n - t)T(1 - q(n - T)T)}{\ln2}\,.\\
+  \E[Y_r] > \frac{q(n - t)T(1 - q(n - T)T)}{\ln2} \geq \frac{f(1 - f)}{\ln2} > \frac{(1 - \frac{\delta}{3})f}{\ln2}\,.\\
   \E[\underbar{X}_r] = \frac{1 - (1 - T)^{(n - t)q}}{\ln2}\,.\\
   \E[\overline{X}_r] = \frac{(n - t)qT}{\ln2}\,.
 \end{align*}
+
+For the inequality concerning $\E[Y_r]$, the derivation is analogous to~\cite{backbone}.
 
 \begin{definition}[Causality]
   An execution is \emph{causal} if no block (directly or indirectly) extends
