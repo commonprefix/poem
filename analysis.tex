@@ -786,10 +786,10 @@ of chains do not fall dangerously close to each other.
   of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
 \end{proof}
 
-\begin{conjecture}[Typical Bounds] \label{lem:typical-bounds}
+\begin{lemma}[Typical Bounds] \label{lem:typical-bounds}
   In typical PoEM executions, for any set $S$ of at least $\lambda$ consecutive rounds,
   it holds that $Y(S) > Z(S)$.
-\end{conjecture}
+\end{lemma}
 \begin{proof}
   \begin{align*}
     Y(S) &\geq (1 - \epsilon)\E[Y(S)]\\
