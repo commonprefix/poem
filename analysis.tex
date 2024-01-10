@@ -342,7 +342,7 @@ The following fact will become immediately useful.
 \end{proof}
 
 We are now ready to prove a technical lemma which shows that works
-of blocks and chains do not fall
+of chains do not fall dangerously close to each other.
 
 \begin{lemma}\label{lem:good-ranges}
   Consider a PoEM execution $\mathcal{E}$ with $n$ parties, $q$ queries per round per party,
@@ -404,7 +404,7 @@ of blocks and chains do not fall
   \Qed
 \end{proof}
 
-\begin{lemma}[Hash Separation]
+\begin{lemma}[Hash Separation]\label{lem:hash-separation}
   Consider a causal execution of PoEM. Let $\HS$ be the event that for
   all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution, if
