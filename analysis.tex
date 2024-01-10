@@ -66,9 +66,8 @@ Let $\overline{X}_r = \sum_{i = 1}^{n - t} \sum_{j = 1}^q A_{r,i,j}$ and
   A_{r,i,j} \text{, where $(i, j)$ are the minimum such $(i, j)$.}
 \end{cases}\]
 Observe that $\underbar{X}_r \leq X_r \leq \overline{X}_r$
-and $\E[\underbar{X}_r] \leq \E[X_r] = f \leq \E[\overline{X}_r]$.
-
-and $\underbar{X}_r \sim \Bern(1 - (1 - T)^{q(n - t)}) \Exp(\ln 2)$.
+and $\E[\underbar{X}_r] \leq \E[X_r] \leq \E[\overline{X}_r]$.
+Furthermore, $\underbar{X}_r \sim \Bern(1 - (1 - T)^{q(n - t)}) \Exp(\ln 2)$.
 
 We define a random variable $Y_r$ as follows.
 If at round $r$ exactly one honest party obtains a valid block, then $Y_r = X_r$,
@@ -379,7 +378,7 @@ of blocks and chains do not fall
   \end{align*}
 
   Applying a union bound over all the queries $j$ and chains $i$ of the execution, we obtain
-  $\Pr[\BADRANGE] \leq 2 (nqL)^2 \frac{nqL + 1}{2^{\kappa/2}}$, which is negligible in $\kappa$.
+  $\Pr[\BADRANGE] \leq 2 (nqL)^2 \cdot \frac{nqL + 1}{2^{\kappa/2}}$, which is negligible in $\kappa$.
   \Qed
 \end{proof}
 
