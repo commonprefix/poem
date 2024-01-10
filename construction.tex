@@ -74,12 +74,15 @@ This comparison for the ``best'' chain is performed by
 function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
-which also remains the same as the original protocol.
+which also remains the same as the original protocol: He repeatedly tries to find a block $B$
+that satisfies the \pow equation $\aH(B) < T$, where the target $T$ is a small real number in
+the interval $(0, 1)$ satisfying $T = T[{:}\kappa]$ (this last equality guarantees that $T$ can be stored in
+$\kappa$ bits).
 If a block is found, this block is broadcast\footnote{We use the term \emph{broadcast}
 to mean the unreliable, best-effort anonymous manner of communication between honest parties that
 guarantees message delivery from one honest party to all other honest parties.
 This is called \emph{diffuse} in the Backbone series of works.}
-to the network using function $\net.\broadcast()$
+to the network using function $\net.\broadcast()$.
 
 \import{./}{algorithms/algorithm-honest.tex}
 \import{./}{algorithms/algorithm-pow.tex}

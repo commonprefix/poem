@@ -4,7 +4,7 @@
   we check that the first block of the chain is the
   genesis block. Then, in Line~\ref{alg-validate:pow},
   we check that all blocks satisfy the PoW equation
-  ($H(B) > T$) and correctly point to their
+  and correctly point to their
   previous block.
   State transition validation is excluded for simplicity.}
   \begin{algorithmic}[1]
@@ -12,11 +12,11 @@
     \If{$C[0] \neq \mathcal{G}$} \label{alg-validate:gen}
       \State\Return$\false$
     \EndIf
-    \Let{\hat{h}}{H(C[0])[{:}{\kappa}]}
+    \Let{\hat{h}}{\aH(C[0])}
     \For{$B \in C[1{:}]$}
       \Let{(h, x, ctr)}{B}
-      \If{$H(B)[{:}{\kappa}] > T \lor h \neq \hat{h}$} \label{alg-validate:pow}
-        \State\Return$\false$
+      \If{$\aH(B) \geq T \lor h \neq \hat{h}$} \label{alg-validate:pow}
+        \State\Return$\false$ \Comment{Invalid \pow or ancestry}
       \EndIf
       \Let{\hat{h}}{H(B)[{:}{\kappa}]}
     \EndFor
