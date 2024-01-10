@@ -44,7 +44,6 @@ In the analysis we are going to assume honest majority.
   $0 < \delta \leq 1$, if the number $t$ of corrupted parties out of
   $n$ parties satisfies $t < (1 - \delta) (n - t)$.
 \end{definition}
-\atnote{Add the balancing equation $3f + 3\epsilon < \delta \leq 1$ separately}
 
 Consider an execution of the \poem protocol.
 
@@ -85,6 +84,21 @@ $\underbar{X}(S) = \sum_{r \in S} \underbar{X}_r$,
 $Y(S) = \sum_{r \in S} Y_r$
 and $Z(S) = \sum_{r \in S} Z_r$.
 Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
+
+In our protocol parametrization, we are free to choose how quickly blocks are produced
+by honest parties by adjusting the target $T$ parameter, but only some configurations
+will yield the desired security results. We will set $T$ such that the following
+conditions are satisfied.
+
+\begin{definition}[Secure Configuration]
+  Given an environment which affords $q (n - t)$ queries per round to
+  the honest parties, the secure configuration $f$ of PoEM requires
+  $f = \frac{\delta}{6}$. This is achieved by using the secure target
+  value $T = 1 - (1 - f)^{\frac{1}{q(n - t)}}$.
+\end{definition}
+
+We will prove the PoEM protocol is secure if the above configuration is
+followed.
 
 We calculate the following expectations:
 \begin{align*}
@@ -134,6 +148,16 @@ Therefore,
     \item It has hash separation.\dznote{Define hash separation}.\label{item:typicality-hash-separation}
   \end{itemize}
 \end{definition}
+
+In our analysis, we will let $\epsilon = \frac{\delta}{6}$. If the desired
+maximum probability of failure is made concrete, this $\epsilon$, together
+with the concrete probabilities later calculated in Theorem~\ref{thm:typicality},
+will determine the concrete value of $\lambda$, from which the rest of the
+concrete protocol parameters follow. In particular, the value $k$
+for the ledger stabilization rule is
+determined by $\lambda$ and $f$, and $\lambda$ can be calculated from $\epsilon$,
+whereas both $f$ and $\epsilon$ can be determined from the desired acceptable
+honest advantage $\delta$.
 
 We will now prove that typical executions occur with overwhelming probability.
 Towards this purpose, we will need a couple of auxiliary lemmas.
