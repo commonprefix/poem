@@ -913,35 +913,29 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{conjecture}[\poem is Live]
-  Typical executions of \poem are live with parameter $u = 4 \frac{\lambda}{1 - \epsilon}$.
+  Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
 \end{conjecture}
 \begin{proof}
-  % $u * (1 - \epsilon) = 4 \lambda$
-  % $u = 4 \frac{\lambda}{1 - \epsilon}$
-  % $k = 2 \lambda f$
-  % $l = 2 \lambda f$
-  % $\tau = (1- \epsilon) f$
-  % $s = \lambda$ and $\tau = (1 - \epsilon)f$
-  % $s \tau = (1 - \epsilon)f \lambda$
-  % $u = $
-  \atnote{Change $k$, noting that $f$ no longer includes the $1/ln2$ factor}
-  \atnote{Change $\tau$, noting that $f$ no longer includes the $1/ln2$ factor}
-  \atnote{Change $l$, noting that $f$ no longer includes the $1/ln2$ factor}
+  % $k = \frac{2 \lambda f}{\ln2}$
+  % $\ell = \frac{2 \lambda f}{\ln2}$
   Consider any round $r$.
-  Because $u > \lambda = s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
+  Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
   for all honest parties $P$ and all rounds $r' \geq r + u$, it holds that
-  $\work(\Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq u \tau = 2k$.
-  Because $\work([{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq k = l = 2 \lambda f$,
-  invoking Entropic Chain (Theorem~\ref{thm:entoropic-quality}),
+  $\work(\Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq u \tau \geq \ell + 2k$.
+  From Corollary~\ref{cor:slicing-work-bound}, it follows that
+  $\work([{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq \ell$.
+  Invoking Entropic Quality (Theorem~\ref{thm:entoropic-quality}),
   it holds that in the chain segment $[{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]$,
   there is at least one honestly generated block that was produced after round $r$.
 
   Now, consider that an honest party attempts to inject a transaction \tx
   at round $r$. At the beginning of round $r + 1$, all honest parties
-  receive \tx and include it in their mempool. Hence, all honest blocks produced
+  receive \tx and include it in their mempool~\cite[Section 5.7]{blockchain-foundations}.
+  Hence, all honest blocks produced
   after round $r$ will either include, or extend a chain that includes transaction \tx.
   Because of this and the above, for all honest parties $P$ and rounds $r' \geq r + u$,
   we conclude that $\tx \in \Ledger[P][][r']$.
+  \Qed
 \end{proof}
 
 \begin{corollary}[\poem is Secure]
