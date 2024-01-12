@@ -895,6 +895,23 @@ of chains do not fall dangerously close to each other.
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
+\begin{lemma} \label{lem:slicing-work-bound}
+  In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
+  $\work([{:}{-k}] \lhd \Chain[P][][r]) < 2k$.
+\end{lemma}
+\begin{proof}
+  From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ work. Therefore,
+  $\work([-k] \lhd \Chain[P][][r]) < k$.
+  From the definition of the slicing notation ($[{:}]\lhd$)
+  it holds that $\work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) \leq k$. Summing the two constituents,
+  we obtain
+  \begin{align*}
+    \work([-k{:}] \lhd \Chain[P][][r]) =\\
+    \work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) + \work([-k] \lhd \Chain[P][][r]) < 2k\,.
+  \end{align*}
+  \Qed
+\end{proof}
+
 \begin{conjecture}[\poem is Live]
   Typical executions of \poem are live with parameter $u = 4 \frac{\lambda}{1 - \epsilon}$.
 \end{conjecture}
