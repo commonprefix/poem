@@ -818,6 +818,23 @@ of chains do not fall dangerously close to each other.
   in more than $\frac{k}{2 f} \geq \lambda$ consecutive rounds.
 \end{conjecture}
 
+\begin{corollary} \label{cor:slicing-work-bound}
+  In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
+  $\work([{:}{-k}] \lhd \Chain[P][][r]) < 2k$.
+\end{corollary}
+\begin{proof}
+  From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ work. Therefore,
+  $\work([-k] \lhd \Chain[P][][r]) < k$.
+  From the definition of the slicing notation ($[{:}]\lhd$)
+  it holds that $\work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) \leq k$. Summing the two constituents,
+  we obtain
+  \begin{align*}
+    \work([-k{:}] \lhd \Chain[P][][r]) =\\
+    \work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) + \work([-k] \lhd \Chain[P][][r]) < 2k\,.
+  \end{align*}
+  \Qed
+\end{proof}
+
 \begin{lemma}[Entropic Common Prefix Lemma]
   Suppose at round $r$ of a PoEM typical execution an honest party has a chain
   $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
@@ -893,23 +910,6 @@ of chains do not fall dangerously close to each other.
   Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
   \lread is invoked on parties $P_1, P_2$ after rounds $r_1, r_2$ respectively,
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
-\end{proof}
-
-\begin{lemma} \label{lem:slicing-work-bound}
-  In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
-  $\work([{:}{-k}] \lhd \Chain[P][][r]) < 2k$.
-\end{lemma}
-\begin{proof}
-  From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ work. Therefore,
-  $\work([-k] \lhd \Chain[P][][r]) < k$.
-  From the definition of the slicing notation ($[{:}]\lhd$)
-  it holds that $\work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) \leq k$. Summing the two constituents,
-  we obtain
-  \begin{align*}
-    \work([-k{:}] \lhd \Chain[P][][r]) =\\
-    \work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) + \work([-k] \lhd \Chain[P][][r]) < 2k\,.
-  \end{align*}
-  \Qed
 \end{proof}
 
 \begin{conjecture}[\poem is Live]
