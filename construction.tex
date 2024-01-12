@@ -69,7 +69,8 @@ our time model).
 At the beginning of each round, the honest party calls $\net.\receive()$ to get all
 the chains from the network (Line~\ref{alg-backbone.receive}).
 It then adopts the ``best'' valid chain seen so far (including the chain
-he already has).
+he already has). By $\Chain[P][][r]$, we denote the chain that was adopted
+by party $P$ at round $r$.
 This comparison for the ``best'' chain is performed by
 function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.

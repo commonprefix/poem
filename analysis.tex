@@ -6,25 +6,24 @@ We now prove the security of PoEM.
   The \emph{Entropic Growth} property of
   a \poem execution,
   parametrized by the growth interval $s \in \mathbb{N}$
-  and the growth velocity $\tau \in \mathbb{R}^+$,
+  and the entropic growth velocity $\tau \in \mathbb{R}^+$,
   states that for
   all honest parties $P$ and all rounds $r_1 + s \leq r_2$,
   the chains $C_1, C_2$ of $P$ at rounds $r_1, r_2$ respectively
-  satisfy $\work(C_2[{|C_1|}{:}]) \geq s \tau \lg T$.
+  satisfy $\work(C_2[{|C_1|}{:}]) \geq s \tau$.
 \end{definition}
 
-\begin{definition}[Entropic Quality]
-  The \emph{Entropic Quality} property of
-  a \poem execution, parametrized by the \emph{quality chunk parameter} $\ell \in \mathbb{N}$
-  and \emph{quality concentration parameter} $\mu \in \mathbb{R}^+$
-  (with $\ell \mu \geq 1$)
+\begin{definition}[Existential Entropic Quality]
+  The \emph{Existential Entropic Quality} property of
+  a \poem execution, parametrized by the entropic \emph{quality chunk parameter} $\ell \in \mathbb{N}$,
+  % and \emph{quality concentration parameter} $\mu \in \mathbb{R}^+$ (with $\ell \mu \geq 1$)
   states that for
   all honest parties $P$ and all rounds $r$,
   the chain $C$ of $P$ at round $r$
   has the property that
-  for every $0 \leq \alpha < \work(C) - \ell \lg T$,
+  for every $0 \leq \alpha < \work(C) - \ell$,
   there is at least one honestly generated block in the chain
-  $[{\alpha}{:}{\alpha + \ell \lg T}] \lhd C$.
+  $[{\alpha}{:}{\alpha + \ell}] \lhd C$.
 \end{definition}
 
 \begin{definition}[Entropic Common Prefix]
@@ -809,7 +808,7 @@ of chains do not fall dangerously close to each other.
 
 \atnote{Define Chained Work}
 
-\begin{theorem}[Entropic Growth] \atnote{TODO: Prove}
+\begin{theorem}[Entropic Growth] \label{thm:entropic-growth} \atnote{TODO: Prove}
   Typical executions of \poem satisfy the Entropic Growth property
   with $s = \lambda$ and $\tau = (1 - \epsilon)f$.
 \end{theorem}
@@ -867,12 +866,12 @@ of chains do not fall dangerously close to each other.
     $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
 \end{proof}
 
-\begin{theorem}[Entropic Common Prefix] \atnote{TODO: Prove}
+\begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix} \atnote{TODO: Prove}
   Typical executions of \poem satisfy the Entropic Common Prefix property
   with $k = 2 \lambda f$.
 \end{theorem}
 
-\begin{theorem}[Entropic Quality] \atnote{TODO: Prove}
+\begin{theorem}[Entropic Quality] \label{thm:entoropic-quality} \atnote{TODO: Prove}
   Typical executions of \poem satisfy the Entropic Quality property
   with $\ell = 2 \lambda f$ and
   $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
@@ -885,7 +884,7 @@ of chains do not fall dangerously close to each other.
   Consider any two honest parties $P_1, P_2$ and
   any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
   adopt at rounds $r_1, r_2$ respectively.
-  From Entropic Common Prefix, it follows that:
+  From Entropic Common Prefix (Theorem~\ref{thm:common-prefix}), it follows that:
   \begin{itemize}
     \item if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preceq C_2$.
     \item if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preceq C_1$.
@@ -897,10 +896,35 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{conjecture}[\poem is Live]
-  Typical executions of \poem are live.
+  Typical executions of \poem are live with parameter $u = 4 \frac{\lambda}{1 - \epsilon}$.
 \end{conjecture}
 \begin{proof}
-  \atnote{TODO: Prove}
+  % $u * (1 - \epsilon) = 4 \lambda$
+  % $u = 4 \frac{\lambda}{1 - \epsilon}$
+  % $k = 2 \lambda f$
+  % $l = 2 \lambda f$
+  % $\tau = (1- \epsilon) f$
+  % $s = \lambda$ and $\tau = (1 - \epsilon)f$
+  % $s \tau = (1 - \epsilon)f \lambda$
+  % $u = $
+  \atnote{Change $k$, noting that $f$ no longer includes the $1/ln2$ factor}
+  \atnote{Change $\tau$, noting that $f$ no longer includes the $1/ln2$ factor}
+  \atnote{Change $l$, noting that $f$ no longer includes the $1/ln2$ factor}
+  Consider any round $r$.
+  Because $u > \lambda = s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
+  for all honest parties $P$ and all rounds $r' \geq r + u$, it holds that
+  $\work(\Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq u \tau = 2k$.
+  Because $\work([{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq k = l = 2 \lambda f$,
+  invoking Entropic Chain (Theorem~\ref{thm:entoropic-quality}),
+  it holds that in the chain segment $[{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]$,
+  there is at least one honestly generated block that was produced after round $r$.
+
+  Now, consider that an honest party attempts to inject a transaction \tx
+  at round $r$. At the beginning of round $r + 1$, all honest parties
+  receive \tx and include it in their mempool. Hence, all honest blocks produced
+  after round $r$ will either include, or extend a chain that includes transaction \tx.
+  Because of this and the above, for all honest parties $P$ and rounds $r' \geq r + u$,
+  we conclude that $\tx \in \Ledger[P][][r']$.
 \end{proof}
 
 \begin{corollary}[\poem is Secure]
