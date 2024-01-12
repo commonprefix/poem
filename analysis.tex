@@ -823,9 +823,21 @@ of chains do not fall dangerously close to each other.
 \end{theorem}
 
 \begin{conjecture}[Entropic Patience] \label{lem:patience}
-  In a typical execution, any chained work $k \geq 2 \lambda f$ is computed
-  in more than $\frac{k}{2 f} \geq \lambda$ consecutive rounds.
+  In a typical execution, any chained work $k \geq 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2}$ is computed
+  in more than $\frac{k}{2 \frac{f}{1 - f} \frac{1}{\ln2}} \geq \lambda$ consecutive rounds.
 \end{conjecture}
+\begin{proof}
+  \atnote{Define |S|}
+  \begin{align*}
+    X(S) < (1 + \epsilon) \E[\overline{X}(S)] \leq (1 + \epsilon) \E[\overline{X}_r] |S| <\\
+    (1 + \epsilon) \frac{f}{1 - f} \frac{1}{\ln2} |S|\\
+    Z(S) < (1 + \epsilon) \E[Z(S)] \leq (1 + \epsilon) \E[Z_r] |S| <\\
+    (1 + \epsilon) \frac{t}{n - t} \frac{f}{1 - f}\frac{1}{\ln2} |S| <\\
+    (1 + \epsilon) (1 - \delta) \frac{f}{1 - f}\frac{1}{\ln2} |S|\\
+    X(S) + Z(S) < (1 + \epsilon) \frac{f}{1 - f} \frac{1}{\ln2} (1 + 1 - \delta) |S| <\\
+    (2\lambda) \frac{f}{1 - f} \frac{1}{\ln2} < k
+  \end{align*}
+\end{proof}
 
 \begin{corollary} \label{cor:slicing-work-bound}
   In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
