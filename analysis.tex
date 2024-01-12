@@ -58,6 +58,14 @@ We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{n - t} A_{r, i, j}$.
 If at round $r$ at least one honest party finds a valid block ($X_r > 0$),
 we say that round $r$ is a \emph{successful round}.
 We let $f = \Pr[X_r > 0] = 1 - (1 - T)^{q(n - t)}$.
+Solving for $T$ we obtain
+\begin{align*}
+  f &= 1 - (1 - T)^{q(n - t)}\\
+  1 - f &= (1 - T)^{q(n - t)}\\
+  (1 - f)^{\frac{1}{q(n - t)}} &= 1 - T\\
+  T &= 1 - (1 - f)^{\frac{1}{q(n - t)}}\,.
+\end{align*}
+
 Let $\overline{X}_r = \sum_{i = 1}^{n - t} \sum_{j = 1}^q A_{r,i,j}$ and
 \[
   \underbar{X}_r = \begin{cases}
@@ -92,7 +100,7 @@ conditions are satisfied.
   Given an environment which affords $q (n - t)$ queries per round to
   the honest parties, the secure configuration $f$ of PoEM requires
   $f = \frac{\delta}{6}$. This is achieved by using the secure target
-  value $T = 1 - (1 - f)^{\frac{1}{q(n - t)}}$.
+  value $T = 1 - (1 - \frac{\delta}{6})^{\frac{1}{q(n - t)}}$.
 \end{definition}
 
 We will prove the PoEM protocol is secure if the above configuration is
