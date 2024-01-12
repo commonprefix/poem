@@ -799,7 +799,7 @@ of chains do not fall dangerously close to each other.
 \end{lemma}
 \begin{proof}
   \begin{align*}
-    Y(S) &\geq (1 - \epsilon)\E[Y(S)]\\
+    Y(S) &> (1 - \epsilon)\E[Y(S)]\\
          &> (1 - \epsilon) f (1 - f) \frac{|S|}{\ln2}
           > \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
           > \left(1 - \frac{2\delta}{3}\right) f \frac{|S|}{\ln2}\\
@@ -808,7 +808,8 @@ of chains do not fall dangerously close to each other.
 
   The first inequality follows from typical Eq.~\ref{eq.typical-y},
   the second from the bound in Eq.~\ref{eq.ex-y-bound},
-  the third from setting $\epsilon = f = \frac{\delta}{6}$,
+  the third from setting $\epsilon = f = \frac{\delta}{6}$
+  according to the derivation in~\cite[Chapter 13]{blockchain-foundations},
   the penultimate from the bound in Eq.~\ref{eq.ex-z-bound},
   and the last one from typical Eq.~\ref{eq.typical-z}.
   \Qed
