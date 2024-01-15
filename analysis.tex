@@ -638,11 +638,11 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{lemma}[Entropic Common Prefix Lemma]
+\begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
   Suppose at round $r$ of a PoEM typical execution an honest party has a chain
   $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
   Then, $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
-  for $k = 2 \lambda f$.
+  for $k = 2 \lambda f$. \atnote{Change $k$ value}
 \end{lemma}
 \begin{proof}
     Consider an execution as in the statement and suppose,
@@ -686,10 +686,22 @@ of chains do not fall dangerously close to each other.
     $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
 \end{proof}
 
-\begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix} \atnote{TODO: Prove}
+\begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
   Typical executions of \poem satisfy the Entropic Common Prefix property
   with $k = 2 \lambda f$.
 \end{theorem}
+\begin{proof}
+  Consider chains $C_1, C_2$ adopted by honest parties $P_1, P_2$ at rounds $r_1 \leq r_2$ respectively
+  (without the loss of generality), and suppose towards a contradiction that Common Prefix is violated with
+  $[{:}{-k}] \lhd C_1 \not \preceq C_2$.
+  Let $r_2 \geq r \geq r_1$ be the first round that Entropic Common Prefix is violated.
+  It follows that, at round $r$, all honest parties have chains that contain $[{:}{-k}] \lhd C_1$
+  (otherwise Entropic Common Prefix would have been violated earlier).
+  At round $r$, an honest party $P$ that has chain $[{:}{-k}] \lhd C_1 \preceq C$, adopts
+  a chain $C'$ such that $[{:}{-k}] \lhd C_1 \not \preceq C'$, violating Entropic Common Prefix.
+  However, $[{:}{-k}] \lhd C_1 \not \preceq C' \Rightarrow [{:}{-k}] \lhd C \not \preceq C'$, and thus contradicting Lemma~\ref{lem:common-prefix-lemma}.
+  \Qed
+\end{proof}
 
 \begin{theorem}[Entropic Quality] \label{thm:entoropic-quality} \atnote{TODO: Prove}
   Typical executions of \poem satisfy the Entropic Quality property
