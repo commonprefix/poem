@@ -687,6 +687,7 @@ of chains do not fall dangerously close to each other.
   Then, there is a set $S \supseteq S'$ of consecutive rounds with
   $|S| = \ceil*{\frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}} + 1 < \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}} + 2$
   such that $X(S) + Z(S) \geq X(S') + Z(S') \geq k$. However,
+  because $|S| > \lambda$, typicality applies and from Lemma~\ref{lem:typical-bounds} we obtain
   $X(S) < (1 + \epsilon) \E[\overline{X}(S)] \leq (1 + \epsilon) \E[\overline{X}_r] |S| <
   (1 + \epsilon) \frac{f}{1 - f} \frac{|S|}{\ln2}$
   and
@@ -698,8 +699,9 @@ of chains do not fall dangerously close to each other.
     X(S) + Z(S) < (1 + \epsilon) \frac{f}{1 - f} \frac{|S|}{\ln2} (1 + 1 - \delta) <
     2 \frac{f}{1 - f} \frac{|S|}{\ln2} <\\
     2\frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}} \frac{f}{1 - f} \frac{1}{\ln2} + 4 \frac{f}{1 - f} \frac{1}{\ln2} =\\
-    k - 8 + 4 \frac{f}{1 - f} \frac{1}{\ln2} = k - 4 (2 - \frac{f}{1 - f} \frac{1}{\ln2}) < k\,.
+    k - 8 + 4 \frac{f}{1 - f} \frac{1}{\ln2} = k - 4 \left(2 - \frac{f}{1 - f} \frac{1}{\ln2}\right) < k\,.
   \end{align*}
+  The last inequality follows from $2 - \frac{f}{1 - f} \frac{1}{\ln2} < 0$.
   \Qed
 \end{proof}
 
