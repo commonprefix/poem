@@ -33,7 +33,7 @@ We now prove the security of PoEM.
   all honest parties $P_1, P_2$
   and all rounds $r_1 \leq r_2$,
   the chains $C_1, C_2$ that $P_1, P_2$ adopt at rounds $r_1, r_2$ respectively
-  satisfy $[{:}{-k}] \lhd C_1 \preceq C_2$.
+  satisfy $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$.
 \end{definition}
 
 In the analysis we are going to assume honest majority.
@@ -740,8 +740,8 @@ of chains do not fall dangerously close to each other.
   adopt at rounds $r_1, r_2$ respectively.
   From Entropic Common Prefix (Theorem~\ref{thm:common-prefix}), it follows that:
   \begin{itemize}
-    \item if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preceq C_2$.
-    \item if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preceq C_1$.
+    \item if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$.
+    \item if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$.
   \end{itemize}
   In both cases, it follows that $[{:}{-k}] \lhd C_1 \sim [{:}{-k}] \lhd C_2$.
   Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
