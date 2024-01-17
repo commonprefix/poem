@@ -661,9 +661,8 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
-  Suppose at round $r$ of a PoEM typical execution an honest party has a chain
-  $C_1$, while a chain $C_2$ of work at least $\work(C_1)$ is adopted by an honest party.
-  Then, $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
+  For all rounds $r$, and all honest parties $P_1, P_2$ adopting chains $C_1$ and $C_2$ respectively at round $r$
+  of a typical PoEM execution, it holds that $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
   for $k = 2 \lambda f$. \atnote{Change $k$ value}
 \end{lemma}
 \begin{proof}
@@ -681,7 +680,7 @@ of chains do not fall dangerously close to each other.
     Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
     during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
 
-    Note that, if $\Xi \neq \emptyset$, then $\min{\Xi} > \max{I(B^*)}$
+    Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
     because the chain ending in block $B^*$
     was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
     are extending a chain with greater or equal work.
@@ -693,16 +692,16 @@ of chains do not fall dangerously close to each other.
 
     We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
     or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
-    common prefix of $C_1$ and $C_2$ ($[\xi] \lhd C_1 = [\xi] \lhd C_2$),
+    common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
     then it is adversarial by the definition of $B^*$. Otherwise,
     there is one block in $C_1$ and another one in $C_2$, and by
     Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
     $[\xi] \lhd C_2$ cannot both be honest.
     This completes the proof of the claim $Z(S) \geq Y(S)$.
 
-    It holds that all chained work $\work(C_2[{i^*} {:}]) \geq k$
-    was produced during $S$.
-    Hence, from Lemma~\ref{lem:patience}, $|S| > \lambda$ and
+    All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
+    was produced during $S \cup \{r^*\}$.
+    Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
     the properties of a typical execution apply.
     Therefore, by Lemma~\ref{lem:typical-bounds},
     $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
