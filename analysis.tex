@@ -619,7 +619,7 @@ of chains do not fall dangerously close to each other.
 \end{lemma}
 \begin{proof}
   Assume, towards a contradiction, there is a set of consecutive rounds $S'$ in which
-  the chained work $k$ was computed and $|S'| < \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}$.
+  the chained work $k$ was computed and $|S'| \leq \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}$.
   It holds that $X(S') + Z(S') \geq k$.
   Then, there is a set $S \supseteq S'$ of consecutive rounds with
   $|S| = \ceil*{\frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}} + 1 < \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}} + 2$
