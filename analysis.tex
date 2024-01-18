@@ -661,7 +661,7 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
-  For all rounds $r$, and all honest parties $P_1, P_2$ adopting chains $C_1$ and $C_2$ respectively at round $r$
+  For all rounds $r$, and all honest parties $P_1, P_2$, where $P_1$ has $C_1$ and $P_2$ adopts $C_2$ at round $r$
   of a typical PoEM execution, it holds that $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
   for $k = 2 \lambda f$. \atnote{Change $k$ value}
 \end{lemma}
@@ -686,7 +686,7 @@ of chains do not fall dangerously close to each other.
     are extending a chain with greater or equal work.
     Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
     the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
-    by honest parties at any later round should have at least $\max \Xi$ work.
+    by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
     Hence, for every $\xi \in \Xi$ it holds that
     $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
 
