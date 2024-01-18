@@ -101,6 +101,7 @@ with the most intrinsic work. Finally, in Line~\ref{alg-maxvalid:return}, we ret
 
 When the time comes to report the stable chain
 (function $\lread$ in Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.read}),
+after the function \execute has been called,
 the honest party removes the unstable part of the chain, namely
 the last $k$ bits of work from the chain, and reports
 the remaining chain as stable. Note that, contrary to Bitcoin,
