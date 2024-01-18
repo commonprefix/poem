@@ -59,9 +59,9 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
 The protocol execution commences in discrete rounds $1, 2, \ldots$, and has a total duration of
 $L$, polynomial in the security parameter $\kappa \in \mathbb{N}$.
-We assume a synchronous communication network, where all honestly produced
-messages are delivered with a delay of one round (messages sent in a round
-arrive at the beginning of the next round).
+We assume a synchronous communication network: If an honest party sends a message
+to the network at some round $r$, this message is delivered to all honest parties
+(including itself) at round $r + 1$.
 We also assume a static setting, where the protocol is executed by
 a fixed total number of $n \in \mathbb{N}$ parties, unknown to the honest parties.
 In the execution, the adversary controls $t < n$ of the parties,
