@@ -712,15 +712,15 @@ of chains do not fall dangerously close to each other.
   with $k = 2 \lambda f$.
 \end{theorem}
 \begin{proof}
-  Consider chains $C_1, C_2$ adopted by honest parties $P_1, P_2$ at rounds $r_1 \leq r_2$ respectively
-  (without the loss of generality), and suppose towards a contradiction that Common Prefix is violated with
-  $[{:}{-k}] \lhd C_1 \not \preceq C_2$.
-  Let $r_2 \geq r \geq r_1$ be the first round that Entropic Common Prefix is violated.
-  It follows that, at round $r$, all honest parties have chains that contain $[{:}{-k}] \lhd C_1$
-  (otherwise Entropic Common Prefix would have been violated earlier).
-  At round $r$, an honest party $P$ that has chain $[{:}{-k}] \lhd C_1 \preceq C$, adopts
-  a chain $C'$ such that $[{:}{-k}] \lhd C_1 \not \preceq C'$, violating Entropic Common Prefix.
-  However, $[{:}{-k}] \lhd C_1 \not \preceq C' \Rightarrow [{:}{-k}] \lhd C \not \preceq C'$, and thus contradicting Lemma~\ref{lem:common-prefix-lemma}.
+  Suppose towards a contradiction that Entropic Common Prefix is violated in a typical execution,
+  and let $r_2$ be the earliest round in which it is violated.
+  Let $r_1$ be any of its corresponding $r_1$.
+  It follows that, at round $r_2$, party $P_2$ has a chain containing $[{:}{-k}] \lhd C_1$
+  (otherwise $r_2$ would not have been minimal).
+  At round $r_2$ and adopts
+  $C_2$ such that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C'$, violating Entropic Common Prefix.
+  However, $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2 \Rightarrow [{:}{-k}] \lhd C \not \preccurlyeq C_2$,
+  contradicting Lemma~\ref{lem:common-prefix-lemma}.
   \Qed
 \end{proof}
 
