@@ -1,0 +1,230 @@
+\section{Mathematical Background}
+
+% \begin{theorem}[Concentration of Gamma]
+%   Consider a family $\{ X_i \}_{i \in [n]}$ of i.i.d. random variables $X_i$ distributed as $\Exp(\lambda)$, $\lambda > 0$,
+%   and let $X = \sum_{i = 1}^{n}{X_i}$. Then, for any $0 < \epsilon < 1$, it holds that
+%   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-n(\epsilon - \ln(1 + \epsilon))}$,
+%   which is negligible in $n$.
+% \end{theorem}
+% \begin{proof}
+% %  First, we calculate the expectation:
+% %
+% %  \[
+% %    \E[X] = \E[\sum_{i = 1}^n X_i] = \sum_{i = 1}^n \E[X_i] = n \E[X_i] = \frac{n}{\lambda}
+% %  \]
+% %
+% %  Next, we calculate the moment generating function:
+% %
+% %  \[
+% %    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n} X_i] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}]
+% %    = \E[e^{t X_i}]^n = (\frac{\lambda}{\lambda - t})^n
+% %  \]
+% %
+% %  The third equality stems from the mutual independence of the family $\{ X_i \}_{i \in [n]}$,
+% %  whereas the last equality stems from the moment generating function of the exponential.
+%   $X$ is distributed as $\Gamma(\alpha=n, \beta=\lambda)$. Therefore
+%   $\E[X] = \frac{n}{\lambda}$ and the moment generating
+%   function is $\E[e^{tX}] = (\frac{\lambda}{\lambda - t})^n = e^{n\ln(\frac{\lambda}{\lambda - t})}$.
+%
+% % For all $0 < t < \lambda$,
+% % \begin{align*}
+% %   \Pr[X > \alpha] = \Pr[e^{tX} > e^{t\alpha}] \leq \frac{\E[e^{tX}]}{e^{t\alpha}}\,.
+% % \end{align*}
+%
+% %  The first equality is by the fact that the exponential function is increasing,
+% %  whereas the second inequality is Markov's inequality.
+%   \begin{align*}
+%     \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{n}{\lambda}] \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{n}{\lambda}}\\
+%     = e^{n\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda}}\,.
+%   \end{align*}
+%
+%   The first inequality is by the generic Chernoff bound.
+%   To minimize the exponent over $t$, we differentiate it and equate to $0$:
+%
+%   \begin{align*}
+%     \frac{d}{dt}(\ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{1}{\lambda}) &= 0\\
+%     \frac{d}{dt}{\ln\lambda - \ln(\lambda - t) - t(1 + \epsilon)\frac{1}{\lambda}} &= 0\\
+%     \frac{1}{\lambda - t} - (1 + \epsilon)\frac{1}{\lambda} &= 0\\
+%     \frac{1}{\lambda - t} &= (1 + \epsilon)\frac{1}{\lambda}\\
+%     \lambda - t &= \frac{\lambda}{1 + \epsilon}\\
+%     t &= \lambda(1 - \frac{1}{1 + \epsilon}) = \frac{\lambda \epsilon}{1 + \epsilon}\,.
+%   \end{align*}
+%
+%   We substitute $t$ in the exponent:
+%
+%   \begin{align*}
+%     n \ln(\frac{\lambda}{\lambda - t}) - t(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{\lambda}{\lambda - \frac{\lambda\epsilon}{1 + \epsilon}}) - \frac{\lambda \epsilon}{1 + \epsilon}(1 + \epsilon)\frac{n}{\lambda} = \\
+%     n \ln(\frac{1}{1 - \frac{\epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(\frac{1}{\frac{1 + \epsilon - \epsilon}{1 + \epsilon}}) - \epsilon n = \\
+%     n \ln(1 + \epsilon) - \epsilon n = \\
+%     -n (\epsilon - \ln(1 + \epsilon))\\
+%   \end{align*}
+%
+%   The exponent is negative because
+%   \begin{align*}
+%     \epsilon - \ln(1 + \epsilon) > 0 \Leftrightarrow \\
+%     \epsilon > \ln(1 + \epsilon)\\
+%     e^{\epsilon} > 1 + \epsilon\,,
+%   \end{align*}
+%   which holds because $\epsilon > 0$.
+% \end{proof}
+
+\begin{lemma} \label{lem:bernoulli}
+  For all $0 < y < 1$, it holds that $2^y - 1 < y$
+  and $1 - 2^{-y} < y$.
+\end{lemma}
+\begin{proof}
+  For the first part,
+  it suffices to show that $(y + 1)^{1/y} > 2$,
+  as this implies that $2^y < y + 1$ and, ultimately, $2^y - 1 < y$.
+  The inequality $(y + 1)^{1/y} > 2$ holds due to Bernoulli's
+  inequality ($(1 + x)^r > 1 + rx$ for all $x > 0$ and $r > 1$),
+  when setting $x = y$ and $r = \frac{1}{y}$.
+
+  For the second part,
+  it suffices to show that $(1 - y)^{1/y} < \frac{1}{2}$.
+  Let $f(y) = (1 - y)^{1/y}$ and
+  \begin{align*}
+    \frac{d}{dy} f(y) = \frac{d}{dy} (1 - y)^{1/y} = \frac{d}{dy} e^{\frac{1}{y}\ln(1 - y)} =\\
+    (1 - y)^{1/y} \left(-\frac{1}{y (1 - y)} - \frac{\ln(1 - y)}{y^2}\right) =\\
+    (1 - y)^{1/y} \left(\frac{y - (y - 1) \ln(1 - y)}{y^2(y - 1)}\right)
+  \end{align*}
+  Letting $\phi(y) = y - (y - 1) \ln(1 - y)$, we have
+  $\frac{d}{dy} f(y) = (1 - y)^{1/y} \left(\frac{\phi(y)}{y^2(y - 1)}\right)$.
+  Observe that $\phi(y)$ is continuous and differentiable for $y \in (0, 1)$.
+  It holds that
+  \begin{align*}
+    \frac{d}{dy} \phi(y) = \frac{d}{dy} (y - (y - 1) \ln(1 - y)) =\\
+    \frac{d}{dy} (y - y \ln(1 - y) + \ln(1 - y)) =\\
+    1 - \ln(1 - y) + \frac{y}{1 - y} - \frac{1}{1 - y} =\\
+    1 - \ln(1 - y) - \frac{1 - y}{1 - y} = -\ln(1 - y)
+  \end{align*}
+  Hence, for $y \in (0, 1)$, it holds that $\frac{d}{dy} \phi(y) > 0$ and
+  $\phi(y)$ is increasing. Because $\phi(0) = 0$,
+  it holds that $\phi(y) > 0$ for $y \in (0, 1)$.
+  Therefore, for $y \in (0, 1)$, it holds that $\frac{d}{dy} f(y) < 0$
+  and $f(y)$ is decreasing.
+
+  Setting $\omega = - \frac{1}{y}$, we have
+  \begin{align*}
+    \lim_{y \to 0}f(y) = \lim_{y \to 0}(1 - y)^{\frac{1}{y}} = \lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{-\omega} =\\
+    \frac{1}{\lim_{\omega \to -\infty}\left(1 + \frac{1}{\omega}\right)^{\omega}} = \frac{1}{e}
+  \end{align*}
+
+  Pick an arbitrary $0 < \epsilon < \frac{1}{2} - \frac{1}{e}$. By the definition of the limit,
+  there exists a $\delta > 0$ such that for all $y \in (0, \delta)$, it holds that
+  $|f(y) - \frac{1}{e}| <  \epsilon \Leftrightarrow f(y) < \frac{1}{2}$.
+  Hence, for $y \in (0, 1)$, because $f(y)$ is continuous and decreasing, it holds that
+  $f(y) < \frac{1}{2}$.
+  \Qed
+\end{proof}
+
+\begin{theorem}[Concentration of $\Bern \times \Exp$]\label{thm:bern-exp}
+  Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
+  all mutually independent,
+  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
+  Let $X_i = A_i B_i$, and $X = \sum_{i = 1}^n X_i$.
+  Then for any $0 < \epsilon < 1$, it holds that
+  $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$ and
+  $\Pr[X < (1 - \epsilon) \E[X]] < e^{-\Omega(n)}$,
+  which is negligible in $n$.
+\end{theorem}
+\begin{proof}
+  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
+  $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
+
+  \begin{align*}
+    &\E[e^{t X_i}] = \E[e^{t A_i B_i}] =\\
+      &\E[e^{t A_i B_i}|A_i = 0] \Pr[A_i = 0]\\
+    + &\E[e^{t A_i B_i}|A_i = 1] \Pr[A_i = 1] = \\
+    \E[e^{t A_i B_i}|A_i = 0] (1 - p) + &\E[e^{t A_i B_i}|A_i = 1] p = \\
+    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + p \frac{\lambda}{\lambda - t}\,.
+  \end{align*}
+
+  \begin{align*}
+    \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n X_i}] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}] = \\
+    \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
+  \end{align*}
+
+  For all $0 < t < \lambda$:
+
+  \begin{align*}
+    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
+    \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
+    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
+  \end{align*}
+
+  Consider the factor
+  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}$
+  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
+
+  \begin{align*}
+    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
+  \end{align*}
+
+  At $t = 0$ we have $f(0) = 0$ and
+  \begin{align*}
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
+    \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
+  \end{align*}
+
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
+  $0 < t < t^*$ it holds that $\frac{d}{dt} f(t) < 0$. Because $f$ is continuous and differentiable in $[0, t^*]$,
+  by the Mean Value Theorem, there must exist some $\xi \in (0, t^*)$ such that
+  $\frac{d}{dt} f(\xi) = \frac{f(t^*) - f(0)}{t^* - 0} = \frac{f(t^*)}{t^*}$.
+  Since $t^* > 0$ and $\frac{d}{dt} f(\xi) < 0$, therefore $f(t^*) < 0$.
+  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
+  gives us a bound for which $\Pr[X > (1 + \epsilon)\E[X]] < e^{-\Omega(n)}$.
+
+  For all $t < 0$:
+
+  \begin{align*}
+    \Pr[X < (1 - \epsilon)\E[X]] = \Pr[X < (1 - \epsilon)\frac{np}{\lambda}]\\
+    % = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
+    % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
+    \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
+    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 - \epsilon)\frac{p}{\lambda}}
+  \end{align*}
+
+  Consider the factor
+  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda}$
+  in front of $n$ in the exponent. Taking its derivative with respect to $t$:
+
+  \begin{align*}
+    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} = \\
+    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)\frac{p}{\lambda} = \\
+    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 - \epsilon)\frac{p}{\lambda}
+  \end{align*}
+
+  At $t = 0$ we have $f(0) = 0$ and
+  \begin{align*}
+    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
+    \frac{p}{\lambda}(1 - 1 + \epsilon) = \frac{\epsilon p}{\lambda} > 0\,.
+  \end{align*}
+
+  Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0)>  0$, there must exist some $t^* < 0$ such that for all
+  $t^* < t < 0$ it holds that $\frac{d}{dt} f(t) > 0$. Because $f$ is continuous and differentiable in $[t^*, 0]$,
+  by the Mean Value Theorem, there must exist some $\xi \in (t^*, 0)$ such that
+  $\frac{d}{dt} f(\xi) = \frac{f(0) - f(t^*)}{0 - t^*} = \frac{f(t^*)}{t^*}$.
+  Since $t^* < 0$ and $\frac{d}{dt} f(\xi) > 0$, therefore $f(t^*) < 0$.
+  This $t^*$ makes the factor in front of $n$ in the exponent negative, and therefore
+  gives us a bound for which $\Pr[X < (1 - \epsilon)\E[X]] < e^{-\Omega(n)}$.
+  \Qed
+\end{proof}
+
+% \begin{lemma}
+%   $f(\kappa) = 2^{\frac{nqL + 1}{2^{\kappa/2}}} - 1$ is negligible.
+% \end{lemma}
+% \begin{proof}
+%   It suffices to show that $f(\kappa) < \frac{nqL + 1}{2^{\kappa/2}}$
+%   for sufficiently large $\kappa$, since $\frac{nqL + 1}{2^{\kappa/2}}$
+%   is negligible.
+%   This follows by applying Lemma~\ref{lem:bernoulli} for $y = \frac{nqL + 1}{2^{\kappa/2}}$.
+%   Note that, for large enough $\kappa$, the exponent $\frac{nqL + 1}{2^{\kappa/2}}$
+%   falls within the range $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$,
+%   so the lemma is applicable.
+%   \Qed
+% \end{proof}

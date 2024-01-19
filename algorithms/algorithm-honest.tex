@@ -11,17 +11,18 @@
         \EndFunction
         \Function{$\execute_{\net}$}{$1^\kappa$}
             \CommentLine{Receive chains from the network}
-            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive} 
+            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive}
             \State $C \leftarrow$ maxvalid$(C \cup \bar M)$ \label{alg-backbone.maxvalid} \Comment{Adopt heaviest chain}
             \Let{x}{\textsc{input}()} \Comment{Take all transactions in mempool}
             \Let{B}{\pow(x, H(C[-1])[{:}{\kappa}])} \Comment{Mine a new block}
             \If{$B \neq \bot$} \Comment{Successful mining}
-                \Let{ C}{ C \concat B} \Comment{Add block to chain}
+                \State $\net.\broadcast(C \concat B)$ \Comment{Broadcast mined chain}
+            \Else
+                \State $\net.\broadcast(C)$ \Comment{Broadcast adopted chain}
             \EndIf
-            \State $\net.\broadcast(C)$
             \State {\textsf{round}} $\leftarrow$ {\textsf{round}+1}
         \EndFunction
-        \Function{$\lread$}{}
+        \Function{$\lread$}{}\label{alg-backbone.read}
             \State\Return$([{:}{-k}] \lhd C).x$
         \EndFunction
         \vskip8pt

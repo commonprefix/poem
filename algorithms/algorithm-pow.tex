@@ -5,7 +5,7 @@
         \State{$ctr \getsrandomly \{0,1\}^\kappa$}
         \For{$i \gets 1 \text{ to } q$}
             \Let{B}{h \concat x \concat ctr}
-            \If{$H(B)[{:}{\kappa}] \leq T$}
+            \If{$\aH(B) < T$}
                 \State\Return{$B$}
             \EndIf
             \Let{ctr}{ctr + 1}

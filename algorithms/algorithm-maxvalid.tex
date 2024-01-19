@@ -8,8 +8,8 @@
       \If{$\lnot\validate_{\mathcal{G}}(C)$}
         \Continue
       \EndIf
-      
-      \Let{\thiswork}{\sum_{B \in C}\work(H(B)[{:}{\kappa}])}
+
+      \Let{\thiswork}{\awork(C)} \Comment{Computed as $\sum_{B \in C}H(B)[{:}{\kappa}]$}
       \If{$\thiswork > \maxwork$} \label{alg-maxvalid:validate}
         \Let{C_\mmax}{C}
         \Let{\maxwork}{\thiswork}

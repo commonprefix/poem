@@ -28,24 +28,6 @@ In this definition, the full hash value, interpreted as a real number in the int
 $(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
 value. Said differently, for any $A \in (0, 1)$,
 $\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}$.
-Observe that $\aH(A) \leq H(A)$ and $\awork(A) \geq \work(A)$,
-and that $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
-
-\begin{lemma}\label{lemma:awork-rounding}
-  For all $A, B \in (0, 1)$, it holds that
-  $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
-\end{lemma}
-\begin{proof}
-  \begin{align*}
-                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B\\
-    \Rightarrow &\lg A \leq \lg B \Rightarrow A \leq B\\
-    \Rightarrow &2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor\\
-    \Rightarrow &\frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow \lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
-    \Rightarrow &-\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
-    \Rightarrow &\awork(A) \geq \awork(B)
-  \end{align*}
-  \Qed
-\end{proof}
 
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain
@@ -61,11 +43,11 @@ and that $\work(A) \geq \work(B) \Rightarrow \awork(A) \geq \awork(B)$.
 For chain $C$, we write $[\alpha] \lhd C$
 to denote the $i^\text{th}$ block of $C$ such that
 $\work(C[{:}{i - 1}]) < \alpha \leq \work(C[{:}{i}])$.
-If $\work(C) < \alpha$, then $[\alpha] \lhd C = \bot$.
+If $\work(C) < \alpha$, then let $[\alpha] \lhd C = \bot$.
 If $\alpha$ is negative, then $[\alpha] \lhd C$ is defined as
 the $i^\text{th}$ block of $C$ such that
 $\work(C[{i - 1}{:}]) < -\alpha \leq \work(C[{i}{:}])$.
-We write $[{\alpha}{:}{\beta}] \lhd C$ to denote
+We use the slicing notation $[{\alpha}{:}{\beta}] \lhd C$ to denote
 $C[{i}{:}{j}]$ where $i$ is the index of $[\alpha] \lhd C$
 and $j$ is the index of $[\beta] \lhd C$ in $C$ respectively.
 The notation $[{\alpha}{:}] \lhd C$ means $C[{i}{:}]$,
@@ -80,21 +62,28 @@ ${\big\lVert}_{B \in C} B.x$.
 
 In Algorithm~\ref{alg.backbone} we show the code of an honest party.
 First, the party is constructed using the \constructor function (Line~\ref{alg-backbone.constructor}).
-In every round, each party is executed by the environment using function \execute.
+In every round, each party is executed by the environment using function \execute
+(note that this function is due to the lockstep round-based nature of
+our time model).
 
 At the beginning of each round, the honest party calls $\net.\receive()$ to get all
-the chains from the network (Line~\ref{alg-backbone.receive}). If a ``better''
-valid chain is found, then the party adopts it.
-This comparison for the ``better'' chain is performed by
+the chains from the network (Line~\ref{alg-backbone.receive}).
+It then adopts the ``best'' valid chain seen so far (including the chain
+he already has). By $\Chain[P][][r]$, we denote the chain that was adopted
+by party $P$ at round $r$.
+This comparison for the ``best'' chain is performed by
 function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
-which also remains the same as the original protocol.
+which also remains the same as the original protocol: He repeatedly tries to find a block $B$
+that satisfies the \pow equation $\aH(B) < T$, where the target $T$ is a small real number in
+the interval $(0, 1)$ satisfying $T = T[{:}\kappa]$ (this last equality guarantees that $T$ can be stored in
+$\kappa$ bits).
 If a block is found, this block is broadcast\footnote{We use the term \emph{broadcast}
 to mean the unreliable, best-effort anonymous manner of communication between honest parties that
 guarantees message delivery from one honest party to all other honest parties.
 This is called \emph{diffuse} in the Backbone series of works.}
-to the network using function $\net.\broadcast()$
+to the network using function $\net.\broadcast()$.
 
 \import{./}{algorithms/algorithm-honest.tex}
 \import{./}{algorithms/algorithm-pow.tex}
@@ -103,12 +92,23 @@ We will now analyze the functionality of \maxvalid. The method receives as input
 a set of chains and returns the ``best'' chain based on a validation and
 chain adoption rule. The function iterates over all the provided chains
 and first checks their validity in Line~\ref{alg-maxvalid:validate}, using
-function \validate (Algorithm~\ref{alg.validate}. The \validate function remains unchanged compared to
+function \validate (Algorithm~\ref{alg.validate}). The \validate function remains unchanged compared to
 the original Bitcoin protocol.
-The chains that satisfy the validation rule,
+The chains that satisfy the validation rule
 are compared with one another in order to find the chain
 with the most intrinsic work. Finally, in Line~\ref{alg-maxvalid:return}, we return the
 ``best'' chain $C_{\mmax}$.
+
+When the time comes to report the stable chain
+(function $\lread$ in Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.read}),
+after the function \execute has been called,
+the honest party removes the unstable part of the chain, namely
+the last $k$ bits of work from the chain, and reports
+the remaining chain as stable. Note that, contrary to Bitcoin,
+the variable $k$ is measured in bits of work, and not in blocks
+(looking ahead, $k$ will be shown to be polynomial in the
+security parameter $\kappa$, and we will calculate its value
+in the analysis section).
 
 This concludes the \poem construction.
 

@@ -4,7 +4,7 @@ In Bitcoin~\cite{bitcoin}, a population of \emph{miners}
 attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
 where $h$ is a pointer to the previous block, $x$ contains a sequence of
 \emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
-by the miner to satisfy the \emph{proof-of-work} inequality $H(B) \leq T$, where
+by the miner to satisfy the \emph{proof-of-work} inequality $H(B) < T$, where
 $H$ is a hash function with output in the interval $(0, 1)$
 and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
 inequality is considered a valid block, whereas candidates that do not satisfy
@@ -18,7 +18,7 @@ difficulty is dynamically adjusted, and the \emph{heaviest chain} is chosen (c.f
 ~\cite{varbackbone}).} chain is chosen as the canonical one.
 
 Some blocks $B$ satisfy the proof-of-work inequality better than others.
-Namely, they satisfy not only $H(B) \leq T$, but also $H(B) \leq \frac{T}{2^w}$
+Namely, they satisfy not only $H(B) < T$, but also $H(B) < \frac{T}{2^w}$
 for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are ignored when choosing
 which chain to pick. We posit that this \emph{information}
 produced during the mining process corresponds to \emph{removing entropy} from the
@@ -47,7 +47,7 @@ On the contrary, in the real deployment of Bitcoin, the difficulty is dynamicall
 \emph{variable population} model~\cite{varbackbone}), and the \emph{heaviest chain} is chosen.
 The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
 $T$ is the nominal target of the block. In PoEM, we count the \emph{intrinsic work}
-of each block, which is different from the nominal target $T$ and depends on the value $H(B) \leq T$.
+of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$.
 We perform our analysis in the static population model, and leave the analysis in the variable
 population model for future work.} target. Intuitively, this corresponds to counting the
 ``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
@@ -98,7 +98,7 @@ The idea of using a more nuanced proof-of-work inequality in which some blocks
 are considered heavier than others was first put forth by Andrew Miller~\cite{highway},
 with the first complete protocol to utilize it being
 Proofs of Proof-of-Work~\cite{popow}. These were later refined multiple times
-to account for non-interactivity~\cite{nipopows}, backwards compatibility~\cite{velvet-nipopows},
+to account for non\-/interactivity~\cite{nipopows}, backwards compatibility~\cite{velvet-nipopows},
 onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
 gas consumption~\cite{gasefficient-nipopows},
 bribing resilience~\cite{soft-power},
