@@ -102,7 +102,7 @@ $Y(S) = \sum_{r \in S} Y_r$
 and $Z(S) = \sum_{r \in S} Z_r$.
 Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
 
-\begin{lemma}[Expectation Bounds]
+\begin{lemma}[Expectation Bounds]\label{lem:expectation-bounds}
   The following bounds hold.
   \begin{enumerate}
     \item $\frac{f}{1 - f} > Tq(n - t)$
@@ -170,7 +170,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   one which is computed at a later or the same random oracle query.
 \end{definition}
 
-\begin{definition}[\poem Typical Execution]
+\begin{definition}[\poem Typical Execution]\label{def:typicality}
   An execution of \poem is \emph{($\epsilon,\lambda$)-typical} (or just typical),
   for $\epsilon \in (0,1)$ and integer $\lambda > 4$, if for any set $S$ of at
   least $\lambda$ consecutive rounds, the following hold.
@@ -562,7 +562,7 @@ of chains do not fall dangerously close to each other.
 %   as long as $B' \neq \bot$.
 % \end{conjecture}
 
-\begin{lemma}[Entropic Chain Growth Lemma]
+\begin{lemma}[Entropic Chain Growth Lemma]\label{lem:chain-growth}
   Suppose that at round $r_1$ an honest party has a chain of work $w$.
   Then, by round $r_2 \geq r_1$, every honest party adopts a chain of work at least
   $w + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
@@ -607,10 +607,22 @@ of chains do not fall dangerously close to each other.
 
 \atnote{Define Chained Work}
 
-\begin{theorem}[Entropic Growth] \label{thm:entropic-growth} \atnote{TODO: Prove}
+\begin{theorem}[Entropic Growth] \label{thm:entropic-growth}
+  \dznote{Simplify $\tau$ and make it an expression of $\delta, f, \epsilon$}
   Typical executions of \poem satisfy the Entropic Growth property
-  with $s = \lambda$ and $\tau = (1 - \epsilon)f$.
+  with $s = \lambda$ and $\tau = (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}$.
 \end{theorem}
+\begin{proof}
+  Consider a typical \poem execution in which an honest party has a chain $C_1$
+  at round $r_1$ and adopts a chain $C_2$ at round $r_2 \geq r_1 + s$.
+  Let $S = \{r_1, \ldots, r_2 - 1\}$. Then $|S| \geq s = \lambda$ and,
+  applying Definition~\ref{def:typicality} we obtain $X(S) > (1 - \epsilon)\E[\underline{X}(S)]$.
+  By
+  Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
+  Hence, $X(S) > (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
+  By Lemma~\ref{lem:chain-growth}, $\work(C_2) \geq \work(C_1) + X(S)$, as desired.
+  \Qed
+\end{proof}
 
 \pagebreak
 \begin{lemma}[Entropic Patience] \label{lem:patience}
@@ -666,61 +678,87 @@ of chains do not fall dangerously close to each other.
   for $k = 2 \lambda f$. \atnote{Change $k$ value}
 \end{lemma}
 \begin{proof}
-    Consider an execution as in the statement and suppose,
-    towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
-    or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
-    Consider the last block $B^*$ with index $i^*$ on the common prefix of
-    $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
-    be the round at which it was computed; if no such block exists let $r^* = 0$.
-    Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
-    $Z(S) \geq Y(S)$.
+  Consider an execution as in the statement and suppose,
+  towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
+  or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
+  Consider the last block $B^*$ with index $i^*$ on the common prefix of
+  $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
+  be the round at which it was computed; if no such block exists let $r^* = 0$.
+  Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
+  $Z(S) \geq Y(S)$.
 
-    We show this by pairing all work of blocks computed by honest parties during
-    convergence opportunities in $S$ with adversarial work computed during $S$.
-    Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
-    during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
+  We show this by pairing all work of blocks computed by honest parties during
+  convergence opportunities in $S$ with adversarial work computed during $S$.
+  Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
+  during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
 
-    Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
-    because the chain ending in block $B^*$
-    was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
-    are extending a chain with greater or equal work.
-    Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
-    the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
-    by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
-    Hence, for every $\xi \in \Xi$ it holds that
-    $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
+  Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
+  because the chain ending in block $B^*$
+  was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
+  are extending a chain with greater or equal work.
+  Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
+  the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
+  by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
+  Hence, for every $\xi \in \Xi$ it holds that
+  $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
 
-    We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
-    or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
-    common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
-    then it is adversarial by the definition of $B^*$. Otherwise,
-    there is one block in $C_1$ and another one in $C_2$, and by
-    Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
-    $[\xi] \lhd C_2$ cannot both be honest.
-    This completes the proof of the claim $Z(S) \geq Y(S)$.
+  We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
+  or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
+  common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
+  then it is adversarial by the definition of $B^*$. Otherwise,
+  there is one block in $C_1$ and another one in $C_2$, and by
+  Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
+  $[\xi] \lhd C_2$ cannot both be honest.
+  This completes the proof of the claim $Z(S) \geq Y(S)$.
 
-    All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
-    was produced during $S \cup \{r^*\}$.
-    Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
-    the properties of a typical execution apply.
-    Therefore, by Lemma~\ref{lem:typical-bounds},
-    $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
+  All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
+  was produced during $S \cup \{r^*\}$.
+  Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
+  the properties of a typical execution apply.
+  Therefore, by Lemma~\ref{lem:typical-bounds},
+  $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
 \end{proof}
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
   Typical executions of \poem satisfy the Entropic Common Prefix property
   with $k = 2 \lambda f$.
+  \atnote{Fix $k$}
 \end{theorem}
 \begin{proof}
-  Suppose towards a contradiction that Entropic Common Prefix is violated in a typical execution,
-  and let $r_2$ be the earliest round in which it is violated.
-  Let $r_1$ be any of its corresponding $r_1$.
-  It follows that, at round $r_2$, party $P_2$ has a chain containing $[{:}{-k}] \lhd C_1$
-  (otherwise $r_2$ would not have been minimal).
-  At round $r_2$ and adopts
-  $C_2$ such that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C'$, violating Entropic Common Prefix.
-  However, $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2 \Rightarrow [{:}{-k}] \lhd C \not \preccurlyeq C_2$,
-  contradicting Lemma~\ref{lem:common-prefix-lemma}.
+  Consider a typical execution and suppose, towards a contradiction, that Common
+  Prefix is violated, and let $r_2$ be the first round during which it is violated.
+  At $r_2$ there is an honest party $P_2$ who adopts chain $C_2$
+  inconsistent with the chain $C_1$ adopted by an honest party
+  $P_1$ at a round $r_1 \leq r_2$, namely $[{:}{-k}] \lhd C_1 \not\preceq C_2$.
+
+  % TODO: Change algorithm so that has r => adopts r + 1
+  \noindent
+  \textbf{Case $r_1 < r_2$.}
+  At round $r_2$, party $P_1$ has a chain $C$,
+  which it adopted at $r_2 - 1$ (not excluding the case
+  where $C = C_1$). It holds that $[{:}{-k}] \lhd C_1 \preceq C$
+  due to the minimality of $r_2$ (otherwise, the Common Prefix virtue would
+  have been broken at $r_2 - 1$ by chains $C_1$ and $C$).
+  Furthermore, $\work(C) \geq \work(C_1)$ due to heaviest chain
+  rule followed by $P_1$. Therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  By the Common Prefix lemma, we have $[{:}{-k}] \lhd C \preceq C_2$
+  (at $r_2$, party $P_1$ has $C$ and party $P_2$ adopts $C_2$).
+  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  which contradicts the violation of Common Prefix.
+
+  \noindent
+  \textbf{Case $r_1 = r_2$.}
+  Let $C$ be the chain that $P_1$ adopts at $r_1 + 1$ (not excluding the case
+  where $C = C_1$).
+  By the Common Prefix lemma, we have that
+  $[{:}{-k}] \lhd C_1 \preceq C$ (at $r_1 + 1$, party $P_1$ adopts $C$ and has $C_1$).
+  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
+  rule followed by $P_1$.
+  Because $\work(C) \geq \work(C_1)$, therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  By the Common Prefix lemma, we have that
+  $[{:}{-k}] \lhd C \preceq C_2$ (at $r_1 + 1$, party $P_1$ adopts $C$ and party $P_2$ has $C_2$).
+  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  which contradicts the violation of Common Prefix.
   \Qed
 \end{proof}
 
