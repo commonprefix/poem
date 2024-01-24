@@ -678,45 +678,45 @@ of chains do not fall dangerously close to each other.
   for $k = 2 \lambda f$. \atnote{Change $k$ value}
 \end{lemma}
 \begin{proof}
-    Consider an execution as in the statement and suppose,
-    towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
-    or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
-    Consider the last block $B^*$ with index $i^*$ on the common prefix of
-    $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
-    be the round at which it was computed; if no such block exists let $r^* = 0$.
-    Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
-    $Z(S) \geq Y(S)$.
+  Consider an execution as in the statement and suppose,
+  towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
+  or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
+  Consider the last block $B^*$ with index $i^*$ on the common prefix of
+  $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
+  be the round at which it was computed; if no such block exists let $r^* = 0$.
+  Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
+  $Z(S) \geq Y(S)$.
 
-    We show this by pairing all work of blocks computed by honest parties during
-    convergence opportunities in $S$ with adversarial work computed during $S$.
-    Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
-    during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
+  We show this by pairing all work of blocks computed by honest parties during
+  convergence opportunities in $S$ with adversarial work computed during $S$.
+  Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
+  during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
 
-    Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
-    because the chain ending in block $B^*$
-    was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
-    are extending a chain with greater or equal work.
-    Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
-    the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
-    by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
-    Hence, for every $\xi \in \Xi$ it holds that
-    $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
+  Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
+  because the chain ending in block $B^*$
+  was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
+  are extending a chain with greater or equal work.
+  Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
+  the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
+  by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
+  Hence, for every $\xi \in \Xi$ it holds that
+  $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
 
-    We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
-    or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
-    common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
-    then it is adversarial by the definition of $B^*$. Otherwise,
-    there is one block in $C_1$ and another one in $C_2$, and by
-    Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
-    $[\xi] \lhd C_2$ cannot both be honest.
-    This completes the proof of the claim $Z(S) \geq Y(S)$.
+  We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
+  or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
+  common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
+  then it is adversarial by the definition of $B^*$. Otherwise,
+  there is one block in $C_1$ and another one in $C_2$, and by
+  Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
+  $[\xi] \lhd C_2$ cannot both be honest.
+  This completes the proof of the claim $Z(S) \geq Y(S)$.
 
-    All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
-    was produced during $S \cup \{r^*\}$.
-    Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
-    the properties of a typical execution apply.
-    Therefore, by Lemma~\ref{lem:typical-bounds},
-    $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
+  All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
+  was produced during $S \cup \{r^*\}$.
+  Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
+  the properties of a typical execution apply.
+  Therefore, by Lemma~\ref{lem:typical-bounds},
+  $Z(S) < Y(S)$ which contradicts the previous claim. \Qed
 \end{proof}
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
