@@ -722,17 +722,43 @@ of chains do not fall dangerously close to each other.
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
   Typical executions of \poem satisfy the Entropic Common Prefix property
   with $k = 2 \lambda f$.
+  \atnote{Fix $k$}
 \end{theorem}
 \begin{proof}
-  Suppose towards a contradiction that Entropic Common Prefix is violated in a typical execution,
-  and let $r_2$ be the earliest round in which it is violated.
-  Let $r_1$ be any of its corresponding $r_1$.
-  It follows that, at round $r_2$, party $P_2$ has a chain containing $[{:}{-k}] \lhd C_1$
-  (otherwise $r_2$ would not have been minimal).
-  At round $r_2$ and adopts
-  $C_2$ such that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C'$, violating Entropic Common Prefix.
-  However, $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2 \Rightarrow [{:}{-k}] \lhd C \not \preccurlyeq C_2$,
-  contradicting Lemma~\ref{lem:common-prefix-lemma}.
+  Consider a typical execution and suppose, towards a contradiction, that Common
+  Prefix is violated, and let $r_2$ be the first round during which it is violated.
+  At $r_2$ there is an honest party $P_2$ who adopts chain $C_2$
+  inconsistent with the chain $C_1$ adopted by an honest party
+  $P_1$ at a round $r_1 \leq r_2$, namely $[{:}{-k}] \lhd C_1 \not\preceq C_2$.
+
+  % TODO: Change algorithm so that has r => adopts r + 1
+  \noindent
+  \textbf{Case $r_1 < r_2$.}
+  At round $r_2$, party $P_1$ has a chain $C$,
+  which it adopted at $r_2 - 1$ (not excluding the case
+  where $C = C_1$). It holds that $[{:}{-k}] \lhd C_1 \preceq C$
+  due to the minimality of $r_2$ (otherwise, the Common Prefix virtue would
+  have been broken at $r_2 - 1$ by chains $C_1$ and $C$).
+  Furthermore, $\work(C) \geq \work(C_1)$ due to heaviest chain
+  rule followed by $P_1$. Therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  By the Common Prefix lemma, we have $[{:}{-k}] \lhd C \preceq C_2$
+  (at $r_2$, party $P_1$ has $C$ and party $P_2$ adopts $C_2$).
+  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  which contradicts the violation of Common Prefix.
+
+  \noindent
+  \textbf{Case $r_1 = r_2$.}
+  Let $C$ be the chain that $P_1$ adopts at $r_1 + 1$ (not excluding the case
+  where $C = C_1$).
+  By the Common Prefix lemma, we have that
+  $[{:}{-k}] \lhd C_1 \preceq C$ (at $r_1 + 1$, party $P_1$ adopts $C$ and has $C_1$).
+  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
+  rule followed by $P_1$.
+  Because $\work(C) \geq \work(C_1)$, therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  By the Common Prefix lemma, we have that
+  $[{:}{-k}] \lhd C \preceq C_2$ (at $r_1 + 1$, party $P_1$ adopts $C$ and party $P_2$ has $C_2$).
+  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  which contradicts the violation of Common Prefix.
   \Qed
 \end{proof}
 
