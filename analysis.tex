@@ -106,7 +106,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   The following bounds hold.
   \begin{enumerate}
     \item $\frac{f}{1 - f} > Tq(n - t)$
-    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{(n - t)q}}{\ln2}$
+    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2} = \frac{f}{\ln2}$
     \item $\E[\overline{X}_r] < \frac{f}{1 - f}\frac{1}{\ln2}$
     \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$
     \item $\E[Z_r] < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$
@@ -136,7 +136,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   follows from fact that
   $\underbar{X}_r \sim \Bern(1 - (1 - T)^{q(n - t)}) \Exp(\ln 2)$.
   The expectation $\E[\overline{X}_r] = \frac{Tq(n - t)}{\ln2} < \frac{f}{1 - f}\frac{1}{\ln2}$
-  follows from the fact that $\overline{X}_r$ is the sum of $(n - t)q$ independent
+  follows from the fact that $\overline{X}_r$ is the sum of $q(n - t)$ independent
   random variables distributed as $\Bern(T)\Exp(\ln2)$ and the above bounds on $f$.
 
   \noindent
@@ -608,9 +608,8 @@ of chains do not fall dangerously close to each other.
 \atnote{Define Chained Work}
 
 \begin{theorem}[Entropic Growth] \label{thm:entropic-growth}
-  \dznote{Simplify $\tau$ and make it an expression of $\delta, f, \epsilon$}
   Typical executions of \poem satisfy the Entropic Growth property
-  with $s = \lambda$ and $\tau = (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}$.
+  with $s = \lambda$ and $\tau = (1 - \epsilon)\frac{f}{\ln2}$.
 \end{theorem}
 \begin{proof}
   Consider a typical \poem execution in which an honest party has a chain $C_1$
@@ -618,8 +617,8 @@ of chains do not fall dangerously close to each other.
   Let $S = \{r_1, \ldots, r_2 - 1\}$. Then $|S| \geq s = \lambda$ and,
   applying Definition~\ref{def:typicality} we obtain $X(S) > (1 - \epsilon)\E[\underline{X}(S)]$.
   By
-  Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
-  Hence, $X(S) > (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
+  Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{f}{\ln2}|S|$.
+  Hence, $X(S) > (1 - \epsilon)\frac{f}{\ln2}|S|$.
   By Lemma~\ref{lem:chain-growth}, $\work(C_2) \geq \work(C_1) + X(S)$, as desired.
   \Qed
 \end{proof}
