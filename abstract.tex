@@ -1,13 +1,13 @@
 \begin{abstract}
-  We propose a modification to the proof-of-work fork choice rule.
-  Instead of choosing the longest chain, we choose the chain with the most
-  \emph{intrinsic work}. The intrinsic work of a block is roughly the number of
-  zeroes at the front of its hash. This modification allows us to increase
-  the block production rate without sacrificing adversarial resilience,
-  yielding a $39.9\%$ improvement in confirmation delay and
-  a $16.3\%$ improvement in throughput as compared to the vanilla
-  Bitcoin proof-of-work fork choice rule. Our modification is at the
-  level of the proof-of-work inequality, and thus can be composed with
-  any other methods to improve latency or throughput that have been
-  proposed throughout the years.
+   Proof-of-Entropy-Minima (PoEM) is novel fork choice rule which incorporates
+  \emph{intrinsic work} to more efficiently resolve forks.  Intrinsic work measures 
+  the number of states a block removes from the possible chain progression paths, 
+  corresponding to the entropy removed from the system. Additionally, hash-linked 
+  blocks create a series of dependent events, for which PoEM employs the correct 
+  combinatorial treatment to derive a guaranteed unique chain weight.Finally, it is shown PoEM increases
+  the block production rate while improving adversarial resilience,
+  yielding a $2\times$ improvement in confirmation delay, compared to the heaviest chain rule.
+  \atnote{Revisit the $2\times$ number when we know it.}
+
+   
 \end{abstract}
