@@ -39,8 +39,8 @@ of an experimental deployment of our system.
 \myparagraph[Construction overview]
 The classical Bitcoin protocol uses the longest chain fork choice. Among two different
 chains, the one with the most blocks is chosen as the canonical one. We modify this
-rule as follows: Each block counts for its intrinsic work $-\frac{\lg H(B)}{T}$,
-where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
+rule as follows: Each block counts for its intrinsic work $\gamma-\lg \frac{H(B)}{T}$,
+where $H(B)$ denotes the hash of the block, $T$ denotes the fixed\footnote{Our
 analysis is in the \emph{static population} model in which the difficulty
 and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone}.
 On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
@@ -50,10 +50,10 @@ $T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic w
 of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
 and choose the heaviest based on this rule.
 We perform our analysis in the static population model, and leave the analysis in the variable
-population model for future work.} target. Intuitively, this corresponds to counting the
-``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
-to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
-it has. The chain with the most total intrinsic work is chosen as the canonical chain.
+population model for future work.} target, and $\gamma$ is a constant in the fixed difficulty setting, where $0 < \gamma <= \lg(T)$.
+The zeroes at the front of the hash are already guaranteed to be at least $\lg T$, but can be more. 
+When $\gamma = \lg(T)$, intrinsic work raised to the power of two is the expected number of hashes needed to reproduce a block of equivalent weight.
+The chain with the most total intrinsic work is chosen as the canonical chain.
 
 \begin{figure*}
   \centering
