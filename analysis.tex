@@ -109,8 +109,8 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
     \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2} = \frac{f}{\ln2}
             > \frac{(1 - f)Tq(n - t)}{\ln2}$
     \item $\E[\overline{X}_r] < \frac{f}{1 - f}\frac{1}{\ln2}$
-    \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$
-    \item $\E[Z_r] = \frac{tqT}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$
+    \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$\label{eq.ex-y-bound}
+    \item $\E[Z_r] = \frac{tqT}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$\label{eq.ex-z-bound}
     \item $\E[Z_r] < \E[X_r]$
   \end{enumerate}
 \end{lemma}
@@ -618,12 +618,12 @@ of chains do not fall dangerously close to each other.
          &> (1 + \epsilon)\E[Z(S)] \geq Z(S)\,.
   \end{align*}
 
-  The first inequality follows from typical Eq.~\ref{eq.typical-y},
-  the second from the bound in Eq.~\ref{eq.ex-y-bound},
+  The first inequality follows from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-y},
+  the second from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-y-bound},
   the third from setting $\epsilon = f = \frac{\delta}{6}$
   according to the derivation in~\cite[Chapter 13]{blockchain-foundations},
-  the penultimate from the bound in Eq.~\ref{eq.ex-z-bound},
-  and the last one from typical Eq.~\ref{eq.typical-z}.
+  the penultimate from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
+  and the last one from typical Definition~\ref{def:typicality} Eq~\ref{eq.typical-z}.
   \Qed
 \end{proof}
 
