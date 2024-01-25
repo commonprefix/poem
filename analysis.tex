@@ -106,10 +106,12 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   The following bounds hold.
   \begin{enumerate}
     \item $\frac{f}{1 - f} > Tq(n - t)$
-    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2} = \frac{f}{\ln2}$
+    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2} = \frac{f}{\ln2}
+            > \frac{(1 - f)Tq(n - t)}{\ln2}$
     \item $\E[\overline{X}_r] < \frac{f}{1 - f}\frac{1}{\ln2}$
     \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$
-    \item $\E[Z_r] < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$
+    \item $\E[Z_r] = \frac{tqT}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$
+    \item $\E[Z_r] < \E[X_r]$
   \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -135,6 +137,8 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2}$
   follows from fact that
   $\underbar{X}_r \sim \Bern(1 - (1 - T)^{q(n - t)}) \Exp(\ln 2)$.
+  The bound on $\E[\underbar{X}_r]$ follows from the previous
+  bound on $f$.
   The expectation $\E[\overline{X}_r] = \frac{Tq(n - t)}{\ln2} < \frac{f}{1 - f}\frac{1}{\ln2}$
   follows from the fact that $\overline{X}_r$ is the sum of $q(n - t)$ independent
   random variables distributed as $\Bern(T)\Exp(\ln2)$ and the above bounds on $f$.
@@ -157,12 +161,25 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
 
   \noindent
   \textbf{Bounds for $\E[Z]$.}
-  $\E[Z_r] = \frac{tqT}{\ln2} < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
+  The expectation $\E[Z_r] = \frac{tqT}{\ln2}$ follows from the fact that $Z_r$
+  is distributed as a sum of $tq$ independent samples distributed as $\Bern(T) \Exp(\ln2)$.
+  For the bound, we have
+  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
     % \E[Z(S)] =
     % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
     % \frac{tq|S| T}{\ln2}\,.
   % \end{align*}
   For the inequalities concerning $\E[Z_r]$, we used the derivation in~\cite{backbone}.
+  \dznote{Write this derivation explicitly}
+
+  For $\E[Z_r] < \E[X_r]$, we have
+  $\E[Z_r] < \E[X_r]
+  \Leftarrow \E[Z_r] < \E[\underbar{X}_r]
+  \Leftarrow \frac{tqT}{\ln2} < \frac{(1 - f)Tq(n - t)}{\ln2}
+  \Leftarrow \frac{t}{n - t} < 1 - f
+  \Leftarrow 1 - \delta < 1 - f
+  \Leftarrow f < \delta$, which follows from
+  the secure configuration.
 \end{proof}
 
 \begin{definition}[Causality]
