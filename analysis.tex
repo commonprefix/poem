@@ -19,7 +19,7 @@ We now prove the security of PoEM.
   % and \emph{quality concentration parameter} $\mu \in \mathbb{R}^+$ (with $\ell \mu \geq 1$)
   states that for
   all honest parties $P$ and all rounds $r$,
-  the chain $C$ of $P$ at round $r$
+  the chain $C$ that $P$ adopts at round $r$
   has the property that
   for every $0 \leq \alpha < \work(C) - \ell$,
   there is at least one honestly generated block in the chain
@@ -793,6 +793,49 @@ of chains do not fall dangerously close to each other.
   with $\ell = 2 \lambda f$ and
   $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
 \end{theorem}
+\begin{proof}
+  Suppose, towards a contradiction, that there is a chain quality violation in a typical
+  \poem execution. Then there is an honest party $P$ who adopts a chain $C_3$
+  at round $r$ for which chain quality is violated.
+  This means there are $u, v$ such that the chain $C_1 = C_3[u{:}v]$
+  has $\work(C_1) \geq \ell$ and quality lower than $\mu$, namely
+  the sum $x$ of works of all honestly generated blocks in $C_1$ is less than
+  $\mu \work(C_1)$.
+  Consider the minimum work chain $C_2 = C_3[{u'}{:}{v'}]$
+  such that $C_1$ is fully included in $C_2$ (i.e., $u' \leq u$ and $v' \geq v$)
+  with the following properties:
+
+  \begin{enumerate}
+    \item $C_3[u']$ was computed by an honest party $P_1$ (this will exist because $C_3[0]$ is the genesis block, which is honestly generated) at some round $r_1$ (letting $r_1 = 0$ if $u' = 0$).
+    \item $C_3[v']$ was the tip of the adopted chain by an honest party $P_2$ at some round $r_2$ (this will exist because $P$ adopts $C_3$).
+  \end{enumerate}
+
+  Let $L = \work(C_2)$ and $S = \{r_1, \ldots, r_2 - 1\}$. Note that, by causality,
+  all the work $L$ was computed in $S$. By the supposition, we have
+  $x < \mu \ell \leq \mu L$.
+
+  We have that $Z(S) \geq L - x$. To see this, observe that, by the minimality of $C_2$, all the blocks
+  with heights $u', \ldots, u$ as well as the blocks with heights $v, \ldots, v'$ were computed by the adversary, and so the only honest work computed within $L$ is $x$.
+
+  Additionally, $L \geq X(S)$. To see this, note that at round $r_1$, party $P_1$ produced $C_3[u']$,
+  and so every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}])$ from round $r_1 + 1$
+  onwards. Therefore, by Lemma~\ref{lem:chain-growth}, at round $r_2$, every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}]) + X(S)$. But we know that $P_2$ adopts a chain
+  of length $\work(C_3[{u'}{:}]) + L$, and so $L \geq X(S)$.
+
+  Therefore,
+  \[
+    Z(S) \geq L - x > (1 - \mu)L \geq (1 - \mu)X(S) \geq ((1 + \frac{\delta}{2})\cdot\frac{t}{n - t} + \frac{\epsilon}{1 - \epsilon})X(S)\,.
+  \]
+
+  The last inequality follows from replacing the value of $\mu$ from the statement.
+
+  By Lemma~\ref{lem:patience}, $|S| > \lambda$ and typical bounds apply. Therefore,
+  $X(S) > (1 - \epsilon)\E[\underline{X}(S)] = (1 - \epsilon)\frac{f}{\ln2}$ and,
+  from this and the previous inequality,
+  $Z(S) \geq (1 + \frac{\delta}{2})\cdot\frac{t}{n - t}X(S) + \epsilon f \frac{|S|}{\ln2}$.
+  However, this contradicts the bound in Lemma~\ref{lem:typical-bounds}.
+  \Qed
+\end{proof}
 
 \begin{conjecture}[\poem is Safe]
   Typical executions of \poem are safe.
