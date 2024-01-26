@@ -110,7 +110,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
             > \frac{(1 - f)Tq(n - t)}{\ln2}$
     \item $\E[\overline{X}_r] < \frac{f}{1 - f}\frac{1}{\ln2}$
     \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$\label{eq.ex-y-bound}
-    \item $\E[Z_r] = \frac{tqT}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$\label{eq.ex-z-bound}
+    \item $\E[Z_r] = \frac{tqT}{\ln2} < \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{1}{\ln2}  < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$\label{eq.ex-z-bound}
     \item $\E[Z_r] < \E[X_r]$
   \end{enumerate}
 \end{lemma}
@@ -622,7 +622,8 @@ of chains do not fall dangerously close to each other.
   the second from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-y-bound},
   the third from setting $\epsilon = f = \frac{\delta}{6}$
   according to the derivation in~\cite[Chapter 13]{blockchain-foundations},
-  the penultimate from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
+  the penultimate from the bound in \cite[Section 13.2.2]{blockchain-foundations},
+  % bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
   and the last one from typical Definition~\ref{def:typicality} Eq~\ref{eq.typical-z}.
   \Qed
 \end{proof}
