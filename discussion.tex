@@ -1,15 +1,14 @@
 \section{Disscusion}
 Although PoEM is a new consensus mechanism, it is compatible with other
-previously proposed improvements upon PoW. This likely includes GHOST,
-Bitcoin-NG, and Prism. We anticipate that the improvement in confimation delay,
+previously proposed improvements upon PoW. We anticipate that the improvement in confimation delay,
 throughput, and tolerance to orphans will likely be additive to any of these
 existing proposals. 
 
 Interestly, the entropy measurement used by PoEM converges to a physically
 meaningful quantity, specifically the expected number of hashes needed to
 reproduce a chain of equivalent or greater weight.  This provides a unifying
-weighting rule for hierarchical chain constructions such as BlockReduce, HLCR,
-Bitcoin-NG, Prism and fruitchains. All of these constructions suffer from
+weighting rule for hierarchical chain constructions such as HLCR \cite{hlcr},
+Bitcoin-NG \cite{bitcoinng}, Prism \cite{prism} and fruitchains \cite{fruitchains}. All of these constructions suffer from
 needing multiple competing decision metrics, specically both work and time.
 However, with PoEM, we believe that the time dependence can be removed from
 these constructions. 
