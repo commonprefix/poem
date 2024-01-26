@@ -605,11 +605,15 @@ of chains do not fall dangerously close to each other.
   it holds that:
 
   \begin{enumerate}
-    \item $Y(S) > Z(S)$.
+    \item $Z(S) < \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2} \leq (1 - \frac{2 \delta}{3}) f \frac{|S|}{\ln2}$. \label{typ-bound-z}
     \item $Z(S) < (1 + \frac{\delta}{2})\frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}$.
+    \item $Z(S) < Y(S)$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
+
+  \noindent
+  \textbf{\ref{typ-bound-z}.}
   \begin{align*}
     Y(S) &> (1 - \epsilon)\E[Y(S)]\\
          &> (1 - \epsilon) f (1 - f) \frac{|S|}{\ln2}
