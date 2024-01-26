@@ -1,27 +1,43 @@
 \section{Experiment}
 
 \subsection{Setup}
-We simulate an honest party network with 37 nodes and adversary network with 12
-nodes. This sets the adversary hash rate ($\beta$) for the experiments at 24.44.
-PoEM experiments use a bias of 14.6. Our simulations measure the confirmation
-delay(d) under different block rates(g) for both PoEM and bitcoin. For each
-experiment g value is fixed and is run as a monte carlo simulation with 100
-runs. For each run the winner at each round is calculated by looking at which
-party reached the round the fastest from the start of the experiment. After
-after 100 runs, wins for the honest party is added up for each run and the f is
-calculated by picking the expected number of blocks for which the probability of
-honest parties winning crosses 90\%. Confirmation delay(d) is calculated by
-dividing the f by g for each experiment. Fig1 shows the evolution of d for
-different values of g. Best operating conditions for a protocol is the point of
-least confirmation delay. Bitcoin achieved the lowest delay of 11.16 for g=0.98
-and for PoEM achieved lowest delay of 10.58 for g=1.29. This shows that PoEM can
-be run 31.6\% faster rate and still achieve a lower d.
 
-We also ran simulation of PoEM with different bias values at the best operating
-point of Bitcoin at g=0.98. Fig2 shows the confirmation delay for different
-values of g. It can be seen that PoEM can achieve even lower confirmation delays
-for lower values of bias. The best confirmation delay of 7.95 was achieved with
-bias of 10.
+In our study, we constructed a simulation framework consisting of two networks:
+an honest party network comprising 37 nodes and an adversarial network with 12
+nodes. The honest party had an artificial network delay of 100ms and
+expected block production time was set to 1 second. Adversaries network delay
+was only the inherent delay in communication between virtual machines and was
+<5 ms. This configuration establishes the adversary's hash rate, denoted as
+$\beta$, at 24.44 for our experiments. PoEM experiments were run utilizing a
+bias factor of 14.6. Our primary objective is to measure the confirmation delay
+(denoted as $d$) under varying block rates ($g$) for both PoEM and Bitcoin
+protocols.
+
+For each experimental setup, we fixed the value of gg and conducted a Monte
+Carlo simulation comprising 100 iterations. In each iteration, we determined
+the winner of each round by identifying which party reached that round quickest
+from the experiment's onset. Upon completing 100 iterations, we aggregated the
+victories of the honest party for each run. We then calculated the frequency
+($f$) at which the probability of the honest parties' victory surpasses 90\%.
+The confirmation delay ($d$) for each experiment was obtained by dividing $f$
+by $g$.
+
+Figure 1 illustrates the evolution of $d$ across different $g$ values. We
+identified the best operating conditions for a protocol as the point where the
+confirmation delay is minimized. In our simulations, Bitcoin achieved its
+lowest delay of 11.16 at a block rate of $g=0.98$. Conversely, PoEM reached its
+minimal delay of 10.58 at a higher block rate of $g=1.29$, indicating that PoEM
+can operate at a 31.6\% faster rate while still attaining a lower confirmation
+delay compared to Bitcoin.
+
+Further, we extended our simulation to examine PoEM's performance with varied
+bias values, specifically at Bitcoin's optimal operating point of $g=0.98$.
+Figure 2 presents the confirmation delays corresponding to different bias
+values. These results demonstrate that PoEM can achieve even lower confirmation
+delays with optimized $\gamma$ values. Notably, the optimal confirmation delay
+of 7.95 was observed at a bias setting of 10. However, the optimization of
+$\gamma$ for all values of $g$ is a non-trivial task, and we leave this to
+future work.
 
 \begin{figure}
     \centering
@@ -37,7 +53,7 @@ bias of 10.
     \includegraphics[width = \textwidth]{figures/gamma.pdf}
     \label{fig:right}
     \end{subfigure}
-    \caption{description}
+    \caption{Confirmation delay from simulations of PoEM and Bitcoin for various values of $g$ a) Confirmation delay $\Delta$ vs. the block production rate $g$. Note that PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$ b) Confirmation delay ($\Delta$) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g$ which showed the lowest confirmation delay in Bitcoin to elucidate the optimized performance of PoEM. PoEM achieved confirmation 28.8\% faster than Bitcoin's most optimal performance.}
     \label{fig:gamma}
 \end{figure}
 
