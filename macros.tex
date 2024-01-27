@@ -48,10 +48,10 @@
 \newcommand{\Bern}{\textsf{Bern}}
 
 
-\newcommandx{\myparagraph}[1][1=]{
-\ifoakland
-  \subsubsection*{#1}
-\else
-  \textbf{#1}.
-\fi
-}
+\newcommandx{\myparagraph}[1][1=]{%
+\ifoakland%
+  \textbf{#1.}%
+\else%
+  \textbf{#1}.%
+\fi%
+}%
