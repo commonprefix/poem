@@ -724,7 +724,7 @@ of chains do not fall dangerously close to each other.
 \begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
   For all rounds $r$, and all honest parties $P_1, P_2$, where $P_1$ has $C_1$ and $P_2$ adopts $C_2$ at round $r$
   of a typical PoEM execution, it holds that $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
-  for $k = 2 \lambda f$. \atnote{Change $k$ value}
+  for $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{lemma}
 \begin{proof}
   Consider an execution as in the statement and suppose,
@@ -770,8 +770,7 @@ of chains do not fall dangerously close to each other.
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
   Typical executions of \poem satisfy the Entropic Common Prefix property
-  with $k = 2 \lambda f$.
-  \atnote{Fix $k$}
+  with $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{theorem}
 \begin{proof}
   Consider a typical execution and suppose, towards a contradiction, that Common
@@ -811,9 +810,9 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{theorem}[Entropic Quality] \label{thm:entoropic-quality} \atnote{TODO: Prove}
+\begin{theorem}[Entropic Quality] \label{thm:entoropic-quality}
   Typical executions of \poem satisfy the Entropic Quality property
-  with $\ell = 2 \lambda f$ and
+  with $\ell = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$ and
   $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
 \end{theorem}
 \begin{proof}
@@ -882,8 +881,6 @@ of chains do not fall dangerously close to each other.
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
 \end{conjecture}
 \begin{proof}
-  % $k = \frac{2 \lambda f}{\ln2}$
-  % $\ell = \frac{2 \lambda f}{\ln2}$
   Consider any round $r$.
   Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
   for all honest parties $P$ and all rounds $r' \geq r + u$, it holds that
