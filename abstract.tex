@@ -1,9 +1,13 @@
 \begin{abstract}
   We propose a modification to the proof-of-work fork choice rule.
   Instead of choosing the longest chain, we choose the chain with the most
-  \emph{intrinsic work}. The intrinsic work of a block is the number of
+  \emph{intrinsic work}. The intrinsic work of a block is roughly the number of
   zeroes at the front of its hash. This modification allows us to increase
   the block production rate without sacrificing adversarial resilience,
-  yielding a $2\times$ improvement in confirmation delay.
-  \atnote{Revisit the $2\times$ number when we know it.}
+  yielding a $39.9\%$ improvement in confirmation delay and
+  a $16.3\%$ improvement in throughput as compared to the vanilla
+  Bitcoin proof-of-work fork choice rule. Our modification is at the
+  level of the proof-of-work inequality, and thus can be composed with
+  any other methods to improve latency or throughput that have been
+  proposed throughout the years.
 \end{abstract}
