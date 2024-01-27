@@ -164,12 +164,12 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   The expectation $\E[Z_r] = \frac{tqT}{\ln2}$ follows from the fact that $Z_r$
   is distributed as a sum of $tq$ independent samples distributed as $\Bern(T) \Exp(\ln2)$.
   For the bound, we have
-  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
+  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$ % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$
     % \E[Z(S)] =
     % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
     % \frac{tq|S| T}{\ln2}\,.
   % \end{align*}
-  For the inequalities concerning $\E[Z_r]$, we used the derivation in~\cite{backbone}.
+  using an analysis completely analogous to the one in~\cite{backbone}.
   \dznote{Write this derivation explicitly}
 
   For $\E[Z_r] < \E[X_r]$, we have
