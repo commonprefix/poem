@@ -19,7 +19,7 @@ We now prove the security of PoEM.
   % and \emph{quality concentration parameter} $\mu \in \mathbb{R}^+$ (with $\ell \mu \geq 1$)
   states that for
   all honest parties $P$ and all rounds $r$,
-  the chain $C$ of $P$ at round $r$
+  the chain $C$ that $P$ adopts at round $r$
   has the property that
   for every $0 \leq \alpha < \work(C) - \ell$,
   there is at least one honestly generated block in the chain
@@ -106,10 +106,12 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   The following bounds hold.
   \begin{enumerate}
     \item $\frac{f}{1 - f} > Tq(n - t)$
-    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{(n - t)q}}{\ln2}$
+    \item $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2} = \frac{f}{\ln2}
+            > \frac{(1 - f)Tq(n - t)}{\ln2}$ \label{eq.ex-underbar-x-bound}
     \item $\E[\overline{X}_r] < \frac{f}{1 - f}\frac{1}{\ln2}$
-    \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$
-    \item $\E[Z_r] < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$
+    \item $\E[Y_r] > \frac{(1 - \frac{\delta}{3})f}{\ln2}$\label{eq.ex-y-bound}
+    \item $\E[Z_r] = \frac{tqT}{\ln2} < \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{1}{\ln2}  < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$\label{eq.ex-z-bound}
+    \item $\E[Z_r] < \E[X_r]$
   \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -135,8 +137,10 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   $\E[\underbar{X}_r] = \frac{1 - (1 - T)^{q(n - t)}}{\ln2}$
   follows from fact that
   $\underbar{X}_r \sim \Bern(1 - (1 - T)^{q(n - t)}) \Exp(\ln 2)$.
+  The bound on $\E[\underbar{X}_r]$ follows from the previous
+  bound on $f$.
   The expectation $\E[\overline{X}_r] = \frac{Tq(n - t)}{\ln2} < \frac{f}{1 - f}\frac{1}{\ln2}$
-  follows from the fact that $\overline{X}_r$ is the sum of $(n - t)q$ independent
+  follows from the fact that $\overline{X}_r$ is the sum of $q(n - t)$ independent
   random variables distributed as $\Bern(T)\Exp(\ln2)$ and the above bounds on $f$.
 
   \noindent
@@ -157,12 +161,25 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
 
   \noindent
   \textbf{Bounds for $\E[Z]$.}
-  $\E[Z_r] = \frac{tqT}{\ln2} < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
+  The expectation $\E[Z_r] = \frac{tqT}{\ln2}$ follows from the fact that $Z_r$
+  is distributed as a sum of $tq$ independent samples distributed as $\Bern(T) \Exp(\ln2)$.
+  For the bound, we have
+  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
     % \E[Z(S)] =
     % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
     % \frac{tq|S| T}{\ln2}\,.
   % \end{align*}
   For the inequalities concerning $\E[Z_r]$, we used the derivation in~\cite{backbone}.
+  \dznote{Write this derivation explicitly}
+
+  For $\E[Z_r] < \E[X_r]$, we have
+  $\E[Z_r] < \E[X_r]
+  \Leftarrow \E[Z_r] < \E[\underbar{X}_r]
+  \Leftarrow \frac{tqT}{\ln2} < \frac{(1 - f)Tq(n - t)}{\ln2}
+  \Leftarrow \frac{t}{n - t} < 1 - f
+  \Leftarrow 1 - \delta < 1 - f
+  \Leftarrow f < \delta$, which follows from
+  the secure configuration.
 \end{proof}
 
 \begin{definition}[Causality]
@@ -585,32 +602,64 @@ of chains do not fall dangerously close to each other.
 
 \begin{lemma}[Typical Bounds] \label{lem:typical-bounds}
   In typical PoEM executions, for any set $S$ of at least $\lambda$ consecutive rounds,
-  it holds that $Y(S) > Z(S)$.
+  it holds that:
+
+  \begin{enumerate}
+    \item $Z(S) < \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2} \leq (1 - \frac{2 \delta}{3}) f \frac{|S|}{\ln2}$. \label{eq.typ-bound-z}
+    \item $Z(S) < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}$. \label{eq.typ-bound-z-x}
+    \item $Z(S) < Y(S)$. \label{eq.typ-bound-y-z}
+  \end{enumerate}
 \end{lemma}
 \begin{proof}
+  \textbf{Proposition \ref{eq.typ-bound-z}.}
   \begin{align*}
-    Y(S) &> (1 - \epsilon)\E[Y(S)]\\
-         &> (1 - \epsilon) f (1 - f) \frac{|S|}{\ln2}
-          > \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
-          > \left(1 - \frac{2\delta}{3}\right) f \frac{|S|}{\ln2}\\
-         &> (1 + \epsilon)\E[Z(S)] \geq Z(S)\,.
+    Z(S) &< (1 + \epsilon) \E[Z(S)] = (1 + \epsilon) \E[Z_r] |S| \\
+         &= \E[Z_r] |S| + \epsilon \E[Z_r] |S|\\
+         &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} \\
+         &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2} \\
+         &= \left(\frac{t}{n - t} \cdot \frac{1}{1 - f} + \epsilon \right) f \frac{|S|}{\ln2} \\
+         &\leq \left(1 - \frac{2 \delta}{3}\right) f \frac{|S|}{\ln2}\,.
   \end{align*}
 
-  The first inequality follows from typical Eq.~\ref{eq.typical-y},
-  the second from the bound in Eq.~\ref{eq.ex-y-bound},
-  the third from setting $\epsilon = f = \frac{\delta}{6}$
-  according to the derivation in~\cite[Chapter 13]{blockchain-foundations},
-  the penultimate from the bound in Eq.~\ref{eq.ex-z-bound},
-  and the last one from typical Eq.~\ref{eq.typical-z}.
+  The first relation follows from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-z},
+  the second from the independence of $Z_r$, the fourth from
+  the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
+  the fifth and the last from the bounds in~\cite[Section 13.2.2]{blockchain-foundations}.
+
+  \noindent
+  \textbf{Proposition \ref{eq.typ-bound-z-x}.}
+  \begin{align*}
+    Z(S) &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
+        %  &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \cdot f \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
+        %  &= \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \E[\underbar{X}(S)] + \epsilon f \frac{|S|}{\ln2}\\
+         &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}
+  \end{align*}
+
+  \atnote{Do the math instead of citing backbone.}
+
+  The first relation follows from part~(\ref{eq.typ-bound-z}) of this proof,
+  and the second from the bound in \cite[Lemma 11(c)]{backbone}.
+
+  \noindent
+  \textbf{Proposition \ref{eq.typ-bound-y-z}.}
+  \begin{align*}
+    Y(S) &> (1 - \epsilon)\E[Y(S)]\\
+         &> \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
+          > \left(1 - \frac{2\delta}{3}\right) f \frac{|S|}{\ln2}\\
+         &> Z(S)\,.
+  \end{align*}
+
+  The first inequality follows from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-y},
+  the second from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-y-bound},
+  and the last one from part~(\ref{eq.typ-bound-z}) of this proof.
   \Qed
 \end{proof}
 
 \atnote{Define Chained Work}
 
 \begin{theorem}[Entropic Growth] \label{thm:entropic-growth}
-  \dznote{Simplify $\tau$ and make it an expression of $\delta, f, \epsilon$}
   Typical executions of \poem satisfy the Entropic Growth property
-  with $s = \lambda$ and $\tau = (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}$.
+  with $s = \lambda$ and $\tau = (1 - \epsilon)\frac{f}{\ln2}$.
 \end{theorem}
 \begin{proof}
   Consider a typical \poem execution in which an honest party has a chain $C_1$
@@ -618,8 +667,8 @@ of chains do not fall dangerously close to each other.
   Let $S = \{r_1, \ldots, r_2 - 1\}$. Then $|S| \geq s = \lambda$ and,
   applying Definition~\ref{def:typicality} we obtain $X(S) > (1 - \epsilon)\E[\underline{X}(S)]$.
   By
-  Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
-  Hence, $X(S) > (1 - \epsilon)\frac{1 - (1 - T)^{(n - t)q}}{\ln2}|S|$.
+  Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{f}{\ln2}|S|$.
+  Hence, $X(S) > (1 - \epsilon)\frac{f}{\ln2}|S|$.
   By Lemma~\ref{lem:chain-growth}, $\work(C_2) \geq \work(C_1) + X(S)$, as desired.
   \Qed
 \end{proof}
@@ -675,7 +724,7 @@ of chains do not fall dangerously close to each other.
 \begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
   For all rounds $r$, and all honest parties $P_1, P_2$, where $P_1$ has $C_1$ and $P_2$ adopts $C_2$ at round $r$
   of a typical PoEM execution, it holds that $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
-  for $k = 2 \lambda f$. \atnote{Change $k$ value}
+  for $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{lemma}
 \begin{proof}
   Consider an execution as in the statement and suppose,
@@ -721,8 +770,7 @@ of chains do not fall dangerously close to each other.
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
   Typical executions of \poem satisfy the Entropic Common Prefix property
-  with $k = 2 \lambda f$.
-  \atnote{Fix $k$}
+  with $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{theorem}
 \begin{proof}
   Consider a typical execution and suppose, towards a contradiction, that Common
@@ -762,11 +810,54 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{theorem}[Entropic Quality] \label{thm:entoropic-quality} \atnote{TODO: Prove}
+\begin{theorem}[Entropic Quality] \label{thm:entoropic-quality}
   Typical executions of \poem satisfy the Entropic Quality property
-  with $\ell = 2 \lambda f$ and
+  with $\ell = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$ and
   $\mu = 1 - (1 + \frac{\delta}{2})\frac{t}{n - t} - \frac{\epsilon}{1 - \epsilon}$.
 \end{theorem}
+\begin{proof}
+  Suppose, towards a contradiction, that there is a chain quality violation in a typical
+  \poem execution. Then there is an honest party $P$ who adopts a chain $C_3$
+  at round $r$ for which chain quality is violated.
+  This means there are $u, v$ such that the chain $C_1 = C_3[u{:}v]$
+  has $\work(C_1) \geq \ell$ and quality lower than $\mu$, namely
+  the sum $x$ of works of all honestly generated blocks in $C_1$ is less than
+  $\mu \work(C_1)$.
+  Consider the minimum work chain $C_2 = C_3[{u'}{:}{v'}]$
+  such that $C_1$ is fully included in $C_2$ (i.e., $u' \leq u$ and $v' \geq v$)
+  with the following properties:
+
+  \begin{enumerate}
+    \item $C_3[u']$ was computed by an honest party $P_1$ (this will exist because $C_3[0]$ is the genesis block, which is honestly generated) at some round $r_1$ (letting $r_1 = 0$ if $u' = 0$).
+    \item $C_3[v']$ was the tip of the adopted chain by an honest party $P_2$ at some round $r_2$ (this will exist because $P$ adopts $C_3$).
+  \end{enumerate}
+
+  Let $L = \work(C_2)$ and $S = \{r_1, \ldots, r_2 - 1\}$. Note that, by causality,
+  all the work $L$ was computed in $S$. By the supposition, we have
+  $x < \mu \ell \leq \mu L$.
+
+  We have that $Z(S) \geq L - x$. To see this, observe that, by the minimality of $C_2$, all the blocks
+  with heights $u', \ldots, u$ as well as the blocks with heights $v, \ldots, v'$ were computed by the adversary, and so the only honest work computed within $L$ is $x$.
+
+  Additionally, $L \geq X(S)$. To see this, note that at round $r_1$, party $P_1$ produced $C_3[u']$,
+  and so every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}])$ from round $r_1 + 1$
+  onwards. Therefore, by Lemma~\ref{lem:chain-growth}, at round $r_2$, every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}]) + X(S)$. But we know that $P_2$ adopts a chain
+  of length $\work(C_3[{u'}{:}]) + L$, and so $L \geq X(S)$.
+
+  Therefore,
+  \[
+    Z(S) \geq L - x > (1 - \mu)L \geq (1 - \mu)X(S) \geq ((1 + \frac{\delta}{2})\cdot\frac{t}{n - t} + \frac{\epsilon}{1 - \epsilon})X(S)\,.
+  \]
+
+  The last inequality follows from replacing the value of $\mu$ from the statement.
+
+  By Lemma~\ref{lem:patience}, $|S| > \lambda$ and typical bounds apply. Therefore,
+  $X(S) > (1 - \epsilon)\E[\underline{X}(S)] = (1 - \epsilon)\frac{f}{\ln2}$ and,
+  from this and the previous inequality,
+  $Z(S) \geq (1 + \frac{\delta}{2})\cdot\frac{t}{n - t}X(S) + \epsilon f \frac{|S|}{\ln2}$.
+  However, this contradicts the bound in Lemma~\ref{lem:typical-bounds}.
+  \Qed
+\end{proof}
 
 \begin{conjecture}[\poem is Safe]
   Typical executions of \poem are safe.
@@ -790,8 +881,6 @@ of chains do not fall dangerously close to each other.
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
 \end{conjecture}
 \begin{proof}
-  % $k = \frac{2 \lambda f}{\ln2}$
-  % $\ell = \frac{2 \lambda f}{\ln2}$
   Consider any round $r$.
   Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
   for all honest parties $P$ and all rounds $r' \geq r + u$, it holds that

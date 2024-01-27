@@ -29,11 +29,12 @@ We modify the fork choice rule of Bitcoin to take this information into account.
 We build a protocol which retains the same level of security as Bitcoin, while achieving
 better confirmation latency, because the block production rate can be safely increased.
 We report on our production implementation of a real-world system
-in which we employ this new rule, and show that it achieves a $2\times$ \atnote{fix this number}
-improvement in confirmation latency by measuring the confirmation delay and security
+in which we employ this new rule, and show that it achieves a $39.9\%$
+improvement in confirmation latency
+and a $16.3\%$ improvement in throughput as compared to Bitcoin.
+by measuring the confirmation delay and security
 of an experimental deployment of our system.
-Additionally, we theoretically prove our new protocol is secure and calculate the safe
-bounds within which block production can be increased.
+Additionally, we theoretically prove our new protocol is secure.
 
 \noindent
 \myparagraph[Construction overview]
