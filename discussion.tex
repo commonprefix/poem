@@ -1,0 +1,38 @@
+\section{Disscusion}
+Although PoEM is a new consensus mechanism, it is compatible with other
+previously proposed improvements upon PoW. We anticipate that the improvement in confimation delay,
+throughput, and tolerance to orphans will likely be additive to any of these
+existing proposals. 
+
+Interestly, the entropy measurement used by PoEM converges to a physically
+meaningful quantity, specifically the expected number of hashes needed to
+reproduce a chain of equivalent or greater weight.  This provides a unifying
+weighting rule for hierarchical chain constructions such as HLCR \cite{hlcr},
+Bitcoin-NG \cite{bitcoinng}, Prism \cite{prism} and fruitchains \cite{fruitchains}. All of these constructions suffer from
+needing multiple competing decision metrics, specically both work and time.
+However, with PoEM, we believe that the time dependence can be removed from
+these constructions. 
+
+PoEM not only provides a simple fork choice rule, but is also a fair mechanism
+for weighting entire chains against one another, no matter the complexity of
+the graph construction. 
+
+\section{Future work} Future research on PoEM should extend the current
+security proof non-zero gamma values. While our current understanding suggests
+that a zero gamma represents the least favorable scenario for achieving rapid
+concentration, it has nevertheless been proven secure. Interestingly,
+experimental data indicates that PoEM performs more effectively with non-zero
+gamma values, which appear to have a significant correlation with block
+production rates. Thus, a detailed analysis of gamma optimization across
+various block production scenarios is warranted.
+
+Moreover, the existing security proof for PoEM needs to be expanded to
+accommodate environments with variable difficulty. This expansion should also
+include adaptations for partially synchronous and asynchronous models,
+broadening the scope and applicability of PoEM's security framework.
+
+Lastly, PoEM presents a novel approach to consensus in blockchain networks,
+particularly in hierarchically and partially ordered graph structures. The
+potential of PoEM in these settings is significant, and as such, a thorough
+investigation into its security and liveness within such structures is
+essential. 

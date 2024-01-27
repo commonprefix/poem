@@ -2,7 +2,8 @@
 In the \poem construction, only the fork choice rule
 of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
-of each round, now adopt the chain with the most intrinsic work.
+of each round, now adopt the chain with the most intrinsic work. To simplify the
+analysis, we assume that $\gamma = 0$.
 
 A block is any triplet of the
 form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
