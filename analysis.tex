@@ -611,7 +611,7 @@ of chains do not fall dangerously close to each other.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
-  \textbf{\ref{eq.typ-bound-z}.}
+  \textbf{Proposition \ref{eq.typ-bound-z}.}
   \begin{align*}
     Z(S) &< (1 + \epsilon) \E[Z(S)] = (1 + \epsilon) \E[Z_r] |S| \\
          &= \E[Z_r] |S| + \epsilon \E[Z_r] |S|\\
@@ -627,21 +627,21 @@ of chains do not fall dangerously close to each other.
   the fifth and the last from the bounds in~\cite[Section 13.2.2]{blockchain-foundations}.
 
   \noindent
-  \textbf{\ref{eq.typ-bound-z-x}.}
+  \textbf{Proposition \ref{eq.typ-bound-z-x}.}
   \begin{align*}
     Z(S) &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
-         &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \cdot f \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
-         &= \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \E[\underbar{X}(S)] + \epsilon f \frac{|S|}{\ln2}\\
-         &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} (1 - \epsilon) X(S) + \frac{\epsilon f |S|}{\ln2}
+        %  &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \cdot f \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
+        %  &= \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \E[\underbar{X}(S)] + \epsilon f \frac{|S|}{\ln2}\\
+         &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}
   \end{align*}
 
+  \atnote{Do the math instead of citing backbone.}
+
   The first relation follows from part~(\ref{eq.typ-bound-z}) of this proof,
-  the second from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
-  the third from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-underbar-x-bound},
-  and the last from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-x}.
+  and the second from the bound in \cite[Lemma 11(c)]{backbone}.
 
   \noindent
-  \textbf{\ref{eq.typ-bound-y-z}.}
+  \textbf{Proposition \ref{eq.typ-bound-y-z}.}
   \begin{align*}
     Y(S) &> (1 - \epsilon)\E[Y(S)]\\
          &> \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
