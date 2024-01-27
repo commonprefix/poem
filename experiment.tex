@@ -27,7 +27,7 @@ height, $K^*$, for which the probability of the honest parties' victory
 surpasses 90\%. The chain growth rate, $f$, was found by taking the lifetime of
 the execution and dividing the longest honest chain length with that lifetime.
 The confirmation delay ($d$) for each experiment was obtained by dividing
-$K*$by $f$.
+$K^*$by $f$.
 
 Figure 1 illustrates the evolution of $d$ across different $g$ values. We
 identified the best operating conditions for a protocol as the point where the
@@ -70,9 +70,15 @@ like Bitcoin in terms of both processing speed and transactional capacity.
     \centering
     \caption{d vs bias}
     \includegraphics[width = 0.8\textwidth]{figures/gamma.pdf}
-    \label{fig:right}
+    \label{fig:bias}
     \end{subfigure}
-    \caption{Confirmation delay from simulations of PoEM and Bitcoin for various values of $g$ a) Confirmation delay $\Delta$ vs. the block production rate $g$. Note that PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$ b) Confirmation delay ($\Delta$) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g$ which showed the lowest confirmation delay in Bitcoin to elucidate the optimized performance of PoEM. PoEM achieved confirmation 28.8\% faster than Bitcoin's most optimal performance.}
+    \begin{subfigure}{0.49\textwidth}
+    \centering
+    \caption{f vs g}
+    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
+    \label{fig:fg}
+    \end{subfigure}
+    \caption{Confirmation delay from simulations of PoEM and Bitcoin for various values of $g$ a) Confirmation delay $\Delta$ vs. the block production rate $g$. Note that PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$ b) Confirmation delay ($\Delta$) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g$ which showed the lowest confirmation delay in Bitcoin to elucidate the optimized performance of PoEM. PoEM achieved confirmation 39.9\% faster than Bitcoin's most optimal performance.}
     \label{fig:gamma}
 \end{figure}
 
