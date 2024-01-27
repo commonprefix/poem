@@ -24,23 +24,24 @@ which chain to pick. We posit that this \emph{information}
 produced during the mining process corresponds to \emph{removing entropy} from the
 state space of the system (i.e., during mining, the set of future possible states
 of the execution as a whole shrinks).
-In this paper, Here we formalize the Proof-of-Entropy-Minima (PoEM)~\cite{poem} fork choice rule and develop a security proof.
-PoEM modifies the fork choice rule of Bitcoin to take $w$ into account.
-PoEM retains the same level of security as Bitcoin, while achieving
+In this paper, we introduce \emph{PoEM}.
+We modify the fork choice rule of Bitcoin to take this information into account.
+We build a protocol which retains the same level of security as Bitcoin, while achieving
 better confirmation latency, because the block production rate can be safely increased.
-We theoretically prove our new protocol is secure and calculate the safe
-bounds within which block production can be increased.
-Additionally, we report on our production implementation of a real-world system
-in which we employ this new rule, and show that it achieves a $2\times$ \atnote{fix this number}
-improvement in confirmation latency by measuring the confirmation delay and security
-of an experimental deployment of our system. 
+We report on our production implementation of a real-world system
+in which we employ this new rule, and show that it achieves a $39.9\%$
+improvement in confirmation latency
+and a $16.3\%$ improvement in throughput as compared to Bitcoin.
+by measuring the confirmation delay and security
+of an experimental deployment of our system.
+Additionally, we theoretically prove our new protocol is secure.
 
 \noindent
 \myparagraph[Construction overview]
 The classical Bitcoin protocol uses the longest chain fork choice. Among two different
 chains, the one with the most blocks is chosen as the canonical one. We modify this
-rule as follows: Each block counts for its intrinsic work $\gamma-\lg \frac{H(B)}{T}$,
-where $H(B)$ denotes the hash of the block, $T$ denotes the fixed\footnote{Our
+rule as follows: Each block counts for its intrinsic work $-\frac{\lg H(B)}{T}$,
+where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
 analysis is in the \emph{static population} model in which the difficulty
 and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone}.
 On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
@@ -50,10 +51,10 @@ $T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic w
 of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
 and choose the heaviest based on this rule.
 We perform our analysis in the static population model, and leave the analysis in the variable
-population model for future work.} target, and $\gamma$ is a constant in the fixed difficulty setting, where $0 < \gamma <= \lg(T)$.
-The zeroes at the front of the hash are already guaranteed to be at least $\lg T$, but can be more. 
-When $\gamma = \lg(T)$, intrinsic work raised to the power of two is the expected number of hashes needed to reproduce a block of equivalent weight.
-The chain with the most total intrinsic work is chosen as the canonical chain.
+population model for future work.} target. Intuitively, this corresponds to counting the
+``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
+to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
+it has. The chain with the most total intrinsic work is chosen as the canonical chain.
 
 \begin{figure*}
   \centering
@@ -93,8 +94,7 @@ allows for faster transaction confirmation while retaining the same level of sec
 
 \noindent
 \myparagraph[Related work]
-Bitcoin was first proven secure in the s
-tatic population setting~\cite{backbone},
+Bitcoin was first proven secure in the static population setting~\cite{backbone},
 and later also studied under in the variable population setting~\cite{varbackbone}.
 The idea of using a more nuanced proof-of-work inequality in which some blocks
 are considered heavier than others was first put forth by Andrew Miller~\cite{highway},
@@ -104,12 +104,15 @@ to account for non\-/interactivity~\cite{nipopows}, backwards compatibility~\cit
 onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
 gas consumption~\cite{gasefficient-nipopows},
 bribing resilience~\cite{soft-power},
-and variable populations~\cite{dionyziz}. The concept of making a fork choice rule
-based on Proof-of-Entropy-Minima (PoEM) was first introduced by Kreder et al ~\cite{poem}
-which was inspired due to difficulties in the Hierarchical Longest Chain Rule~\cite{hlcr}.
-Previous modifications to the fork choice rule include the GHOST
-protocol~\cite{ghost}. Alternative mechanisms towards improving the latency and throughput
-of Proof-of-Work blockchains at the consensus layer include parallel chains~\cite{parallel-chains},
-separation of transaction/consensus blocks~\cite{prism}, hybrid approaches between Proof-of-Work and Proof-of-Stake~\cite{byzcoin},
-and the use of microblocks~\cite{bitcoin-ng}. These mechanisms are orthogonal and can be combined with our approach, yielding even
+and variable populations~\cite{dionyziz}.
+We are the first to modify the fork choice rule to take these refinements into
+account. Previous modifications to the fork choice rule include the GHOST
+protocol~\cite{ghost}.
+Alternative mechanisms towards improving the latency and throughput
+of proof-of-work blockchains at the consensus
+layer include parallel chains~\cite{parallel-chains},
+separation of transaction/consensus blocks~\cite{prism},
+hybrid approaches between proof-of-work and proof-of-stake~\cite{byzcoin},
+and the use of microblocks~\cite{bitcoin-ng}. These mechanisms
+are orthogonal and can be combined with our approach, yielding even
 further performance gains.
