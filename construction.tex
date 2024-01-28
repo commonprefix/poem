@@ -2,8 +2,7 @@
 In the \poem construction, only the fork choice rule
 of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
-of each round, now adopt the chain with the most intrinsic work. To simplify the
-analysis, we assume that $\gamma = 0$.
+of each round, now adopt the chain with the most intrinsic work.
 
 A block is any triplet of the
 form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
@@ -28,8 +27,11 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
   The \emph{intrinsic work} of a block hash
   $A$ is denoted as $\work(A) = -\lg A$.
   The \emph{approximate intrinsic work} of a block hash $A$ is denoted
-  $\awork(A) = -\lg A[{:}{\kappa}]$.
+  $\awork(A) = \gamma - \lg A[{:}{\kappa}]$, where $\gamma \in \mathbb{R}^+$
+  is the \emph{bias} parameter of the protocol.
 \end{definition}
+
+To simplify the analysis, we will use set $\gamma = 0$.
 
 In this definition, the full hash value, interpreted as a real number in the interval
 $(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
