@@ -904,7 +904,8 @@ of chains do not fall dangerously close to each other.
   \poem is secure with overwhelming probability.
 \end{corollary}
 \begin{proof}
-  Security follows typicality (Theorem~\ref{thm:typicality}),
-  safety (Theorem~\ref{thm:safety}), and liveness (Theorem~\ref{thm:liveness}).
+  Executions are typical with overwhelming probability (Theorem~\ref{thm:typicality}).
+  Typical executions are safe (Theorem~\ref{thm:safety}), and live (Theorem~\ref{thm:liveness}), from which
+  security follows.
   \Qed
 \end{proof}
