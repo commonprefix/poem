@@ -413,7 +413,7 @@ of chains do not fall dangerously close to each other.
   both hold.
   Observe that the statement of Corollary~\ref{cor:chain-work-approximation}
   holds in this conditioning.
-  From the two lemmas we know that $\Pr[\CLOSE]$ and
+  From the two lemmas we know $\Pr[\CLOSE]$ and
   $\Pr[\lnot \BADRANGE]$ are both overwhelming, therefore
   $\Pr[\CLOSE \land \lnot \BADRANGE]$ is overwhelming.
   Conditioned on this event, we will
@@ -489,7 +489,7 @@ of chains do not fall dangerously close to each other.
   it holds that $\awork(C_1) < \awork(C_2) \rightarrow \work(C_1) < \work(C_2)$.
 \end{corollary}
 \begin{proof}
-  Towards a contradiction, suppose that $\awork(C_1) < \awork(C_2)$, but
+  Suppose towards a contradiction $\awork(C_1) < \awork(C_2)$, but
   $\work(C_1) \geq \work(C_2)$. From Hash Separation, it follows that
   $\awork(C_1) \geq \awork(C_2)$, which is a contradiction.
   \Qed
@@ -769,7 +769,7 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
-  Typical executions of \poem satisfy the Entropic Common Prefix property
+  Typical executions of \poem satisfy Entropic Common Prefix
   with $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{theorem}
 \begin{proof}
