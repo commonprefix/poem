@@ -14,7 +14,7 @@
             \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive}
             \State $C \leftarrow$ maxvalid$(C \cup \bar M)$ \label{alg-backbone.maxvalid} \Comment{Adopt heaviest chain}
             \Let{x}{\textsc{input}()} \Comment{Take all transactions in mempool}
-            \Let{B}{\pow(x, H(C[-1])[{:}{\kappa}])} \Comment{Mine a new block}
+            \Let{B}{\pow(x, \aH(C[-1]))} \Comment{Mine a new block}
             \If{$B \neq \bot$} \Comment{Successful mining}
                 \State $\net.\broadcast(C \concat B)$ \Comment{Broadcast mined chain}
             \Else

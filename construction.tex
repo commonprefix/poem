@@ -1,4 +1,4 @@
-\section{Construction}
+\section{Construction}\label{sec:construction}
 In the \poem construction, only the fork choice rule
 of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
@@ -26,7 +26,7 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 
 \begin{definition}[Block Intrinsic Work]
   The \emph{intrinsic work} of a block hash
-  $A$ is denoted as $\work(A) = -\lg A$.
+  $A$ is denoted as $\work(A) = \gamma - \lg A$.
   The \emph{approximate intrinsic work} of a block hash $A$ is denoted
   $\awork(A) = \gamma - \lg A[{:}{\kappa}]$, where $\gamma \in \mathbb{R}^+$
   is the \emph{bias} parameter of the protocol.
@@ -79,10 +79,11 @@ our time model).
 
 \import{./}{algorithms/algorithm-pow.tex}
 
-At the beginning of each round, the honest party calls $\net.\receive()$ to get all
-the chains from the network (Line~\ref{alg-backbone.receive}).
-It then adopts the ``best'' valid chain seen so far (including the chain
-he already has). By $\Chain[P][][r]$, we denote the chain that was adopted
+The honest party begins each round with a certain value stored in his chain $C$.
+We say that the honest party \emph{has} chain $C$ at this round. The party calls $\net.\receive()$ to get all
+the chains from the network (Line~\ref{alg-backbone.receive}) and chooses the
+``best'' chain among them. We say that the honest party
+\emph{adopts} this chain. By $\Chain[P][][r]$, we denote the chain that was adopted
 by party $P$ at round $r$.
 This comparison for the ``best'' chain is performed by
 function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
@@ -108,12 +109,7 @@ function \validate (Algorithm~\ref{alg.validate}). The \validate function remain
 the original Bitcoin protocol.
 The chains that satisfy the validation rule
 are compared with one another in order to find the chain
-with the most intrinsic work (heaviest chain)\footnote{%
-Note that this choice of chain is different from the heaviest chain rule
-in variable difficulty Bitcoin: Here, we are choosing the chain
-that maximizes the sum of \emph{intrinsic} work, i.e., $-\lg(H(B))$,
-whereas variable difficulty Bitcoin maximizes the sum of
-\emph{nominal} work, i.e., $-\lg(T)$.}.
+with the most intrinsic work (hereforth ``heaviest chain'').
 Finally, in Line~\ref{alg-maxvalid:return}, we return the
 ``best'' chain $C_{\mmax}$.
 

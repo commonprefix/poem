@@ -1,17 +1,17 @@
-\section{Experiments \& Deploment}\label{sec:experiments}
+\section{Experiments \& Deployment}\label{sec:experiments}
 
 \begin{figure}[h]
     \centering
     \begin{subfigure}{0.49\textwidth}
     \centering
     \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
-    \caption{d vs g}
+    \caption{$d$ vs $g$}
     \label{fig:dvsg}
     \end{subfigure}
     \begin{subfigure}{0.49\textwidth}
     \centering
     \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
-    \caption{f vs g}
+    \caption{$f$ vs $g$}
     \label{fig:fg}
     \end{subfigure}
     \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
@@ -22,10 +22,21 @@ In this section, we report on a real-world implementation and deployment of our
 protocol, and experimental measurements illustrating the concrete improvements
 in latency and throughput as compared to vanilla Bitcoin.
 
-\subsection{Real-world Deployment}
+\subsection{Real-world Deployment}\label{sec:deployment}
 
 We have implemented and deployed PoEM in a real-world permissionless peer-to-peer
-setting. The deployment is on a testnet that has been continuously operating for
+setting\footnote{
+    The source code resides in the following anonymized repositories:
+    \begin{enumerate}
+        \item \url{https://anonymous.4open.science/r/go-quai-228B/}
+        \item \url{https://anonymous.4open.science/r/go-quai-3FB2}
+        \item \url{https://anonymous.4open.science/r/go-quai-8610}
+        \item \url{https://anonymous.4open.science/r/go-quai-DCB6}
+        \item \url{https://anonymous.4open.science/r/simulation-0549}
+        \item \url{https://anonymous.4open.science/r/quai-cpu-miner-7065}
+    \end{enumerate}
+}.
+The deployment is on a testnet that has been continuously operating for
 four months. During this period, the network generated over 7.5 million blocks
 with participation from
 more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
@@ -37,7 +48,8 @@ varying between 18 and 790 billion and $\gamma$ varying between 32 and 38.
 
 \subsection{Experimental Methodology}
 
-We ran multiple simulations in order to ascertain the optimal configuration for
+We ran multiple simulations
+in order to ascertain the optimal configuration for
 operating both Bitcoin and PoEM in order to achieve the minimum confirmation delay.
 We simulated an artificial network delay of $\Delta$ (measured in seconds) in the
 communication between the honest parties in order to indirectly control the honest
@@ -50,7 +62,7 @@ In the meantime,
 we kept the mining target $T$ constant throughout the simulations (instead of varying
 the network delay $\Delta$ and keeping $T$ constant, we could have, equivalently, kept
 $\Delta$ constant and varied the target $T$). The target $T$ was not dynamically adjusted
-during the simulation, in order to mimick the static nature corresponding to our theoretical
+during the simulation, in order to mimic the static nature corresponding to our theoretical
 analysis.
 Our goal was to plot the confirmation delay $d$ (in seconds) as a function of the
 block production rate $g$ for both systems.
@@ -79,7 +91,7 @@ broadcast. The adversary's network delay was only the inherent delay in communic
 between virtual machines and was <5 ms. The tests were coordinated using Ansible and the
 machines were given 2 minutes to peer with each other and stabilize at the beginning of
 each test.
-Both Bitcoin and PoEM were run on the same codebase
+Both Bitcoin and PoEM were run on the same codebase,
 with the exception of the appropriate modification to the proof-of-work inequality.
 
 We ran each simulation until one of the honest parties managed to obtain a chain of
@@ -116,7 +128,7 @@ adversary from that $\work$ point onwards. The confirmation delay ($d$) for
 each configuration $g$ was obtained by dividing this $k^*$ by $\frac{f}{\gamma + \frac{1}{\ln2}}$
 to calculate the time needed to get $k^*$ work on average.
 
-\subsection{Experimental Results}
+\subsection{Experimental Results}\label{sec:results}
 
 Figure~\ref{fig:results}(a) illustrates the evolution of $d$ across different $g$ values. We
 identified the best operating conditions for a protocol as the point where the
@@ -133,8 +145,9 @@ comparable (Figure~\ref{fig:results}(b)). However, for a given delay, PoEM can
 safely operate at a higher block production rate $g$ than Bitcoin, yielding an
 operation point with a higher honest chain growth rate $f$. In particular, we
 found that, for example at $d = 25.6\Delta$, Bitcoin gives a chain growth rate
-of $f = 0.43$, whereas PoEM gives a chain growth rate of $f = 0.5$, marking a
-$16.3\%$ improvement in transaction throughput.
+of $f = 0.43$, whereas PoEM, for a close delay of $d = 27.4\Delta$,
+gives a chain growth rate of $f = 0.5$, marking a $16.3\%$ improvement in
+transaction throughput.
 % Specifically, PoEM increases $f$ from 0.43 to 0.5, marking a 16.3\%
 % improvement, for a comparable confirmation delay (Bitcoin($d=25.6$),
 % PoEM($d=27.4$))

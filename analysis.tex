@@ -1,4 +1,4 @@
-\section{Analysis}
+\section{Analysis}\label{sec:analysis}
 
 We now prove the security of PoEM.
 
@@ -56,12 +56,8 @@ If at round $r$ at least one honest party finds a valid block ($X_r > 0$),
 we say that round $r$ is a \emph{successful round}.
 We let $f = \Pr[X_r > 0] = 1 - (1 - T)^{q(n - t)} \geq q(n - t)T$.
 Solving for $T$ we obtain
-\begin{align*}
-  f &= 1 - (1 - T)^{q(n - t)}\\
-  1 - f &= (1 - T)^{q(n - t)}\\
-  (1 - f)^{\frac{1}{q(n - t)}} &= 1 - T\\
-  T &= 1 - (1 - f)^{\frac{1}{q(n - t)}}\,.
-\end{align*}
+$f = 1 - (1 - T)^{q(n - t)} \Rightarrow 1 - f = (1 - T)^{q(n - t)} \Rightarrow
+(1 - f)^{\frac{1}{q(n - t)}} = 1 - T \Rightarrow T = 1 - (1 - f)^{\frac{1}{q(n - t)}}$.
 
 In our protocol parametrization, we are free to choose how quickly blocks are produced
 by honest parties by adjusting the target $T$ parameter, but only some configurations
@@ -239,8 +235,8 @@ random oracle, evaluated using the $\work(B) \in \mathbb{R}^+$
 function (an ideal quantity
 unobservable by any Turing Machine, as it cannot process real-valued
 inputs), and its $\kappa$-bit \emph{discrete approximation} $\awork(B)$ (observable by
-a Turing Machine by invoking $H(B)[{:}{\kappa}]$). We show that the
-difference between these two quantities is immaterial for polynomially-bound
+a Turing Machine by invoking $H(B)[{:}{\kappa}]$). We show the
+difference between these two quantities is immaterial for polynomially bound
 computations, namely they notably diverge only with negligible probability.
 This connection between real-valued and discrete-valued
 random variables will allow us to conduct our analysis using real-valued
@@ -356,7 +352,7 @@ of chains do not fall dangerously close to each other.
   The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
-  If the $j$-th query does takes place, its $w$ is distributed as $\Exp(\ln2)$,
+  If the $j$-th query does take place, its $w$ is distributed as $\Exp(\ln2)$,
   so for every other chain $C_i$ in the execution for which $w_1 < w_2$ we have
   \begin{align*}
     \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
@@ -372,7 +368,7 @@ of chains do not fall dangerously close to each other.
   the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
   Lemma~\ref{lem:bernoulli}, noting that $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
-  Similarly for the other direction,
+  Similarly, for the other direction,
   \begin{align*}
     \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
     \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
@@ -426,7 +422,7 @@ of chains do not fall dangerously close to each other.
   $\HS_j$ holds. We know that $\HS_0$ always holds by definition.
 
   Now, consider the $j$-th random oracle query and suppose $\HS_{j - 1}$ holds.
-  If the query was unsuccessful, then $\HS_j$ holds and we are done.
+  If the query was unsuccessful, then $\HS_j$ holds, and we are done.
   Otherwise, let $C_1$ be the chain
   that the $j$-th random oracle query extends, let $B$ be the block mined on it,
   let $C'_1 = C_1 B$, and let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1)$
@@ -441,20 +437,17 @@ of chains do not fall dangerously close to each other.
   $\aw_1' > \aw_2$. From this, it follows that $w_1 \geq w_2$ yields $\lnot \FLIP_{C_1,C_2}$.
   Thus, it suffices to only consider the situation where $w_1 < w_2$.
 
-  We distinguish two cases:
-
-  \noindent
   \textbf{Case 1: } $w_1 + w < w_2$.
   From the conditioning on $\lnot \BADRANGE$, we have
   $w_1 + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
   therefore
-  \begin{align*}
-    \aw_1 - \frac{nqL}{2^{\kappa/2}} + w &< w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\\
-    \aw_1 + w &< w_2 - \frac{1}{2^{\kappa/2}}\\
-    \aw_1 + \aw - \frac{1}{2^{\kappa/2}} &< w_2 - \frac{1}{2^{\kappa/2}}\\
-    \aw_1 + \aw &< w_2 \\
-    \aw'_1 &< w_2 \leq \aw_2\,.
-  \end{align*}
+  $
+    \aw_1 - \frac{nqL}{2^{\kappa/2}} + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\Rightarrow
+    \aw_1 + w < w_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
+    \aw_1 + \aw - \frac{1}{2^{\kappa/2}} < w_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
+    \aw_1 + \aw < w_2 \Rightarrow
+    \aw'_1 < w_2 \leq \aw_2
+  $.
   The first inequality is obtained from the conditioning on $\CLOSE$,
   noting that $\aw_1 - \frac{nqL}{2^{\kappa/2}} < w_1$ follows from
   $\aw_1 - w_1 < Lqn 2^{-\kappa/2}$ (Corollary~\ref{cor:chain-work-approximation}).
@@ -463,17 +456,12 @@ of chains do not fall dangerously close to each other.
   $\aw - w < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
   It follows that $\lnot \FLIP_{C_1,C_2}$.
 
-  \noindent
   \textbf{Case 2: } $w_1 + w > w_2$.
   From the conditioning on $\lnot \BADRANGE$, we have
   $w_1 + w > w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} > w_2 + \frac{nqL}{2^{\kappa/2}}$,
   therefore
-  \begin{align*}
-    w_1 + w &> \aw_2 - \frac{nqL}{2^{\kappa/2}} + \frac{nqL}{2^{\kappa/2}}\\
-    w_1 + w &> \aw_2\\
-    \aw_1 + \aw &> \aw_2 \\
-    \aw'_1 &> \aw_2\,.
-  \end{align*}
+  $w_1 + w > \aw_2 - \frac{nqL}{2^{\kappa/2}} + \frac{nqL}{2^{\kappa/2}} \Rightarrow w_1 + w > \aw_2 \Rightarrow
+    \aw_1 + \aw > \aw_2 \Rightarrow \aw'_1 > \aw_2$.
   Again, it follows that $\lnot \FLIP_{C_1,C_2}$.
 
   From this and $\HS_{j-1}$ it follows that $\HS_j$ holds.
@@ -523,7 +511,7 @@ of chains do not fall dangerously close to each other.
   we obtain that typicality Eq.~\ref{eq.typical-x}, Eq.~\ref{eq.typical-y}
   and Eq.~\ref{eq.typical-z}
   hold with probability $1 - e^{-\Omega(\lambda)+\ln L}$.
-  If typicality points~\ref{item:typicality-x-y} and~\ref{item:typicality-z}
+  If typicality bounds
   hold for all $S$ with $|S| = \lambda$, then they hold for all $S$ with
   $|S| \geq \lambda$.
 
@@ -617,8 +605,8 @@ of chains do not fall dangerously close to each other.
          &= \E[Z_r] |S| + \epsilon \E[Z_r] |S|\\
          &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} \\
          &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2} \\
-         &= \left(\frac{t}{n - t} \cdot \frac{1}{1 - f} + \epsilon \right) f \frac{|S|}{\ln2} \\
-         &\leq \left(1 - \frac{2 \delta}{3}\right) f \frac{|S|}{\ln2}\,.
+         &= \left(\frac{t}{n - t} \cdot \frac{1}{1 - f} + \epsilon \right) f \frac{|S|}{\ln2}
+         \leq \left(1 - \frac{2 \delta}{3}\right) f \frac{|S|}{\ln2}\,.
   \end{align*}
 
   The first relation follows from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-z},
@@ -626,29 +614,22 @@ of chains do not fall dangerously close to each other.
   the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-z-bound},
   the fifth and the last from the bounds in~\cite[Section 13.2.2]{blockchain-foundations}.
 
-  \noindent
   \textbf{Proposition \ref{eq.typ-bound-z-x}.}
-  \begin{align*}
-    Z(S) &< \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
+  $
+    Z(S) < \frac{t}{n - t} \cdot \frac{f}{1 - f} \cdot \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}
         %  &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \cdot f \frac{|S|}{\ln2} + \epsilon f \frac{|S|}{\ln2}\\
         %  &= \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} \E[\underbar{X}(S)] + \epsilon f \frac{|S|}{\ln2}\\
-         &< \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}
-  \end{align*}
-
+         < \left(1 + \frac{\delta}{2}\right) \cdot \frac{t}{n - t} X(S) + \frac{\epsilon f |S|}{\ln2}
+  $.
   \atnote{Do the math instead of citing backbone.}
-
   The first relation follows from part~(\ref{eq.typ-bound-z}) of this proof,
   and the second from the bound in \cite[Lemma 11(c)]{backbone}.
 
-  \noindent
   \textbf{Proposition \ref{eq.typ-bound-y-z}.}
-  \begin{align*}
-    Y(S) &> (1 - \epsilon)\E[Y(S)]\\
-         &> \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
-          > \left(1 - \frac{2\delta}{3}\right) f \frac{|S|}{\ln2}\\
-         &> Z(S)\,.
-  \end{align*}
-
+  $Y(S) > (1 - \epsilon)\E[Y(S)]
+         > \left(1 - \frac{\delta}{3}\right) f \frac{|S|}{\ln2}
+         > \left(1 - \frac{2\delta}{3}\right) f \frac{|S|}{\ln2}
+         > Z(S)$.
   The first inequality follows from Definition~\ref{def:typicality} Eq.~\ref{eq.typical-y},
   the second from the bound in Lemma~\ref{lem:expectation-bounds} Eq.~\ref{eq.ex-y-bound},
   and the last one from part~(\ref{eq.typ-bound-z}) of this proof.
@@ -786,8 +767,8 @@ of chains do not fall dangerously close to each other.
   where $C = C_1$). It holds that $[{:}{-k}] \lhd C_1 \preceq C$
   due to the minimality of $r_2$ (otherwise, the Common Prefix virtue would
   have been broken at $r_2 - 1$ by chains $C_1$ and $C$).
-  Furthermore, $\work(C) \geq \work(C_1)$ due to heaviest chain
-  rule followed by $P_1$. Therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
+  rule followed by $P_1$. Therefore, $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
   By the Common Prefix lemma, we have $[{:}{-k}] \lhd C \preceq C_2$
   (at $r_2$, party $P_1$ has $C$ and party $P_2$ adopts $C_2$).
   By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
@@ -849,7 +830,6 @@ of chains do not fall dangerously close to each other.
   \]
 
   The last inequality follows from replacing the value of $\mu$ from the statement.
-
   By Lemma~\ref{lem:patience}, $|S| > \lambda$ and typical bounds apply. Therefore,
   $X(S) > (1 - \epsilon)\E[\underline{X}(S)] = (1 - \epsilon)\frac{f}{\ln2}$ and,
   from this and the previous inequality,
@@ -858,25 +838,23 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{theorem}[\poem is Safe]
+\begin{theorem}[\poem is Safe]\label{thm:safety}
   Typical executions of \poem are safe.
 \end{theorem}
 \begin{proof}
   Consider any two honest parties $P_1, P_2$ and
   any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
   adopt at rounds $r_1, r_2$ respectively.
-  From Entropic Common Prefix (Theorem~\ref{thm:common-prefix}), it follows that:
-  \begin{itemize}
-    \item if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$.
-    \item if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$.
-  \end{itemize}
+  From Entropic Common Prefix (Theorem~\ref{thm:common-prefix}), it follows that
+  if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$; and
+  if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$.
   In both cases, it follows that $[{:}{-k}] \lhd C_1 \sim [{:}{-k}] \lhd C_2$.
   Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
   \lread is invoked on parties $P_1, P_2$ after rounds $r_1, r_2$ respectively,
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
-\begin{theorem}[\poem is Live]
+\begin{theorem}[\poem is Live]\label{thm:liveness}
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
 \end{theorem}
 \begin{proof}
@@ -900,10 +878,12 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{corollary}[\poem is Secure]
-  Typical executions of \poem are secure.
+\begin{corollary}[\poem is Secure]\label{cor:security}
+  \poem is secure with overwhelming probability.
 \end{corollary}
 \begin{proof}
-  Security follows from safety and liveness.
+  Executions are typical with overwhelming probability (Theorem~\ref{thm:typicality}).
+  Typical executions are safe (Theorem~\ref{thm:safety}), and live (Theorem~\ref{thm:liveness}), from which
+  security follows.
   \Qed
 \end{proof}
