@@ -51,11 +51,13 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
   for all honest parties $P$.
 \end{definition}
 
-\begin{definition}[Secure]
+\begin{definition}[Security]
   A distributed ledger protocol is \emph{secure} if it is
   both safe and live$(u)$.
 \end{definition}
 
+\noindent
+\myparagraph[Bitcoin Backbone]
 We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
 The protocol execution commences in discrete rounds $1, 2, \ldots$, and has a total duration of
 $L$, polynomial in the security parameter $\kappa \in \mathbb{N}$.
@@ -72,6 +74,22 @@ This choice is without loss of generality~\cite[Proposition 18]{backbone}.
 Parties communicate through an unauthenticated network,
 meaning that the adversary can ``spoof''~\cite{douceur2002sybil}
 the source address of any message that is delivered.
+
+\noindent
+\myparagraph[Static difficulty]
+Our analysis is in the \emph{static population} model in which the difficulty
+and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone},
+where each block counts for $1$ unit.
+On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
+\emph{variable population} model~\cite{varbackbone}), and the \emph{heaviest chain} is chosen.
+The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
+$T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic work}
+of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
+and choose the heaviest chain based on this rule: Each block counts for $-\lg\frac{H(B)}{T}$.
+Like Bitcoin, \poem can also be adapted to work in the variable difficulty setting by adjusting
+the difficulty depending on the observed block production rate of the system.
+We perform our analysis in the static population model, and leave the analysis in the variable
+population model for future work.
 
 We work in the following variant of the Random Oracle model~\cite{ro}, in which
 the random oracle returns a \emph{real number} instead of $\kappa$ bits of output.

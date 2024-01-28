@@ -15,7 +15,7 @@ Among such chains, the \emph{heaviest} chain is chosen as the canonical one.
 
 Some blocks $B$ satisfy the proof-of-work inequality better than others.
 Namely, they satisfy not only $H(B) < T$, but also $H(B) < \frac{T}{2^w}$
-for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are ignored when choosing
+for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are counted all the same when choosing
 which chain to pick.
 We posit that the weight of a block is information
 that can be useful to improve the protocol.
@@ -24,6 +24,7 @@ We modify the fork choice rule of Bitcoin to take this information into account.
 We build a protocol which retains the same level of security as Bitcoin, while achieving
 better confirmation latency or transaction throughput, because the number of confirmations
 can be safely reduced, or the block production rate can be safely increased respectively.
+
 We report on our production implementation of a real-world system
 in which we employ this new rule, and show that it achieves a $28.5\%$
 improvement in confirmation latency
@@ -39,20 +40,12 @@ exposition, and may be of independent interest.
 \noindent
 \myparagraph[Construction overview]
 The classical Bitcoin protocol uses the heaviest chain fork choice. Among two different
-chains, the one with the most work is chosen as the canonical one. We modify this
-rule as follows: Each block counts for its intrinsic work $-\lg \frac{H(B)}{T}$,
-where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
-analysis is in the \emph{static population} model in which the difficulty
-and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone}.
-On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
-\emph{variable population} model~\cite{varbackbone}), and the \emph{heaviest chain} is chosen.
-The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
-$T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic work}
-of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
-and choose the heaviest chain based on this rule.
-We perform our analysis in the static population model, and leave the analysis in the variable
-population model for future work.} target. Intuitively, this corresponds to counting the
-``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
+chains, the one with the \emph{most work} is chosen as the canonical one, where the work (or difficulty) of a block
+is defined as $\frac{1}{T}$, with $T$ being the mining target. We modify this
+rule as follows: Each block counts for its \emph{intrinsic} work $-\lg \frac{H(B)}{T}$,
+where $H(B)$ denotes the hash of the block target. Intuitively, this corresponds to counting the
+``number of extra zeroes'' at the front of the actually achieved hash of each block, not just accounting
+for its nominal target. The zeroes at the front of the hash are already guaranteed
 to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
 it has. The chain with the most total intrinsic work is chosen as the canonical chain.
 
@@ -74,9 +67,10 @@ it has. The chain with the most total intrinsic work is chosen as the canonical 
 
 To see the benefits of this rule, first observe that it provides a natural tie-breaking rule:
 If two honest parties observe the same block tree, they will agree on
-the canonical chain, regardless of the order of network message arrival. But the protocol
-really shines when the block production rate is increased to its limits. It is generally desirable
-to increase the block production rate, because it decreases the confirmation latency of transactions.
+the canonical chain, regardless of the order of network message arrival. The \poem protocol
+outperforms Bitcoin when the block production rate is increased. It is generally desirable
+to increase the block production rate, because it corresponds to an increase in the chain growth
+rate, which, in turn, increases the transaction throughput.
 However, when the expected block interarrival time approaches the network delay, multiple honest blocks
 can be produced in short succession without allowing for honest nodes to synchronize their views.
 As a result, multiple honest nodes may produce blocks at the same height, and only one of these will
@@ -90,12 +84,12 @@ parties when they are racing against a private mining attacker, since they can p
 at a faster rate. This intuition generalizes to arbitrary adversaries.
 The small change we introduce in the fork choice rule allows us to safely increase the block production
 rate, as compared to Bitcoin, without sacrificing adversarial resilience. The resulting protocol
-allows for faster transaction confirmation while retaining the same level of security.
+allows for faster transaction confirmation, or better throughput, while retaining the same level of security.
 
 \noindent
 \myparagraph[Related work]
 Bitcoin was first proven secure in the static population setting~\cite{backbone},
-and later also studied under in the variable population setting~\cite{varbackbone}.
+and later also studied in the variable population setting~\cite{varbackbone}.
 The idea of using a more nuanced proof-of-work inequality in which some blocks
 are considered heavier than others was first put forth by Andrew Miller~\cite{highway},
 with the first complete protocol to utilize it being
