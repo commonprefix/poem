@@ -37,7 +37,13 @@ varying between 18 and 790 billion and $\gamma$ varying between 32 and 38.
 
 \subsection{Experimental Methodology}
 
-We ran multiple simulations in order to ascertain the optimal configuration for
+We ran multiple simulations\footnote{
+    The simulation source code can be found
+    at~\cite{poem-simulation-honest, poem-simulation-adversary,
+             bitcoin-simulation-honest, bitcoin-simulation-adversary,
+             shell-script-simulation, miner-code}.
+}
+in order to ascertain the optimal configuration for
 operating both Bitcoin and PoEM in order to achieve the minimum confirmation delay.
 We simulated an artificial network delay of $\Delta$ (measured in seconds) in the
 communication between the honest parties in order to indirectly control the honest
