@@ -164,12 +164,12 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   The expectation $\E[Z_r] = \frac{tqT}{\ln2}$ follows from the fact that $Z_r$
   is distributed as a sum of $tq$ independent samples distributed as $\Bern(T) \Exp(\ln2)$.
   For the bound, we have
-  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$. % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$.
+  $\E[Z_r] < \frac{t}{n - t}\frac{f}{1 - f}\frac{1}{\ln2} < \left(1 + \frac{\delta}{2}\right)\frac{t}{n - t} \cdot \frac{f}{\ln2}$ % \stepcounter{equation}\tag{\theequation}\label{eq.ex-z-bound}$
     % \E[Z(S)] =
     % \E[\sum_{r \in S} Z_r] = \sum_{r \in S} \E[Z_r] = \sum_{r \in S} \sum_{i = 1}^{t}{ \sum_{j = 1}^{q}{ \E[Z_{r, i, j}] } } = tq|S| \E[A_{r, i, j}] =\\
     % \frac{tq|S| T}{\ln2}\,.
   % \end{align*}
-  For the inequalities concerning $\E[Z_r]$, we used the derivation in~\cite{backbone}.
+  using an analysis completely analogous to the one in~\cite{backbone}.
   \dznote{Write this derivation explicitly}
 
   For $\E[Z_r] < \E[X_r]$, we have
@@ -413,7 +413,7 @@ of chains do not fall dangerously close to each other.
   both hold.
   Observe that the statement of Corollary~\ref{cor:chain-work-approximation}
   holds in this conditioning.
-  From the two lemmas we know that $\Pr[\CLOSE]$ and
+  From the two lemmas we know $\Pr[\CLOSE]$ and
   $\Pr[\lnot \BADRANGE]$ are both overwhelming, therefore
   $\Pr[\CLOSE \land \lnot \BADRANGE]$ is overwhelming.
   Conditioned on this event, we will
@@ -489,7 +489,7 @@ of chains do not fall dangerously close to each other.
   it holds that $\awork(C_1) < \awork(C_2) \rightarrow \work(C_1) < \work(C_2)$.
 \end{corollary}
 \begin{proof}
-  Towards a contradiction, suppose that $\awork(C_1) < \awork(C_2)$, but
+  Suppose towards a contradiction $\awork(C_1) < \awork(C_2)$, but
   $\work(C_1) \geq \work(C_2)$. From Hash Separation, it follows that
   $\awork(C_1) \geq \awork(C_2)$, which is a contradiction.
   \Qed
@@ -514,7 +514,7 @@ of chains do not fall dangerously close to each other.
     \Pr[Z(S) > (1 + \epsilon)\E[Z(S)]] \leq e^{-\Omega(\lambda)} &\,.\\
   \end{align*}
   The $e^{-\Omega(\lambda)}$ bounds are obtained by applying
-  Theorem~\ref{thm:bern-exp} to each of the random variables
+  Lemma~\ref{lem:bern-exp} to each of the random variables
   $\underbar{X}(S), \overline{X}(S), Y(S)$ and $Z(S)$, each
   of which is the sum of $\Theta(\lambda)$ i.i.d. random variables\
   distributed according to $\Bern(p) \times \Exp(\ln2)$ for
@@ -769,7 +769,7 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{theorem}[Entropic Common Prefix] \label{thm:common-prefix}
-  Typical executions of \poem satisfy the Entropic Common Prefix property
+  Typical executions of \poem satisfy Entropic Common Prefix
   with $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{theorem}
 \begin{proof}
@@ -859,9 +859,9 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{conjecture}[\poem is Safe]
+\begin{theorem}[\poem is Safe]
   Typical executions of \poem are safe.
-\end{conjecture}
+\end{theorem}
 \begin{proof}
   Consider any two honest parties $P_1, P_2$ and
   any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
@@ -877,9 +877,9 @@ of chains do not fall dangerously close to each other.
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
-\begin{conjecture}[\poem is Live]
+\begin{theorem}[\poem is Live]
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
-\end{conjecture}
+\end{theorem}
 \begin{proof}
   Consider any round $r$.
   Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that

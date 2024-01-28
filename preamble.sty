@@ -204,17 +204,12 @@
 \fi
 
 \iftwocolumn
+  \theoremstyle{plain}
   \newtheorem{theorem}{Theorem}[section]
-  \newtheorem{corollary}{Corollary}[theorem]
-  \newtheorem{lemma}{Lemma}[theorem]
-  \newtheorem{conjecture}{Conjecture}
-
-  \theoremstyle{remark}
-  \newtheorem*{remark}{Remark}
-
-  \newtheorem*{theorem*}{Theorem}
-  \theoremstyle{definition}
-  \newtheorem{definition}{Definition}[section]
+  \newtheorem{corollary}[theorem]{Corollary}
+  \newtheorem{lemma}[theorem]{Lemma}
+  % \newtheorem{conjecture}{Conjecture}
+  \newtheorem{definition}[theorem]{Definition}
 \fi
 
 \ifccs

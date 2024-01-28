@@ -7,40 +7,40 @@ where $h$ is a pointer to the previous block, $x$ contains a sequence of
 by the miner to satisfy the \emph{proof-of-work} inequality $H(B) < T$, where
 $H$ is a hash function with output in the interval $(0, 1)$
 and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
-inequality is considered a valid block, whereas candidates that do not satisfy
+inequality is considered a \emph{valid block}, whereas candidates that do not satisfy
 the inequality are invalid. Simply put, valid blocks must have
 hashes that begin with a desired number of $0$s.
 These blocks form linked lists known as \emph{chains}.
-Among such chains, the \emph{longest}\footnote{The
-longest chain is chosen in the \emph{static population setting}, which is the
-setting in which we work in this paper. In the real deployment of Bitcoin, the
-difficulty is dynamically adjusted, and the \emph{heaviest chain} is chosen (c.f.,
-~\cite{varbackbone}).} chain is chosen as the canonical one.
+Among such chains, the \emph{heaviest} chain is chosen as the canonical one.
 
 Some blocks $B$ satisfy the proof-of-work inequality better than others.
 Namely, they satisfy not only $H(B) < T$, but also $H(B) < \frac{T}{2^w}$
 for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are ignored when choosing
-which chain to pick. We posit that this \emph{information}
-produced during the mining process corresponds to \emph{removing entropy} from the
-state space of the system (i.e., during mining, the set of future possible states
-of the execution as a whole shrinks).
-In this paper, we introduce \emph{PoEM}.
+which chain to pick.
+We posit that the weight of a block is information
+that can be useful to improve the protocol.
+In this paper, we introduce \emph{\poem}.
 We modify the fork choice rule of Bitcoin to take this information into account.
 We build a protocol which retains the same level of security as Bitcoin, while achieving
-better confirmation latency, because the block production rate can be safely increased.
+better confirmation latency or transaction throughput, because the number of confirmations
+can be safely reduced, or the block production rate can be safely increased respectively.
 We report on our production implementation of a real-world system
 in which we employ this new rule, and show that it achieves a $39.9\%$
 improvement in confirmation latency
 and a $16.3\%$ improvement in throughput as compared to Bitcoin.
-by measuring the confirmation delay and security
-of an experimental deployment of our system.
-Additionally, we theoretically prove our new protocol is secure.
+We also theoretically prove our new protocol is secure
+using the Bitcoin Backbone model. Our theoretical analysis introduces
+a new technique, the \emph{real-valued random oracle}, which we prove behaves
+similarly to the usual random oracle. This variant of the
+random oracle allows for the use of an arsenal of theoretical tools from the
+continuous domain (such as continuous distributions), easying the theoretical
+exposition, and may be of independent interest.
 
 \noindent
 \myparagraph[Construction overview]
 The classical Bitcoin protocol uses the longest chain fork choice. Among two different
 chains, the one with the most blocks is chosen as the canonical one. We modify this
-rule as follows: Each block counts for its intrinsic work $-\frac{\lg H(B)}{T}$,
+rule as follows: Each block counts for its intrinsic work $-\lg \frac{H(B)}{T}$,
 where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
 analysis is in the \emph{static population} model in which the difficulty
 and target remain static. In the static model, Bitcoin uses the \emph{longest chain rule}~\cite{backbone}.

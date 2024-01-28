@@ -120,7 +120,7 @@
   \Qed
 \end{proof}
 
-\begin{theorem}[Concentration of $\Bern \times \Exp$]\label{thm:bern-exp}
+\begin{lemma}[Concentration of $\Bern \times \Exp$]\label{lem:bern-exp}
   Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
   all mutually independent,
   with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
@@ -129,7 +129,7 @@
   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$ and
   $\Pr[X < (1 - \epsilon) \E[X]] < e^{-\Omega(n)}$,
   which is negligible in $n$.
-\end{theorem}
+\end{lemma}
 \begin{proof}
   $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
   $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
