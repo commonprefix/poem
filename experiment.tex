@@ -25,7 +25,18 @@ in latency and throughput as compared to vanilla Bitcoin.
 \subsection{Real-world Deployment}
 
 We have implemented and deployed PoEM in a real-world permissionless peer-to-peer
-setting. The deployment is on a testnet that has been continuously operating for
+setting\footnote{
+    The source code resides in the following anonymized repositories:
+    \begin{enumerate}
+        \item \url{https://anonymous.4open.science/r/go-quai-228B/}
+        \item \url{https://anonymous.4open.science/r/go-quai-3FB2}
+        \item \url{https://anonymous.4open.science/r/go-quai-8610}
+        \item \url{https://anonymous.4open.science/r/go-quai-DCB6}
+        \item \url{https://anonymous.4open.science/r/simulation-0549}
+        \item \url{https://anonymous.4open.science/r/quai-cpu-miner-7065}
+    \end{enumerate}
+}.
+The deployment is on a testnet that has been continuously operating for
 four months. During this period, the network generated over 7.5 million blocks
 with participation from
 more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
@@ -37,12 +48,7 @@ varying between 18 and 790 billion and $\gamma$ varying between 32 and 38.
 
 \subsection{Experimental Methodology}
 
-We ran multiple simulations\footnote{
-    The simulation source code can be found
-    at~\cite{poem-simulation-honest, poem-simulation-adversary,
-             bitcoin-simulation-honest, bitcoin-simulation-adversary,
-             shell-script-simulation, miner-code}.
-}
+We ran multiple simulations
 in order to ascertain the optimal configuration for
 operating both Bitcoin and PoEM in order to achieve the minimum confirmation delay.
 We simulated an artificial network delay of $\Delta$ (measured in seconds) in the
