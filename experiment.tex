@@ -14,7 +14,7 @@ honest particpents and 12 nodes were configured as advisersaries.
 Per\cite{eiar} it has been shown the most effective adversarial attack is a
 private mining attack, which the adversarial nodes conducted during this
 investigation. This configuration establishes the adversary's hash rate, denoted
-to $\beta=0.244$ for our experiments. Both Bitcoin and PoEM were run on the same codebase 
+to $\beta=0.244$ for our experiments. Both Bitcoin and PoEM were run on the same codebase
 with the exception of modification to the consensus rule. Our primary objective is to
 measure the confirmation delay (denoted as $d$) under varying block rates ($g$)
 for both PoEM and Bitcoin protocols.
@@ -36,7 +36,7 @@ confirmation delay is minimized. In our simulations, Bitcoin achieved its lowest
 delay of 25.58$\Delta$ at a block rate of $g=0.98$. Conversely, PoEM for the
 same blockrate reached its minimal delay of 18.29$\Delta$ with a
 $\gamma=10$.This means for Bitcoin's best operating condition, the confimation
-delay was 39.9\% higher compared to PoEM for the same block production rate. 
+delay was 39.9\% higher compared to PoEM for the same block production rate.
 
 Further, we extended our simulation to examine PoEM's performance with varied
 bias values, specifically at Bitcoin's optimal operating point of $g=0.98$.
@@ -84,7 +84,7 @@ like Bitcoin in terms of both processing speed and transactional capacity.
     \label{fig:gamma}
 \end{figure}
 
-\subsection{Real-world Deployment} 
+\subsection{Real-world Deployment}
 In addition to
 its success in simulations, PoEM has been effectively tested in a real-world,
 permissionless peer-to-peer setting. During this
@@ -94,7 +94,7 @@ confirmation of over 500 million transactions. This deployment maintained an
 average hash rate exceeding 50GH/s using the ProgPoW hash algorithm. Over the
 network operation more than 51 petahashes total hash queries have been performed.
 Network ran in variable difficulty setting with difficulty varying between 18
-and 790 billion and $\gamma$ varying between 32 and 38. 
+and 790 billion and $\gamma$ varying between 32 and 38.
 
 Remarkably, even at sustained and high orphan rates upto 38\% PoEM maintained
 finalization guarantees with practical confirmation delays. This has not been
