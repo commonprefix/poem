@@ -859,9 +859,9 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{conjecture}[\poem is Safe]
+\begin{theorem}[\poem is Safe]
   Typical executions of \poem are safe.
-\end{conjecture}
+\end{theorem}
 \begin{proof}
   Consider any two honest parties $P_1, P_2$ and
   any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
@@ -877,9 +877,9 @@ of chains do not fall dangerously close to each other.
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
-\begin{conjecture}[\poem is Live]
+\begin{theorem}[\poem is Live]
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
-\end{conjecture}
+\end{theorem}
 \begin{proof}
   Consider any round $r$.
   Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
