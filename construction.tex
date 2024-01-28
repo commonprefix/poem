@@ -4,6 +4,8 @@ of the original Bitcoin protocol is modified.
 Honest parties, instead of adopting the longest chain, at the beginning
 of each round, now adopt the chain with the most intrinsic work.
 
+\import{./}{algorithms/algorithm-honest.tex}
+
 A block is any triplet of the
 form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
 The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
@@ -75,6 +77,8 @@ In every round, each party is executed by the environment using function \execut
 (note that this function is due to the lockstep round-based nature of
 our time model).
 
+\import{./}{algorithms/algorithm-pow.tex}
+
 At the beginning of each round, the honest party calls $\net.\receive()$ to get all
 the chains from the network (Line~\ref{alg-backbone.receive}).
 It then adopts the ``best'' valid chain seen so far (including the chain
@@ -94,8 +98,7 @@ guarantees message delivery from one honest party to all other honest parties.
 This is called \emph{diffuse} in the Backbone series of works.}
 to the network using function $\net.\broadcast()$.
 
-\import{./}{algorithms/algorithm-honest.tex}
-\import{./}{algorithms/algorithm-pow.tex}
+\import{./}{algorithms/algorithm-maxvalid.tex}
 
 We will now analyze the functionality of \maxvalid. The method receives as input
 a set of chains and returns the ``best'' chain based on a validation and
@@ -114,6 +117,8 @@ whereas variable difficulty Bitcoin maximizes the sum of
 Finally, in Line~\ref{alg-maxvalid:return}, we return the
 ``best'' chain $C_{\mmax}$.
 
+\import{./}{algorithms/algorithm-validate.tex}
+
 When the time comes to report the stable chain
 (function $\lread$ in Algorithm~\ref{alg.backbone} Line~\ref{alg-backbone.read}),
 after the function \execute has been called,
@@ -126,10 +131,5 @@ security parameter $\kappa$, and we will calculate its value
 in the analysis section).
 
 This concludes the \poem construction.
-
-\import{./}{algorithms/algorithm-maxvalid.tex}
-\import{./}{algorithms/algorithm-validate.tex}
-
-
 
 %\import{./}{algorithms/algorithm-operators.tex}

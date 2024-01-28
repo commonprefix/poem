@@ -1,5 +1,23 @@
 \section{Experiments \& Deploment}\label{sec:experiments}
 
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
+    \caption{d vs g}
+    \label{fig:dvsg}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
+    \caption{f vs g}
+    \label{fig:fg}
+    \end{subfigure}
+    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
+    \label{fig:results}
+\end{figure}
+
 In this section, we report on a real-world implementation and deployment of our
 protocol, and experimental measurements illustrating the concrete improvements
 in latency and throughput as compared to vanilla Bitcoin.
@@ -120,21 +138,3 @@ $16.3\%$ improvement in transaction throughput.
 % Specifically, PoEM increases $f$ from 0.43 to 0.5, marking a 16.3\%
 % improvement, for a comparable confirmation delay (Bitcoin($d=25.6$),
 % PoEM($d=27.4$))
-
-\begin{figure}
-    \centering
-    \begin{subfigure}{0.49\textwidth}
-    \centering
-    \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
-    \caption{d vs g}
-    \label{fig:dvsg}
-    \end{subfigure}
-    \begin{subfigure}{0.49\textwidth}
-    \centering
-    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
-    \caption{f vs g}
-    \label{fig:fg}
-    \end{subfigure}
-    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
-    \label{fig:results}
-\end{figure}
