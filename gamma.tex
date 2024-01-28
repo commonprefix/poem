@@ -11,6 +11,7 @@ parameter dominates against the $-\lg\frac{H(B)}{T}$ term, and the system behave
 as if each block counts the same amount of work, converging at the limit to the
 longest chain rule.
 
+\iftwocolumn
 \begin{figure}[h]
     \centering
     \includegraphics[width=\columnwidth,keepaspectratio]{figures/gamma.pdf}
@@ -18,3 +19,12 @@ longest chain rule.
     }
     \label{fig:bias}
 \end{figure}
+\else
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8 \columnwidth,keepaspectratio]{figures/gamma.pdf}
+    \caption{Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g = 0.99$ which showed the lowest confirmation delay in Bitcoin.
+    }
+    \label{fig:bias}
+\end{figure}
+\fi

@@ -49,6 +49,7 @@ for its nominal target. The zeroes at the front of the hash are already guarante
 to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
 it has. The chain with the most total intrinsic work is chosen as the canonical chain.
 
+\iftwocolumn
 \begin{figure*}
   \centering
   \includegraphics[width=0.6\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
@@ -64,6 +65,23 @@ it has. The chain with the most total intrinsic work is chosen as the canonical 
            We illustrate the intrinsic work of a block by its size.}
   \label{fig:poem-wasted-work}
 \end{figure*}
+\else
+\begin{figure*}
+  \centering
+  \includegraphics[width=0.8\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
+  \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
+           with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
+           all blocks in one sequence because she does not incur any network delay. The honest parties,
+           due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
+           In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
+           them were abandoned in Bitcoin and did not make it to the canonical longest chain
+           (top-most chain).
+           In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
+           work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
+           We illustrate the intrinsic work of a block by its size.}
+  \label{fig:poem-wasted-work}
+\end{figure*}
+\fi
 
 To see the benefits of this rule, first observe that it provides a natural tie-breaking rule:
 If two honest parties observe the same block tree, they will agree on

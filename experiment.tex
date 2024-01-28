@@ -1,23 +1,5 @@
 \section{Experiments \& Deployment}\label{sec:experiments}
 
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}{0.49\textwidth}
-    \centering
-    \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
-    \caption{$d$ vs $g$}
-    \label{fig:dvsg}
-    \end{subfigure}
-    \begin{subfigure}{0.49\textwidth}
-    \centering
-    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
-    \caption{$f$ vs $g$}
-    \label{fig:fg}
-    \end{subfigure}
-    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
-    \label{fig:results}
-\end{figure}
-
 In this section, we report on a real-world implementation and deployment of our
 protocol, and experimental measurements illustrating the concrete improvements
 in latency and throughput as compared to vanilla Bitcoin.
@@ -94,6 +76,44 @@ each test.
 Both Bitcoin and PoEM were run on the same codebase,
 with the exception of the appropriate modification to the proof-of-work inequality.
 
+\iftwocolumn
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
+    \caption{$d$ vs $g$}
+    \label{fig:dvsg}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
+    \caption{$f$ vs $g$}
+    \label{fig:fg}
+    \end{subfigure}
+    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
+    \label{fig:results}
+\end{figure}
+\else
+\begin{figure}[pt]
+    \centering
+    \begin{subfigure}{0.98\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/dvsg.pdf}
+    \caption{$d$ vs $g$}
+    \label{fig:dvsg}
+    \end{subfigure}
+    \begin{subfigure}{0.98\textwidth}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
+    \caption{$f$ vs $g$}
+    \label{fig:fg}
+    \end{subfigure}
+    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
+    \label{fig:results}
+\end{figure}
+\fi
+
 We ran each simulation until one of the honest parties managed to obtain a chain of
 length $200$ blocks, at which point the simulation was halted and its lifetime $L$
 (in units of $\Delta$) was measured. We recorded $g$ for that simulation as the number
@@ -118,7 +138,7 @@ this $k^*$ by $f$ to calculate the time needed to get $k^*$ blocks on average.
 
 In PoEM's case, at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
 (corresponding to the expected amount of work per valid block),
-namely $\gamma + \frac{1}{\ln2}, 2\left(\gamma + \frac{1}{\ln2}\right), \ldots, 200\left(\gamma + \frac{1}{\ln2}\right)$.
+namely $\gamma + \frac{1}{\ln2}, 2\left(\gamma + \frac{1}{\ln2}\right),\allowbreak\ldots,\allowbreak 200\left(\gamma + \frac{1}{\ln2}\right)$.
 For each of those $\work$ points, we record a flag indicating whether the honest
 parties or the adversary first mined a chain with at least that amount of work.
 Similar to the Bitcoin experiments, we ran $100$ Monte Carlo simulations and
