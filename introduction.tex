@@ -38,8 +38,8 @@ exposition, and may be of independent interest.
 
 \noindent
 \myparagraph[Construction overview]
-The classical Bitcoin protocol uses the longest chain fork choice. Among two different
-chains, the one with the most blocks is chosen as the canonical one. We modify this
+The classical Bitcoin protocol uses the heaviest chain fork choice. Among two different
+chains, the one with the most work is chosen as the canonical one. We modify this
 rule as follows: Each block counts for its intrinsic work $-\lg \frac{H(B)}{T}$,
 where $H(B)$ denotes the hash of the block, and $T$ denotes the fixed\footnote{Our
 analysis is in the \emph{static population} model in which the difficulty
@@ -49,7 +49,7 @@ On the contrary, in the real deployment of Bitcoin, the difficulty is dynamicall
 The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
 $T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic work}
 of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
-and choose the heaviest based on this rule.
+and choose the heaviest chain based on this rule.
 We perform our analysis in the static population model, and leave the analysis in the variable
 population model for future work.} target. Intuitively, this corresponds to counting the
 ``number of extra zeroes'' at the front of the hash of each block. The zeroes at the front of the hash are already guaranteed
