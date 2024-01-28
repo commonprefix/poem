@@ -356,7 +356,7 @@ of chains do not fall dangerously close to each other.
   The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
-  If the $j$-th query does takes place, its $w$ is distributed as $\Exp(\ln2)$,
+  If the $j$-th query does take place, its $w$ is distributed as $\Exp(\ln2)$,
   so for every other chain $C_i$ in the execution for which $w_1 < w_2$ we have
   \begin{align*}
     \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
@@ -372,7 +372,7 @@ of chains do not fall dangerously close to each other.
   the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
   Lemma~\ref{lem:bernoulli}, noting that $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
-  Similarly for the other direction,
+  Similarly, for the other direction,
   \begin{align*}
     \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
     \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
@@ -426,7 +426,7 @@ of chains do not fall dangerously close to each other.
   $\HS_j$ holds. We know that $\HS_0$ always holds by definition.
 
   Now, consider the $j$-th random oracle query and suppose $\HS_{j - 1}$ holds.
-  If the query was unsuccessful, then $\HS_j$ holds and we are done.
+  If the query was unsuccessful, then $\HS_j$ holds, and we are done.
   Otherwise, let $C_1$ be the chain
   that the $j$-th random oracle query extends, let $B$ be the block mined on it,
   let $C'_1 = C_1 B$, and let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1)$
@@ -786,8 +786,8 @@ of chains do not fall dangerously close to each other.
   where $C = C_1$). It holds that $[{:}{-k}] \lhd C_1 \preceq C$
   due to the minimality of $r_2$ (otherwise, the Common Prefix virtue would
   have been broken at $r_2 - 1$ by chains $C_1$ and $C$).
-  Furthermore, $\work(C) \geq \work(C_1)$ due to heaviest chain
-  rule followed by $P_1$. Therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
+  rule followed by $P_1$. Therefore, $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
   By the Common Prefix lemma, we have $[{:}{-k}] \lhd C \preceq C_2$
   (at $r_2$, party $P_1$ has $C$ and party $P_2$ adopts $C_2$).
   By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
