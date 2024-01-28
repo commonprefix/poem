@@ -1,34 +1,88 @@
 \section{Experiments \& Deploment}\label{sec:experiments}
 
-\subsection{Setup}
+In this section, we report on a real-world implementation and deployment of our
+protocol, and experimental measurements illustrating the concrete improvements
+in latency and throughput as compared to vanilla Bitcoin.
 
-Simulations were run on 49 virtual machines in google cloud all co-located in
+\subsection{Real-world Deployment}
+
+We have implemented and deployed PoEM in a real-world permissionless peer-to-peer
+setting. The deployment is on a testnet that has been continuously operating for
+four months. During this period, the network generated over 7.5 million blocks
+with participation from
+more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
+confirmation of over 500 million testnet transactions. This deployment maintained an
+average hash rate exceeding 50GH/s using the ProgPoW~\cite{progpow} hash algorithm.
+The network participants computed more than 51 petahashes in 4 months.
+The network operated in a variable difficulty and bias setting with the difficulty
+varying between 18 and 790 billion and $\gamma$ varying between 32 and 38.
+
+\subsection{Experimental Methodology}
+
+We ran multiple simulations in order to ascertain the optimal configuration for
+operating both Bitcoin and PoEM in order to achieve the minimum confirmation delay.
+We simulated an artificial network delay of $\Delta$ (measured in seconds) in the
+communication between the honest parties in order to indirectly control the honest
+block production rate $g$, measured in blocks per network delay. We define $g$ to
+be the number of valid blocks cumulatively produced by the honest parties in one
+network delay on average, including blocks that were subsequently abandoned
+(following the terminology in~\cite{eiar}). This corresponds to the average number of
+successful honest random oracle queries per network delay.
+In the meantime,
+we kept the mining target $T$ constant throughout the simulations (instead of varying
+the network delay $\Delta$ and keeping $T$ constant, we could have, equivalently, kept
+$\Delta$ constant and varied the target $T$). The target $T$ was not dynamically adjusted
+during the simulation, in order to mimick the static nature corresponding to our theoretical
+analysis.
+Our goal was to plot the confirmation delay $d$ (in seconds) as a function of the
+block production rate $g$ for both systems.
+
+All executions included exactly
+$n = 49$ parties, of which $t = 12$ were adversarial and $n - t = 37$ were honest.
+The adversarial ratio was $\beta = \frac{t}{n} = 0.244$.
+The honest parties ran the honest code of Bitcoin or PoEM respectively.
+We fixed the adversarial strategy to be the private mining attack, which was
+proven~\cite{eiar} to be the best possible attack against Bitcoin in the
+continuous-time domain~\cite{bitcoin-made-simple}. This means that the network
+began with a genesis block given to all honest and adversarial parties. The adversary
+then mined blocks in private on her own chain, whereas the honest parties mined
+their own blocktree without intervention by the adversary, following the heaviest chain
+rule (in Bitcoin) or the most intrinsic work rule (in PoEM) respectively. To emulate the puppetmaster
+nature of the adversary, we imposed no artificial network delay for the adversary.
+On the contrary, every honest message was artificially delayed by exactly the maximum
+delay bound $\Delta$.
+
+Simulations were run on 49 virtual machines in Google Cloud all co-located in
 the same data center. The configuration of the nodes used was 4 CPU cores, 4
-gigabytes of RAM, with a 10 gigabyte SSD running Ubuntu 22.4. The honest party
-had an artificial network delay beetween 100-1000ms. This delay was achieved by
-adding a sleep on every block message broadcast. Adversaries network delay was
-only the inherent delay in communication between virtual machines and was <5 ms.
-The tests were coordinated using ansible and the machines were given 2 minutes
-to peer and stabalize at the beginning of each test. Thirty-seven nodes were
-honest particpents and 12 nodes were configured as advisersaries.
-Per\cite{eiar} it has been shown the most effective adversarial attack is a
-private mining attack, which the adversarial nodes conducted during this
-investigation. This configuration establishes the adversary's hash rate, denoted
-to $\beta=0.244$ for our experiments. Both Bitcoin and PoEM were run on the same codebase
-with the exception of modification to the consensus rule. Our primary objective is to
-measure the confirmation delay (denoted as $d$) under varying block rates ($g$)
-for both PoEM and Bitcoin protocols.
+GB of RAM, with a 10 GB SSD running Ubuntu 22.4. The honest party
+had an artificial network delay between 100-1000ms (to allow for simulating varying
+$g$). This delay was achieved by adding a \texttt{sleep} prior to every block message
+broadcast. The adversary's network delay was only the inherent delay in communication
+between virtual machines and was <5 ms. The tests were coordinated using Ansible and the
+machines were given 2 minutes to peer with each other and stabilize at the beginning of
+each test.
+Both Bitcoin and PoEM were run on the same codebase
+with the exception of the appropriate modification to the proof-of-work inequality.
 
-For each experimental setup, we fixed the value of $g$ and conducted a Monte
-Carlo simulation comprising 100 iterations. In each iteration, we determined
-the winner of each round by identifying which party reached that round quickest
-from the experiment's onset. Upon completing 100 iterations, we aggregated the
-victories of the honest party for each run. We then calculated the block
-height, $K^*$, for which the probability of the honest parties' victory
-surpasses 90\%. The chain growth rate, $f$, was found by taking the lifetime of
-the execution and dividing the longest honest chain length with that lifetime.
+We ran each simulation until one of the honest parties managed to obtain a chain of
+length $200$ blocks, at which point the simulation was halted and its lifetime $L$
+(in seconds) was measured. At every block height
+$1, \ldots, 200$ that appeared in the simulation, we recorded a flag indicating whether
+the honest parties or the adversary was ahead. For each configuration of $g$, we
+repeated the simulation $100$ times in a Monte Carlo fashion, and chose the value
+$k^*$ to be the block height such that at least $90\%$ of the Monte Carlo simulations
+indicated that the honest parties were ahead of the adversary from height $k^*$
+onwards. This corresponds to accepting a probability of Common Prefix failure of
+up to $10\%$.
+We calculated the average honest chain growth rate $f$ as $f = L / 200$
+(noting that $f \leq g$ and $0 \leq f \leq 1$, roughly following the terminology
+of the Analysis section, and observing that, due to the heaviest chain rule,
+the chain can grow no more than $1$ block per network delay when the honest
+parties are operating alone).
 The confirmation delay ($d$) for each experiment was obtained by dividing
-$K^*$by $f$.
+$k^*$ by $f$ to calculate the time needed to get $k^*$ blocks on average.
+
+\subsection{Experimental Results}
 
 Figure 1 illustrates the evolution of $d$ across different $g$ values. We
 identified the best operating conditions for a protocol as the point where the
@@ -83,22 +137,3 @@ like Bitcoin in terms of both processing speed and transactional capacity.
     \caption{Confirmation delay from simulations of PoEM and Bitcoin for various values of $g$ a) Confirmation delay $\Delta$ vs. the block production rate $g$. Note that PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$ b) Confirmation delay ($\Delta$) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g$ which showed the lowest confirmation delay in Bitcoin to elucidate the optimized performance of PoEM. PoEM achieved confirmation 39.9\% faster than Bitcoin's most optimal performance.}
     \label{fig:gamma}
 \end{figure}
-
-\subsection{Real-world Deployment}
-In addition to
-its success in simulations, PoEM has been effectively tested in a real-world,
-permissionless peer-to-peer setting. During this
-period, the network generated over 7.5 million blocks with participation from
-more than 2000 miners/node operators. Moreover, PoEM has facilitated the
-confirmation of over 500 million transactions. This deployment maintained an
-average hash rate exceeding 50GH/s using the ProgPoW hash algorithm. Over the
-network operation more than 51 petahashes total hash queries have been performed.
-Network ran in variable difficulty setting with difficulty varying between 18
-and 790 billion and $\gamma$ varying between 32 and 38.
-
-Remarkably, even at sustained and high orphan rates upto 38\% PoEM maintained
-finalization guarantees with practical confirmation delays. This has not been
-achieved by a real world permissionless, work-based consensus blockchains under
-such conditions. This real-world performance not only validates PoEM's efficacy
-but also highlights its potential as a robust and scalable blockchain consensus
-mechanism.
