@@ -17,8 +17,7 @@ A \emph{chain} $C$ is a sequence of blocks. The chains considered by honest
 parties begin with a designated
 block $G$, the \emph{genesis block}. The genesis block is a constant block
 known to all parties at the beginning of the execution,
-which we consider honest by definition, and we set
-$\work(G) = 1$ (an arbitrary constant).
+which we consider honest by definition.
 
 When a chain $C$ appears in the execution,
 we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
@@ -31,6 +30,7 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
   is the \emph{bias} parameter of the protocol.
 \end{definition}
 
+For genesis, we set $\work(G) = 1$ (an arbitrary constant) by convention.
 To simplify the analysis, we will use set $\gamma = 0$.
 
 In this definition, the full hash value, interpreted as a real number in the interval
