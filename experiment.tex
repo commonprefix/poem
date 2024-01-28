@@ -66,7 +66,11 @@ with the exception of the appropriate modification to the proof-of-work inequali
 
 We ran each simulation until one of the honest parties managed to obtain a chain of
 length $200$ blocks, at which point the simulation was halted and its lifetime $L$
-(in seconds) was measured. At every block height
+(in units of $\Delta$) was measured. We recorded $g$ for that simulation as the number
+of honest blocks produced divided by $L$ to find the average number of honest blocks
+produced per network delay (regardless of whether they were ultimately abandoned or not).
+
+For Bitcoin, at every block height
 $1, \ldots, 200$ that appeared in the simulation, we recorded a flag indicating whether
 the honest parties or the adversary was ahead. For each configuration of $g$, we
 repeated the simulation $100$ times in a Monte Carlo fashion, and chose the value
@@ -79,40 +83,43 @@ We calculated the average honest chain growth rate $f$ as $f = L / 200$
 of the Analysis section, and observing that, due to the heaviest chain rule,
 the chain can grow no more than $1$ block per network delay when the honest
 parties are operating alone).
-The confirmation delay ($d$) for each experiment was obtained by dividing
-$k^*$ by $f$ to calculate the time needed to get $k^*$ blocks on average.
+The confirmation delay ($d$) for each configuration $g$ was obtained by dividing
+this $k^*$ by $f$ to calculate the time needed to get $k^*$ blocks on average.
+
+In PoEM's case, at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
+(corresponding to the expected amount of work per valid block),
+namely $\gamma + \frac{1}{\ln2}, 2\left(\gamma + \frac{1}{\ln2}\right), \ldots, 200\left(\gamma + \frac{1}{\ln2}\right)$.
+For each of those $\work$ points, we record a flag indicating whether the honest
+parties or the adversary first mined a chain with at least that amount of work.
+Similar to the Bitcoin experiments, we ran $100$ Monte Carlo simulations and
+calculated $k^*$ to be the $\work$ point such that at least $90\%$ of the
+Monte Carlo simulations indicated that the honest parties were ahead of the
+adversary from that $\work$ point onwards. The confirmation delay ($d$) for
+each configuration $g$ was obtained by dividing this $k^*$ by $\frac{f}{\gamma + \frac{1}{\ln2}}$
+to calculate the time needed to get $k^*$ work on average.
 
 \subsection{Experimental Results}
 
-Figure 1 illustrates the evolution of $d$ across different $g$ values. We
+Figure~\ref{fig:results}(a) illustrates the evolution of $d$ across different $g$ values. We
 identified the best operating conditions for a protocol as the point where the
 confirmation delay is minimized. In our simulations, Bitcoin achieved its lowest
-delay of 25.58$\Delta$ at a block rate of $g=0.98$. Conversely, PoEM for the
-same blockrate reached its minimal delay of 18.29$\Delta$ with a
-$\gamma=10$.This means for Bitcoin's best operating condition, the confimation
-delay was 39.9\% higher compared to PoEM for the same block production rate.
+delay of $25.58 \Delta$ at a block rate of $g=0.98$. On the other hand, at the same
+$g$, PoEM reached the minimal delay of $18.29 \Delta$ operating with
+$\gamma=10$. This means for the configuration minimizing the delay of each protocol,
+PoEM had a $\frac{25.58 - 18.29}{25.58} = 28.5\%$ lower confirmation delay as compared to Bitcoin.
 
-Further, we extended our simulation to examine PoEM's performance with varied
-bias values, specifically at Bitcoin's optimal operating point of $g=0.98$.
-Figure 2 presents the confirmation delays corresponding to different bias
-values. These results demonstrate that PoEM can achieve even lower confirmation
-delays with optimized $\gamma$ values. Notably, the optimal confirmation delay
-of 18.29 was observed at a bias setting of 10. However, the optimization of
-$\gamma$ for all values of $g$ is a non-trivial task, and we leave this to
-future work.
-
-In addition to enhancing the confirmation delay, our study reveals that PoEM
-also significantly improves the rate of chain growth, denoted as $f$.
-Specifically, PoEM increases $f$ from 0.43 to 0.5, marking a 16.3\%
-improvement, for a comparable confirmation delay (Bitcoin($d=25.6$),
-PoEM($d=27.4$))
-
-The increased chain growth rate is directly correlated with a higher realized
-throughput for a blockchain system. Thus, PoEM not only demonstrates a
-reduction in confirmation delay but also facilitates a higher transaction
-throughput. This dual advantage positions PoEM as a notably efficient
-blockchain protocol, offering substantial improvements over existing systems
-like Bitcoin in terms of both processing speed and transactional capacity.
+When either system operates at higher block production rate $g$, the honest chain
+grows faster ($f$ also increases), but the confirmation delay $d$ increases as well.
+We found that the relationships between $g$ and $f$ in Bitcoin and PoEM are
+comparable (Figure~\ref{fig:results}(b)). However, for a given delay, PoEM can
+safely operate at a higher block production rate $g$ than Bitcoin, yielding an
+operation point with a higher honest chain growth rate $f$. In particular, we
+found that, for example at $d = 25.6\Delta$, Bitcoin gives a chain growth rate
+of $f = 0.43$, whereas PoEM gives a chain growth rate of $f = 0.5$, marking a
+$16.3\%$ improvement in transaction throughput.
+% Specifically, PoEM increases $f$ from 0.43 to 0.5, marking a 16.3\%
+% improvement, for a comparable confirmation delay (Bitcoin($d=25.6$),
+% PoEM($d=27.4$))
 
 \begin{figure}
     \centering
@@ -124,16 +131,10 @@ like Bitcoin in terms of both processing speed and transactional capacity.
     \end{subfigure}
     \begin{subfigure}{0.49\textwidth}
     \centering
-    \includegraphics[width = 0.8\textwidth]{figures/gamma.pdf}
-    \caption{d vs bias}
-    \label{fig:bias}
-    \end{subfigure}
-    \begin{subfigure}{0.49\textwidth}
-    \centering
     \includegraphics[width = 0.8\textwidth]{figures/fvg.pdf}
     \caption{f vs g}
     \label{fig:fg}
     \end{subfigure}
-    \caption{Confirmation delay from simulations of PoEM and Bitcoin for various values of $g$ a) Confirmation delay $\Delta$ vs. the block production rate $g$. Note that PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$ b) Confirmation delay ($\Delta$) vs. the bias $\gamma$. The bias, $\gamma$ was experimentally optimized for the $g$ which showed the lowest confirmation delay in Bitcoin to elucidate the optimized performance of PoEM. PoEM achieved confirmation 39.9\% faster than Bitcoin's most optimal performance.}
-    \label{fig:gamma}
+    \caption{(a) Confirmation delay $d$ (measured in network delay $\Delta$ units) vs. the block production rate $g$. PoEM typically demonstrates lower confirmation delay for any given value of $g$, and the difference becomes more pronounced at large $g$. (b) The relationship between the honest block production rate $g$ and the honest chain growth rate $f$ for Bitcoin and PoEM.}
+    \label{fig:results}
 \end{figure}
