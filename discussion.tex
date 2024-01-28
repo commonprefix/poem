@@ -6,7 +6,8 @@ Because PoEM changes only the proof-of-work inequality, it can be composed with 
 previously proposed improvements upon PoW to give cumulative benefits.
 Such examples are hierarchical chain constructions like
 Bitcoin-NG~\cite{bitcoinng}, Fruit\-Chains~\cite{fruitchains},
-Prism~\cite{prism}, Parallel Chains~\cite{parallel-chains}, and HLCR~\cite{hlcr}.
+Prism~\cite{prism}, Parallel Chains~\cite{parallel-chains},
+Ledger Combiners~\cite{ledger-combiners} and HLCR~\cite{hlcr}.
 A formal proof of the composability of PoEM with these protocols is left for future work.
 
 \noindent
@@ -48,7 +49,8 @@ operating limits for Bitcoin, and we expect that similar results can be obtained
 We have experimentally demononstrated that consensus is achieved with higher values
 of $g$ when the honest parties play against a private mining adversary. This instills
 confidence, because we know from the work in~\cite{eiar} that this private mining attack
-is indeed the best possible attack against Bitcoin. However, no such result exists for
+is indeed the best possible attack against Bitcoin in the continuous-time domain~\cite{bitcoin-made-simple}.
+However, no such result exists for
 PoEM. Showing that PoEM is secure for high values of $g$ against \emph{any} adversary,
 or that indeed the private mining attack is also the best possible attack against PoEM,
 is left for future work. Such an analysis poses technical challenges because, even though
