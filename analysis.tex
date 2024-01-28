@@ -858,7 +858,7 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{theorem}[\poem is Safe]
+\begin{theorem}[\poem is Safe]\label{thm:safety}
   Typical executions of \poem are safe.
 \end{theorem}
 \begin{proof}
@@ -876,7 +876,7 @@ of chains do not fall dangerously close to each other.
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
-\begin{theorem}[\poem is Live]
+\begin{theorem}[\poem is Live]\label{thm:liveness}
   Typical executions of \poem are live with parameter $u = \max(\ceil*{\frac{\ell + 2k}{(1 - \epsilon) f} \ln2}, s)$.
 \end{theorem}
 \begin{proof}
@@ -901,9 +901,10 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{corollary}[\poem is Secure]
-  Typical executions of \poem are secure.
+  \poem is secure with overwhelming probability.
 \end{corollary}
 \begin{proof}
-  Security follows from safety and liveness.
+  Security follows typicality (Theorem~\ref{thm:typicality}),
+  safety (Theorem~\ref{thm:safety}), and liveness (Theorem~\ref{thm:liveness}).
   \Qed
 \end{proof}
