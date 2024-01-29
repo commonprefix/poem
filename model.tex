@@ -100,11 +100,12 @@ to the machine invoking the oracle. Instead, we allow the querying machine to ch
 bit of the number to obtain.
 
 \begin{definition}[Real-Valued Random Oracle]
-  The \emph{real-valued random oracle} $H$ can be queried with a value $x$ and a bit index $j$.
+  The \emph{real-valued random oracle} $H$ can be queried with an input value $x$
+  and a bit index $j$ and returns the value $H(x)[j]$ as follows.
   When queried with $x$ for the first time,
   it samples a real value $y$ uniformly at random from the continuous interval $(0, 1)$,
   and returns its $j$-th bit from the binary representation of the real number $y$.
-  It then remembers the pair $(x, y)$.
+  It then remembers the pair $(x, y)$. We denote by $H(x)$ this sampled value $y$.
   When queried with $x$ for a subsequent time, it returns the $j$-th bit
   of the stored $y$.
 \end{definition}
