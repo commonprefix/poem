@@ -8,7 +8,8 @@ in latency and throughput as compared to vanilla Bitcoin.
 
 We have implemented and deployed PoEM in a real-world permissionless peer-to-peer
 setting\footnote{
-    The source code resides in the following anonymized repositories:
+    The source code resides in the following \ifanonymous anonymized \fi repositories:
+    \ifanonymous
     \begin{enumerate}
         \item \url{https://anonymous.4open.science/r/go-quai-228B/}
         \item \url{https://anonymous.4open.science/r/go-quai-3FB2}
@@ -17,6 +18,16 @@ setting\footnote{
         \item \url{https://anonymous.4open.science/r/simulation-0549}
         \item \url{https://anonymous.4open.science/r/quai-cpu-miner-7065}
     \end{enumerate}
+    \else
+    \begin{enumerate}
+        \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-honest}
+        \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-adv}
+        \item \url{https://github.com/gameofpointers/go-quai/tree/bitcoin-sim-honest}
+        \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-adv}
+        \item \url{https://github.com/gameofpointers/quai-cpu-miner/tree/sim-miner}
+        \item \url{https://github.com/gameofpointers/simulation}
+    \end{enumerate}
+    \fi
 }.
 The deployment is on a testnet that has been continuously operating for
 four months. During this period, the network generated over 7.5 million blocks
