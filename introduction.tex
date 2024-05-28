@@ -5,7 +5,10 @@ attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
 where $h$ is a pointer to the previous block, $x$ contains a sequence of
 \emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
 by the miner to satisfy the \emph{proof-of-work} inequality $H(B) < T$, where
-$H$ is a hash function with output in the interval $(0, 1)$
+$H$ is a hash function with output in the interval\footnote{The deployed hash function of, e.g., Bitcoin,
+is SHA-256, which outputs a $256$-bit string. The value can be scaled to the interval $(0, 1)$ by
+dividing by $2^{256}$.}
+$(0, 1)$
 and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
 inequality is considered a \emph{valid block}, whereas candidates that do not satisfy
 the inequality are invalid. Simply put, valid blocks must have
@@ -28,7 +31,7 @@ can be safely reduced, or the block production rate can be safely increased resp
 We report on our production implementation of a real-world system
 in which we employ this new rule, and show that it achieves a $28.5\%$
 improvement in confirmation latency
-and a $16.3\%$ improvement in throughput as compared to Bitcoin.
+or a $16.3\%$ improvement in throughput as compared to Bitcoin.
 We also theoretically prove our new protocol is secure
 using the Bitcoin Backbone model. Our theoretical analysis introduces
 a new technique, the \emph{real-valued random oracle}, which we prove behaves
@@ -43,7 +46,7 @@ The classical Bitcoin protocol uses the heaviest chain fork choice. Among two di
 chains, the one with the \emph{most work} is chosen as the canonical one, where the work (or difficulty) of a block
 is defined as $\frac{1}{T}$, with $T$ being the mining target. We modify this
 rule as follows: Each block counts for its \emph{intrinsic} work $-\lg \frac{H(B)}{T}$,
-where $H(B)$ denotes the hash of the block target. Intuitively, this corresponds to counting the
+where $H(B)$ denotes the hash of the block. Intuitively, this corresponds to counting the
 ``number of extra zeroes'' at the front of the actually achieved hash of each block, not just accounting
 for its nominal target. The zeroes at the front of the hash are already guaranteed
 to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
@@ -74,11 +77,11 @@ it has. The chain with the most total intrinsic work is chosen as the canonical 
            all blocks in one sequence because she does not incur any network delay. The honest parties,
            due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
            In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
-           them were abandoned in Bitcoin and did not make it to the canonical longest chain
+           them (shaded) were abandoned in Bitcoin and did not make it to the canonical longest chain
            (top-most chain).
            In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
            work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
-           We illustrate the intrinsic work of a block by its size.}
+           In PoEM (right), we illustrate the intrinsic work of a block by its size.}
   \label{fig:poem-wasted-work}
 \end{figure*}
 \fi
@@ -118,16 +121,23 @@ gas consumption~\cite{gasefficient-nipopows},
 bribing resilience~\cite{soft-power},
 and variable populations~\cite{dionyziz}.
 We are the first to modify the fork choice rule to take these refinements into
-account, following our previous short paper ``POEM: Proof of Entropy Minima''~\cite{poem-short},
+account, following \ifanonymous
+the
+\else
+our
+\fi
+previous short paper ``POEM: Proof of Entropy Minima''~\cite{poem-short},
 where the entropic fork choice rule was defined but not analyzed.
-Previous modifications to the fork choice rule include
-PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, GhostDAG~\cite{ghostdag}, and
-GHOST~\cite{ghost}.
-Alternative mechanisms towards improving the latency and throughput
-of proof-of-work blockchains at the consensus
-layer include parallel chains~\cite{parallel-chains},
-separation of transaction/consensus blocks~\cite{prism},
-hybrid approaches between proof-of-work and proof-of-stake~\cite{byzcoin},
-and the use of microblocks~\cite{bitcoin-ng}. These mechanisms
+Our work only changes the PoW inequality.
+Other mechanisms refining the fork choice rule
 are orthogonal and can be combined with our approach, yielding even
 further performance gains.
+Such examples include
+PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, GhostDAG~\cite{ghostdag}, and
+GHOST~\cite{ghost}.
+Additional mechanisms towards improving the latency and throughput
+of proof-of-work blockchains at the consensus
+layer, also composable with ours, include parallel chains~\cite{parallel-chains},
+separation of transaction/consensus blocks~\cite{prism},
+hybrid approaches between proof-of-work and proof-of-stake~\cite{byzcoin},
+and the use of microblocks~\cite{bitcoin-ng}.

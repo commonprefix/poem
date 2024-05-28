@@ -26,19 +26,19 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 
 \begin{definition}[Block Intrinsic Work]
   The \emph{intrinsic work} of a block hash
-  $A$ is denoted as $\work(A) = \gamma - \lg A$.
+  $A$ is denoted as $\work(A) = \gamma - \lg \frac{A}{T}$.
   The \emph{approximate intrinsic work} of a block hash $A$ is denoted
-  $\awork(A) = \gamma - \lg A[{:}{\kappa}]$, where $\gamma \in \mathbb{R}^+$
+  $\awork(A) = \gamma - \lg \frac{A[{:}{\kappa}]}{T}$, where $\gamma \in \mathbb{R}^+$
   is the \emph{bias} parameter of the protocol.
 \end{definition}
 
 For genesis, we set $\work(G) = 1$ (an arbitrary constant) by convention.
-To simplify the analysis, we will use set $\gamma = 0$.
+To simplify the analysis, we will set $\gamma = 0$.
 
 In this definition, the full hash value, interpreted as a real number in the interval
 $(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
 value. Said differently, for any $A \in (0, 1)$,
-$\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}$.
+$\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa T}$.
 
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain

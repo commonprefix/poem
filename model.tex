@@ -15,6 +15,12 @@ and $\Exp(\lambda)$ the exponential distribution with mean $\frac{1}{\lambda}$.
 We use $\rightarrow$ to mean implication, and $\Rightarrow$ to mean a logical
 deduction step in a proof.
 
+The protocols we are interested in are known in the literature as \emph{distributed ledger protocols}
+(or \emph{logs}, \emph{consensus}, \emph{state machine replication}, or \emph{full atomic commit channels})
+and are operated by a set of mutually untrusted parties among which the majority will be assumed to be honest,
+take as input unordered transactions, and produce as output a safe and live stable \emph{ledger} of transactions (i.e.,
+a sequence of transactions).
+
 \begin{definition}[Distributed Ledger Protocol]
   A \emph{distributed ledger protocol} is an Interactive Turing Machine (ITM)
   which exposes the following methods:
@@ -31,6 +37,11 @@ The distributed ledger protocol is executed by a set of $n$ parties.
 In a distributed ledger protocol execution, the notation
 $\Ledger[P][][r]$ denotes the output of $\lread()$
 invoked on party $P$ at the end of round $r$.
+We will call $\Ledger[P][][r]$ simply the \emph{ledger} of $P$ at $r$,
+implying that it is the \emph{stable ledger} reported by $P$.
+We note that, in our treatment, ledgers are simple sequences of transactions,
+not blocks.
+
 We denote that ledger
 $\Ledger[P_1][][r_1]$ is a prefix of ledger $\Ledger[P_2][][r_2]$,
 using the notation
@@ -59,11 +70,10 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \noindent
 \myparagraph[Bitcoin Backbone]
 We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
-The polynomially bound protocol execution is parametrized by a security parameter $\kappa$ and
-orchestrated by an environment $\mathcal{Z}$ which is similar but distinct
-from Canneti's UC model~\cite{uc}. The execution commences in discrete rounds $1, 2, \ldots$, and has a total duration of
-$L$, polynomial in the security parameter $\kappa \in \mathbb{N}$.
-We assume a synchronous communication network: If an honest party sends a message
+The polynomially bound protocol execution is parametrized by a security parameter $\kappa \in \mathbb{N}$ and
+orchestrated by an environment $\mathcal{Z}$ which is not unlike Canneti's UC model~\cite{uc}. The execution commences in discrete rounds $1, 2, \ldots$, and has a total duration of
+$L$, polynomial in the security parameter $\kappa$.
+We assume a synchronous communication network with a fixed delay of $\Delta = 1$: If an honest party sends a message
 to the network at some round $r$, this message is delivered to all honest parties
 (including itself) at round $r + 1$.
 We also assume a static setting, where the protocol is executed by
@@ -75,7 +85,8 @@ and the last $n - t + 1, \ldots, n$ parties be the corrupted parties, which may 
 This choice is without loss of generality~\cite[Proposition 18]{backbone}.
 Parties communicate through an unauthenticated network,
 meaning that the adversary can ``spoof''~\cite{douceur2002sybil}
-the source address of any message that is delivered.
+the source address of any message that is delivered. The adversary can also send
+different messages to different parties in the same round.
 
 \noindent
 \myparagraph[Static difficulty]
@@ -84,10 +95,12 @@ and target remain static. In the static model, Bitcoin uses the \emph{longest ch
 where each block counts for $1$ unit.
 On the contrary, in the real deployment of Bitcoin, the difficulty is dynamically adjusted (the
 \emph{variable population} model~\cite{varbackbone}), and the \emph{heaviest chain} is chosen.
-The scoring in the variable difficulty model makes each block count for $\frac{1}{T}$, where
-$T$ is the nominal target of the block. In \poem, we count the \emph{intrinsic work}
+The scoring in the variable difficulty model makes each block count for $\frac{1}{T} \in (1, \infty)$, where
+$T \in (0, 1)$ is the nominal target of the block, although $T$ is adjusted from epoch to epoch.
+In \poem, we count the \emph{intrinsic work}
 of each block, which is different from the nominal target $T$ and depends on the value $H(B) < T$,
 and choose the heaviest chain based on this rule: Each block counts for $-\lg\frac{H(B)}{T}$.
+In both Bitcoin and PoEM, block validity is the same: A well-formed block is valid if $H(B) < T$.
 Like Bitcoin, \poem can also be adapted to work in the variable difficulty setting by adjusting
 the difficulty depending on the observed block production rate of the system.
 We perform our analysis in the static population model, and leave the analysis in the variable
@@ -120,4 +133,5 @@ In particular, we will write $\aH(x)$ to denote $H(x)[{:}{\kappa}]$.
 Following the tradition of the Bitcoin Backbone~\cite{backbone} paper,
 during each round, each honest party is allowed to query the random oracle with $q$
 different $x$ values. Similarly, the adversary is allowed to query the random oracle
-with $t q$ different $x$ values.
+with $t q$ different $x$ values. No constraints are imposed on the bit index $j$
+of the query.

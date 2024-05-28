@@ -2,7 +2,20 @@
 
 In this section, we report on a real-world implementation and deployment of our
 protocol, and experimental measurements illustrating the concrete improvements
-in latency and throughput as compared to vanilla Bitcoin.
+in latency and throughput as compared to vanilla Bitcoin. We have deployed:
+
+\begin{enumerate}
+\item a series of simulation experiments, operated in our controlled network
+      environment and in static difficulty, to establish the optimal configuration
+      for PoEM to verify that its performance in throughput and latency
+      compares favourably against Bitcoin (Sections~\ref{sec:methodology}-\ref{sec:results}).
+
+\item a real production-grade testnet, still operating and open to the community
+      for both mining and transaction processing, which employs variable difficulty
+      and is configured with practically realistic parameters (Section~\ref{sec:deployment}).
+\end{enumerate}
+
+We report on the results of both the simulation experiments and the real-world deployment below.
 
 \subsection{Real-world Deployment}\label{sec:deployment}
 
@@ -11,7 +24,7 @@ setting\footnote{
     The source code resides in the following \ifanonymous anonymized \fi repositories:
     \ifanonymous
     \begin{enumerate}
-        \item \url{https://anonymous.4open.science/r/go-quai-228B/}
+        \item \url{https://anonymous.4open.science/r/go-quai-228B}
         \item \url{https://anonymous.4open.science/r/go-quai-3FB2}
         \item \url{https://anonymous.4open.science/r/go-quai-8610}
         \item \url{https://anonymous.4open.science/r/go-quai-DCB6}
@@ -21,7 +34,6 @@ setting\footnote{
     \else
     \begin{enumerate}
         \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-honest}
-        \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-adv}
         \item \url{https://github.com/gameofpointers/go-quai/tree/bitcoin-sim-honest}
         \item \url{https://github.com/gameofpointers/go-quai/tree/poem-sim-adv}
         \item \url{https://github.com/gameofpointers/quai-cpu-miner/tree/sim-miner}
@@ -39,7 +51,7 @@ The network participants computed more than 518 petahashes in 4 months.
 The network operated in a variable difficulty and bias setting with the difficulty ($\frac{2^{256}}{T}$)
 varying between 18 billion and 790 billion and $\gamma$ varying between 32 and 38.
 
-\subsection{Experimental Methodology}
+\subsection{Experimental Methodology}\label{sec:methodology}
 
 We ran multiple simulations
 in order to ascertain the optimal configuration for
@@ -57,8 +69,8 @@ the network delay $\Delta$ and keeping $T$ constant, we could have, equivalently
 $\Delta$ constant and varied the target $T$). The target $T$ was not dynamically adjusted
 during the simulation, in order to mimic the static nature corresponding to our theoretical
 analysis.
-Our goal was to plot the confirmation delay $d$ (in seconds) as a function of the
-block production rate $g$ for both systems.
+Our goal was to plot the confirmation delay $d$ (in units of the network delay $\Delta$)
+as a function of the block production rate $g$ for both systems.
 
 All executions included exactly
 $n = 49$ parties, of which $t = 12$ were adversarial and $n - t = 37$ were honest.
@@ -133,10 +145,10 @@ produced per network delay (regardless of whether they were ultimately abandoned
 
 For Bitcoin, at every block height
 $1, \ldots, 200$ that appeared in the simulation, we recorded a flag indicating whether
-the honest parties or the adversary was ahead. For each configuration of $g$, we
+the first party to mine at this height was honest or adversarial. For each configuration of $g$, we
 repeated the simulation $100$ times in a Monte Carlo fashion, and chose the value
 $k^*$ to be the block height such that at least $90\%$ of the Monte Carlo simulations
-indicated that the honest parties were ahead of the adversary from height $k^*$
+indicated that, within that simulation, the honest parties were ahead of the adversary from height $k^*$
 onwards. This corresponds to accepting a probability of Common Prefix failure of
 up to $10\%$.
 We calculated the average honest chain growth rate $f$ as $f = L / 200$
@@ -145,16 +157,17 @@ of the Analysis section, and observing that, due to the heaviest chain rule,
 the chain can grow no more than $1$ block per network delay when the honest
 parties are operating alone).
 The confirmation delay ($d$) for each configuration $g$ was obtained by dividing
-this $k^*$ by $f$ to calculate the time needed to get $k^*$ blocks on average.
+this $k^*$ by $f$ to calculate the time (in units of network delay $\Delta$)
+needed to get $k^*$ blocks on average.
 
-In PoEM's case, at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
+In PoEM's case, we mark the cummulative chain work at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
 (corresponding to the expected amount of work per valid block),
 namely $\gamma + \frac{1}{\ln2}, 2\left(\gamma + \frac{1}{\ln2}\right),\allowbreak\ldots,\allowbreak 200\left(\gamma + \frac{1}{\ln2}\right)$.
 For each of those $\work$ points, we record a flag indicating whether the honest
 parties or the adversary first mined a chain with at least that amount of work.
 Similar to the Bitcoin experiments, we ran $100$ Monte Carlo simulations and
 calculated $k^*$ to be the $\work$ point such that at least $90\%$ of the
-Monte Carlo simulations indicated that the honest parties were ahead of the
+Monte Carlo simulations indicated that, in this simulation, the honest parties were ahead of the
 adversary from that $\work$ point onwards. The confirmation delay ($d$) for
 each configuration $g$ was obtained by dividing this $k^*$ by $\frac{f}{\gamma + \frac{1}{\ln2}}$
 to calculate the time needed to get $k^*$ work on average.
