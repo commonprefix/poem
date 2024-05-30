@@ -12,13 +12,13 @@
     \If{$C[0] \neq \mathcal{G}$} \label{alg-validate:gen}
       \State\Return$\false$
     \EndIf
-    \Let{\hat{h}}{\aH(C[0])}
+    \Let{\hat{h}}{H(C[0])}
     \For{$B \in C[1{:}]$}
       \Let{(h, x, ctr)}{B}
-      \If{$\aH(B) \geq T \lor h \neq \hat{h}$} \label{alg-validate:pow}
+      \If{$H(B) \geq T \lor h \neq \hat{h}$} \label{alg-validate:pow}
         \State\Return$\false$ \Comment{Invalid \pow or ancestry}
       \EndIf
-      \Let{\hat{h}}{H(B)[{:}{\kappa}]}
+      \Let{\hat{h}}{H(B)}
     \EndFor
     \State\Return$\true$
   \EndFunction

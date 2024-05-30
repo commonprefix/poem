@@ -1,6 +1,78 @@
 \section{Analysis}\label{sec:analysis}
 
 We now prove the security of PoEM.
+We work in the following variant of the Random Oracle model~\cite{ro}, in which
+the random oracle operates as follows internally.
+
+\begin{definition}[Real-Valued Random Oracle]
+  The \emph{real-valued random oracle} $H$ can be queried with an input value $x$
+  and returns the value $y[{:}{\kappa}]$ as follows.
+  When queried with $x$ for the first time,
+  it samples a real value $y$ uniformly at random from the continuous interval $(0, 1)$,
+  and returns its first $\kappa$ bits $H(x) = y[{:}{\kappa}]$.
+  It then remembers the pair $(x, y)$. We denote by $\rH(x)$ this sampled value $y$.
+  When queried with $x$ for a subsequent time, it returns the first $\kappa$ bits $H(x) = y[{:}{\kappa}]$
+  of the stored $y$.
+\end{definition}
+
+We note that this definition is equivalent to the standard Random Oracle model,
+as the real number $y$ is unobservable by any Turing Machine, and the only
+observable quantity is the $\kappa$-bit approximation $y[{:}{\kappa}]$. Despite this,
+in the analysis, we will make use of the real-valued random variable $y = \rH(x)$.
+
+\begin{definition}[Intrinsic Work]
+  We define the \emph{intrinsic work} of a real number $A \in [0, 1)$ as
+  $\work(A) = \gamma - \lg \frac{A[{:}{\kappa}]}{T} = \gamma - \lg \frac{\frac{\lfloor 2^\kappa A \rfloor}{2^\kappa}}{T} \in [\gamma, +\infty]$,
+  where $\gamma \in \mathbb{R}^+$ is the \emph{bias} parameter of the protocol.
+\end{definition}
+
+We note that the above definition is a generalization of Definition~\ref{def:quantized-block-work}
+for $A \in [0, 1)$.
+
+\begin{definition}[Real Intrinsic Work]
+  We define the \emph{real intrinsic work} of a real number $A \in [0, 1)$ as
+  $\rwork(A) = \gamma - \lg \frac{A}{T} \in [\gamma, +\infty]$,
+  where $\gamma \in \mathbb{R}^+$ is the \emph{bias} parameter of the protocol.
+\end{definition}
+
+We observe that, for a block hash $H(x)$,
+the actual protocol uses $\work(H(x))$, which is an approximation
+of $\rwork(\rH(x))$. Because $T \in \{ 0, \frac{1}{2^\kappa}, \frac{2}{2^\kappa}, \ldots, \frac{2^\kappa - 1}{2^\kappa}\}$,
+we have $\work(H(B)) \leftrightarrow \rwork(\rH(B))$.
+We will use the latter value in our analysis.
+Looking ahead, our goal will be to demonstrate that the small discrepancy
+between these two values is immaterial to the protocol's output.
+
+In a similar vein, we define the \emph{real} intrinsic work $\rwork(C)$ of a chain $C$, which
+is approximated by its intrinsic work $\work(C)$:
+
+\begin{definition}[Real Intrinsic Chain Work]
+  We define the \emph{real intrinsic work} of a chain $C$ as
+  $\rwork(C) = \sum_{B \in C}{\rwork(\rH(B))}$.
+\end{definition}
+
+Completely analogously to the chain addressing notation we defined in Section~\ref{sec:construction},
+we define the \emph{real} chain addressing notation $[\alpha] \rlhd C$ as follows.
+
+\noindent
+\myparagraph[Real blockchain addressing]
+Let $[\alpha] \lhd C = C[i]$
+where
+$\rwork(C[{:}{i - 1}]) < \alpha \leq \rwork(C[{:}{i}])$.
+If $\rwork(C) < \alpha$, then $[\alpha] \rlhd C = \bot$.
+If $\alpha < 0$, then $[\alpha] \rlhd C = C[i]$
+where
+$\rwork(C[{i - 1}{:}]) < -\alpha \leq \rwork(C[{i}{:}])$.
+Let $[{\alpha}{:}{\beta}] \rlhd C = C[{i}{:}{j}]$,
+where $i$ is the index of $[\alpha] \rlhd C$
+and $j$ is the index of $[\beta] \rlhd C$ in $C$.
+Let $[{\alpha}{:}] \rlhd C = C[{i}{:}]$,
+and $[{:}\beta] \rlhd C = C[{:}{j}]$,
+where $i$ and $j$ are defined with respect to $\alpha$ and $\beta$
+as above.
+
+The following three chain virtues will be used as intermediate stepping stones
+towards proving the security of the protocol.
 
 \begin{definition}[Entropic Growth]
   The \emph{Entropic Growth} property of
@@ -10,7 +82,7 @@ We now prove the security of PoEM.
   states that for
   all honest parties $P$ and all rounds $r_1 + s \leq r_2$,
   the chains $C_1, C_2$ of $P$ at rounds $r_1, r_2$ respectively
-  satisfy $\work(C_2[{|C_1|}{:}]) \geq s \tau$.
+  satisfy $\rwork(C_2[{|C_1|}{:}]) \geq s \tau$.
 \end{definition}
 
 \begin{definition}[Existential Entropic Quality]
@@ -23,7 +95,7 @@ We now prove the security of PoEM.
   has the property that
   for every $0 \leq \alpha < \work(C) - \ell$,
   there is at least one honestly generated block in the chain
-  $[{\alpha}{:}{\alpha + \ell}] \lhd C$.
+  $[{\alpha}{:}{\alpha + \ell}] \rlhd C$.
 \end{definition}
 
 \begin{definition}[Entropic Common Prefix]
@@ -33,7 +105,7 @@ We now prove the security of PoEM.
   all honest parties $P_1, P_2$
   and all rounds $r_1 \leq r_2$,
   the chains $C_1, C_2$ that $P_1, P_2$ adopt at rounds $r_1, r_2$ respectively
-  satisfy $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$.
+  satisfy $[{:}{-k}] \rlhd C_1 \preccurlyeq C_2$.
 \end{definition}
 
 In the analysis we are going to assume honest majority.
@@ -47,8 +119,8 @@ In the analysis we are going to assume honest majority.
 Consider an execution of the \poem protocol.
 
 We define a random variable $A_{r, i, j}$ as follows.
-If at round $r$, the $j$-th query of (honest or adversarial) party $P_i$ is a valid block $B$,
-then $A_{r, i, j} = \work(H(B))$.
+If at round $r$, the $j$-th query of (honest or adversarial) party $P_i$ is a valid block $B$ (i.e., $H(B) < T$),
+then $A_{r, i, j} = \rwork(\rH(B))$.
 If no valid block is found, $A_{r, i, j} = 0$.
 
 We define $X_{r} = \max_{j=1}^q \max_{i = 1}^{n - t} A_{r, i, j}$.
@@ -87,8 +159,8 @@ We define a random variable $Y_r$ as follows.
 If at round $r$ exactly one honest party obtains a valid block, then $Y_r = X_r$,
 and we call $r$ a \emph{convergence opportunity}. Otherwise, $Y_r = 0$.
 
-We define $Z_{r}$ as the sum of all intrinsic work generated by all adversarial
-party queries during round $r$: $Z_{r} = \sum_{i = n - t + 1}^n \sum_{j = 1}^q A_{r, i, j}$.
+We define $Z_{r}$ as the sum of all real intrinsic work generated by all adversarial
+party queries during round $r$, namely $Z_{r} = \sum_{i = n - t + 1}^n \sum_{j = 1}^q A_{r, i, j}$.
 
 Given a set of rounds $S$, we define
 $X(S) = \sum_{r \in S} X_r$,
@@ -113,7 +185,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
 \begin{proof}
   Observe that $A_{r, i, j}$ can be expressed in the form $A_{r, i, j} = C_{r, i, j} W_{r, i, j}$,
   with independent boolean random variable $C_{r, i, j} \sim \Bern(T)$ indicating whether the query was successful
-  and real random variable $W_{r, i, j} \sim \Exp(\ln2)$ measuring the work of the block found.
+  and real random variable $W_{r, i, j} \sim \Exp(\ln2)$ measuring the real work of the block found.
   Concerning expectations, $\E[W_{r, i, j}] = \frac{1}{\ln2}$, and, furthermore,
   $\E[A_{r, i, j}] = \E[A_{r, i, j} | C_{r, i, j} = 0] \Pr[C_{r, i, j} = 0] +
     \E[A_{r, i, j} | C_{r, i, j} = 1] \Pr[C_{r, i, j} = 1] = \E[A_{r, i, j} | C_{r, i, j} = 1] \Pr[C_{r, i, j} = 1] = \frac{T}{\ln2}$.
@@ -178,6 +250,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   the secure configuration.
 \end{proof}
 
+% TODO: revise based on new "guess" notion in Backbone '24
 \begin{definition}[Causality]
   An execution is \emph{causal} if no block (directly or indirectly) extends
   one which is computed at a later or the same random oracle query.
@@ -213,7 +286,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
     \end{minipage}
 
     \item It is causal.
-    \item It has hash separation.
+    \item It has hash separation. % TODO: this is undefined, but it looks like it's not needed due to the lemma that follows (Hash Seperation proven from causality); if removed, please also remove from Typicality Theorem proof
   \end{itemize}
 \end{definition}
 
@@ -231,101 +304,101 @@ We will now prove that typical executions occur with overwhelming probability.
 Towards this purpose, we will need a couple of auxiliary lemmas.
 
 In the following arguments, we connect the \emph{real valued}
-random oracle, evaluated using the $\work(B) \in \mathbb{R}^+$
+random oracle, evaluated using the $\rwork(\rH(B)) \in \mathbb{R}^+$
 function (an ideal quantity
 unobservable by any Turing Machine, as it cannot process real-valued
-inputs), and its $\kappa$-bit \emph{discrete approximation} $\awork(B)$ (observable by
-a Turing Machine by invoking $H(B)[{:}{\kappa}]$). We show the
+inputs), and its $\kappa$-bit \emph{discrete approximation} $\work(H(B))$ (observable by
+a Turing Machine). We show the
 difference between these two quantities is immaterial for polynomially bound
 computations, namely they notably diverge only with negligible probability.
 This connection between real-valued and discrete-valued
-random variables will allow us to conduct our analysis using real-valued
+random variables will allow us to conduct our analysis using \emph{continuous}
 random variables and, in particular, random variables distributed according to the
-\emph{continuous} exponential distribution. These distributions lend themselves
-to easier tools than conducting a cumbersome analysis in the discrete domain.
+exponential distribution. These distributions lend themselves
+to easier tools than conducting a cumbersome analysis in the discrete domain;
+for instance, the sum of i.i.d. exponentially distributed variables is the gamma
+distribution.
 The following lemmas that translate between the continuous and discrete worlds
 will allow us to later utilize our continuous results in the discrete
 realization of the protocol.
 
 First, we make a few observations about the relationship
-between the real and the approximate work of blocks and chains.
+between the real and the discrete work of blocks and chains.
 Observe that for hash input $A$, we have
-$\aH(A) \leq H(A)$ and for block $B$ we have
-$\awork(B) \geq \work(B)$,
+$H(A) \leq \rH(A)$ and for block $B$ we have
+$\work(H(B)) \geq \rwork(\rH(B))$,
 and for blocks $B_1, B_2$ we have
-$\work(B_1) \geq \work(B_2) \rightarrow \awork(B_1) \geq \awork(B_2)$.
-Additionally, because $T = T[{:}\kappa]$, for any block $B$ it holds
-that $\aH(B) < T \leftrightarrow H(B) < T$.
+$\rwork(\rH(B_1)) \geq \rwork(\rH(B_2)) \rightarrow \work(H(B_1)) \geq \work(H(B_2))$.
 
-Furthermore, taking approximate works preserves
+Furthermore, discretizing real works preserves
 the order of blocks in the following fashion.
 
 \begin{lemma}\label{lemma:awork-rounding}
   For all $A, B \in (0, 1)$, it holds that
-  $\work(A) \geq \work(B) \rightarrow \awork(A) \geq \awork(B)$.
+  $\rwork(A) \geq \rwork(B) \rightarrow \work(A) \geq \work(B)$.
 \end{lemma}
 \begin{proof}
   \begin{align*}
-                &\work(A) \geq \work(B) \Rightarrow -\lg A \geq -\lg B \Rightarrow \lg A \leq \lg B\\
+                &\rwork(A) \geq \rwork(B) \Rightarrow -\lg A \geq -\lg B \Rightarrow \lg A \leq \lg B\\
     \Rightarrow &A \leq B \Rightarrow 2^\kappa A \leq 2^\kappa B \Rightarrow \lfloor 2^\kappa A \rfloor \leq \lfloor 2^\kappa B \rfloor \Rightarrow \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
     \Rightarrow &\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \leq \lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa} \Rightarrow -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa} \geq -\lg \frac{\lfloor 2^\kappa B \rfloor}{2^\kappa}\\
-    \Rightarrow &\awork(A) \geq \awork(B)
+    \Rightarrow &\work(A) \geq \work(B)
   \end{align*}
   \Qed
 \end{proof}
 
 Showing that the order of \emph{chains}
-is preserved under approximate work is a bit more involved,
+is preserved under discretization is a bit more involved,
 and we will work towards it next.
-Towards this, we observe that the approximate work of a block is
+Towards this, we observe that the discrete work of a block is
 close to its real work.
 
 \begin{lemma}[Block Work Approximation]\label{lem:block-work-approximation}
   In a PoEM execution, consider the event $\CLOSE$ that all blocks $B$
-  have $\awork(B) - \work(B) < 2^{-\kappa/2}$.
+  have $\work(B) - \rwork(B) < 2^{-\kappa/2}$.
   The probability $\Pr[\CLOSE]$ is overwhelming in $\kappa$.
 \end{lemma}
 \begin{proof}
   Consider the event $E$ in which for all blocks $B$ it holds that
-  $H(B) > \frac{1}{2^{\kappa/2}}$.
+  $\rH(B) > \frac{1}{2^{\kappa/2}}$.
   Let us calculate the probability of $\lnot E$. For $\lnot E$ to happen,
-  at least one block must have $H(B) \leq \frac{1}{2^{\kappa/2}}$.
-  For any block $B$, it holds that $\Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
-  uniform distribution of $H(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
+  at least one block must have $\rH(B) \leq \frac{1}{2^{\kappa/2}}$.
+  For any block $B$, it holds that $\Pr[\rH(B) \leq \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
+  uniform distribution of $\rH(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
   Since there are at most $nqL$ blocks in the execution, by applying a union bound, we have
-  $\Pr[\lnot E] = \Pr[\exists B: H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \sum_B \Pr[H(B) \leq \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
+  $\Pr[\lnot E] = \Pr[\exists B: \rH(B) \leq \frac{1}{2^{\kappa/2}}] \leq \sum_B \Pr[\rH(B) \leq \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
   which is negligible in $\kappa$,
   so $E$ happens with overwhelming probability.
 
   Consider a block $B$ of the execution, conditioned on the event $E$.
   Then
   \begin{align*}
-        &\awork(B) - \work(B) = -\lg \aH(B) - (-\lg H(B))\\
-       <& -\lg\left(H(B) - \frac{1}{2^\kappa}\right) - (-\lg H(B))\\
+        &\work(B) - \rwork(B) = -\lg H(B) - (-\lg \rH(B))\\
+       <& -\lg\left(\rH(B) - \frac{1}{2^\kappa}\right) - (-\lg \rH(B))\\
     \leq& -\lg\left(\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}\right) - \left(-\lg{\frac{1}{2^{\kappa/2}}}\right)\\
        =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
        =& -\lg{1 - 2^{-\kappa/2}} \leq -\ln{1 - 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
   \end{align*}
 
-  The first inequality stems from the fact that $\aH(B)$ and $H(B)$ must
+  The first inequality stems from the fact that $H(B)$ and $\rH(B)$ must
   differ by less than $\frac{1}{2^\kappa}$. The second inequality stems from
   the fact that the function $-\lg\left(x - \frac{1}{2^\kappa}\right) - (-\lg x)$ is
   decreasing for $x > \frac{1}{2^\kappa}$.
   \Qed
 \end{proof}
 
-The approximate work of a chain is also close to the real work of a chain.
+The discrete work of a chain is also close to the real work of a chain.
 
 \begin{corollary}[Chain Work Approximation]\label{cor:chain-work-approximation}
   In a PoEM execution, the probability that all chains $C$
-  have $\awork(C) - \work(C) < Lqn 2^{-\kappa/2}$
+  have $\work(C) - \rwork(C) < Lqn 2^{-\kappa/2}$
   is overwhelming in $\kappa$.
 \end{corollary}
 \begin{proof}
   Conditioned on the overwhelming event of Lemma~\ref{lem:block-work-approximation}, for all
   chains $C$ it holds that
   \begin{align*}
-     &\awork(C) - \work(C) = \sum_{B \in C}{\awork(B) - \work(B)}\\
+     &\work(C) - \rwork(C) = \sum_{B \in C}{\work(B) - \rwork(B)}\\
     <& \sum_{B \in C}{2^{-\kappa/2}} = |C| 2^{-\kappa/2} \leq Lqn 2^{-\kappa/2}\,.
   \end{align*}
   \Qed
@@ -339,42 +412,42 @@ of chains do not fall dangerously close to each other.
   and total lifetime $L$.
   Consider the $j$-th random oracle query in this execution.
   If the query is successful, let $B$ indicate its produced block, let
-  $w = \work(B), \aw = \awork(B)$, and let $C$ be the
-  chain it extends, let $w_1 = \work(C), \aw_1 = \awork(C)$, and
-  $w_1' = \work(CB), \aw_1' = \awork(CB)$. Consider any other chain $C_i$ that appears in the
-  execution, and let $w_2 = \work(C_i), \aw_2 = \awork(C_i)$.
+  $\rw = \rwork(B), w = \work(B)$, and let $C$ be the
+  chain it extends, let $\rw_1 = \rwork(C), w_1 = \work(C)$, and
+  $\rw_1' = \rwork(CB), w_1' = \work(CB)$. Consider any other chain $C_i$ that appears in the
+  execution, and let $\rw_2 = \rwork(C_i), w_2 = \work(C_i)$.
   Let $\BADRANGE_{j,i}$ denote the event that both
-  $w_1 < w_2$, and, furthermore, either
-  $w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2$ or
-  $w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}$.
+  $\rw_1 < \rw_2$, and, furthermore, either
+  $\rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq \rw_1 + \rw < \rw_2$ or
+  $\rw_2 < \rw_1 + \rw \leq \rw_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}$.
   Let $\BADRANGE$ denote the event that there exists a random oracle query $j$
   and a chain $C_i$ in the execution such that $\BADRANGE_{j,i}$.
   The probability $\Pr[\BADRANGE]$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
-  If the $j$-th query does take place, its $w$ is distributed as $\Exp(\ln2)$,
-  so for every other chain $C_i$ in the execution for which $w_1 < w_2$ we have
+  If the $j$-th query does take place, its $\rw$ is distributed as $\Exp(\ln2)$,
+  so for every other chain $C_i$ in the execution for which $\rw_1 < \rw_2$ we have
   \begin{align*}
-    \Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] = \\
-    \Pr[w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w < w_2 - w_1 | w_1 < w_2] = \\
-    (1 - 2^{-(w_2 - w_1)}) - (1 - 2^{-\left(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)}) = \\
-    2^{-\left(w_2 - w_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)} - 2^{-(w_2 - w_1)} = \\
-    2^{-(w_2 - w_1)} (2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1) \leq
+    \Pr[\rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq \rw_1 + \rw < \rw_2 | \rw_1 < \rw_2] = \\
+    \Pr[\rw_2 - \rw_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq \rw < \rw_2 - \rw_1 | \rw_1 < \rw_2] = \\
+    (1 - 2^{-(\rw_2 - \rw_1)}) - (1 - 2^{-\left(\rw_2 - \rw_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)}) = \\
+    2^{-\left(\rw_2 - \rw_1 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\right)} - 2^{-(\rw_2 - \rw_1)} = \\
+    2^{-(\rw_2 - \rw_1)} (2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1) \leq
     2^{\frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}} - 1 <
     \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
   \end{align*}
 
   The second relation is from the cumulative distribution function of the exponential distribution;
-  the fifth relation is from the conditioning on $w_1 < w_2$, and the last relation is from
+  the fifth relation is from the conditioning on $\rw_1 < \rw_2$, and the last relation is from
   Lemma~\ref{lem:bernoulli}, noting that $0 < \frac{nqL + 1}{2^{\kappa/2}} < 1$.
 
   Similarly, for the other direction,
   \begin{align*}
-    \Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
-    \Pr[w_2 - w_1 < w \leq w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2] = \\
-    (1 - 2^{-\left(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)}) - (1 - 2^{-(w_2 - w_1)}) = \\
-    2^{-(w_2 - w_1)} - 2^{-\left(w_2 - w_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)} = \\
-    2^{-(w_2 - w_1)} (1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}}) \leq
+    \Pr[\rw_2 < \rw_1 + \rw \leq \rw_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | \rw_1 < \rw_2] = \\
+    \Pr[\rw_2 - \rw_1 < \rw \leq \rw_2 - \rw_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | \rw_1 < \rw_2] = \\
+    (1 - 2^{-\left(\rw_2 - \rw_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)}) - (1 - 2^{-(\rw_2 - \rw_1)}) = \\
+    2^{-(\rw_2 - \rw_1)} - 2^{-\left(\rw_2 - \rw_1 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\right)} = \\
+    2^{-(\rw_2 - \rw_1)} (1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}}) \leq
     1 - 2^{-\frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}} <
     \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}}\,.
   \end{align*}
@@ -382,10 +455,10 @@ of chains do not fall dangerously close to each other.
   Consequently,
   \begin{align*}
       &\Pr[\BADRANGE_{j,i}]
-    = \Pr[\BADRANGE_{j,i}|w_1 < w_2]\Pr[w_1 < w_2]\\
-    \leq & \Pr[\BADRANGE_{j,i}|w_1 < w_2]\\
-    = &\Pr[w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq w_1 + w < w_2 | w_1 < w_2] +\\
-      &\Pr[w_2 < w_1 + w \leq w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | w_1 < w_2]\\
+    = \Pr[\BADRANGE_{j,i}|\rw_1 < \rw_2]\Pr[\rw_1 < \rw_2]\\
+    \leq & \Pr[\BADRANGE_{j,i}|\rw_1 < \rw_2]\\
+    = &\Pr[\rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq \rw_1 + \rw < \rw_2 | \rw_1 < \rw_2] +\\
+      &\Pr[\rw_2 < \rw_1 + \rw \leq \rw_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | \rw_1 < \rw_2]\\
     = &2 \frac{nqL + 1}{2^{\kappa/2}}\\
   \end{align*}
 
@@ -398,7 +471,7 @@ of chains do not fall dangerously close to each other.
   Consider a causal execution of PoEM. Let $\HS$ be the event that for
   all two (adversarial or honest) chains
   $C_1, C_2$ appearing in the execution, if
-  $\work(C_1) < \work(C_2)$, then $\awork(C_1) < \awork(C_2)$.
+  $\rwork(C_1) < \rwork(C_2)$, then $\work(C_1) < \work(C_2)$.
   The probability that $\lnot \HS$ is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
@@ -425,43 +498,43 @@ of chains do not fall dangerously close to each other.
   If the query was unsuccessful, then $\HS_j$ holds, and we are done.
   Otherwise, let $C_1$ be the chain
   that the $j$-th random oracle query extends, let $B$ be the block mined on it,
-  let $C'_1 = C_1 B$, and let $w = \work(B), w_1 = \work(C_1), w'_1 = \work(C'_1)$
-  and $\aw, \aw_1, \aw'_1$ be the respective approximate works.
-  Consider any other chain $C_2$ with work $w_2 = \work(C_2)$
-  and approximate work $\aw_2$
+  let $C'_1 = C_1 B$, and let $\rw = \rwork(B), \rw_1 = \rwork(C_1), \rw'_1 = \rwork(C'_1)$
+  and $w, w_1, w'_1$ be the respective discrete works.
+  Consider any other chain $C_2$ with work $\rw_2 = \rwork(C_2)$
+  and discrete work $w_2$
   that has already appeared in the execution,
   and consider the undesirable event $\FLIP_{C_1,C_2}$ that
-  $w'_1 < w_2 \land \aw'_1 \geq \aw_2$ or $w'_1 > w_2 \land \aw'_1 \leq \aw_2$.
-  If $w_1 \geq w_2$, then, because $w > 0$, therefore $w_1 + w > w_2$ and hence $w_1' > w_2$.
-  Additionally, by $\HS_{j - 1}$ we have $\aw_1 > \aw_2$, therefore $\aw_1 + \aw > \aw_2$, and
-  $\aw_1' > \aw_2$. From this, it follows that $w_1 \geq w_2$ yields $\lnot \FLIP_{C_1,C_2}$.
-  Thus, it suffices to only consider the situation where $w_1 < w_2$.
+  $\rw'_1 < \rw_2 \land w'_1 \geq w_2$ or $\rw'_1 > \rw_2 \land w'_1 \leq w_2$.
+  If $\rw_1 \geq \rw_2$, then, because $\rw > 0$, therefore $\rw_1 + \rw > \rw_2$ and hence $\rw_1' > \rw_2$.
+  Additionally, by $\HS_{j - 1}$ we have $w_1 > w_2$, therefore $w_1 + w > w_2$, and
+  $w_1' > w_2$. From this, it follows that $\rw_1 \geq \rw_2$ yields $\lnot \FLIP_{C_1,C_2}$.
+  Thus, it suffices to only consider the situation where $\rw_1 < \rw_2$.
 
-  \textbf{Case 1: } $w_1 + w < w_2$.
+  \textbf{Case 1: } $\rw_1 + \rw < \rw_2$.
   From the conditioning on $\lnot \BADRANGE$, we have
-  $w_1 + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
+  $\rw_1 + \rw < \rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}$,
   therefore
   $
-    \aw_1 - \frac{nqL}{2^{\kappa/2}} + w < w_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\Rightarrow
-    \aw_1 + w < w_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
-    \aw_1 + \aw - \frac{1}{2^{\kappa/2}} < w_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
-    \aw_1 + \aw < w_2 \Rightarrow
-    \aw'_1 < w_2 \leq \aw_2
+    w_1 - \frac{nqL}{2^{\kappa/2}} + \rw < \rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}}\Rightarrow
+    w_1 + \rw < \rw_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
+    w_1 + w - \frac{1}{2^{\kappa/2}} < \rw_2 - \frac{1}{2^{\kappa/2}}\Rightarrow
+    w_1 + w < \rw_2 \Rightarrow
+    w'_1 < \rw_2 \leq w_2
   $.
   The first inequality is obtained from the conditioning on $\CLOSE$,
-  noting that $\aw_1 - \frac{nqL}{2^{\kappa/2}} < w_1$ follows from
-  $\aw_1 - w_1 < Lqn 2^{-\kappa/2}$ (Corollary~\ref{cor:chain-work-approximation}).
+  noting that $w_1 - \frac{nqL}{2^{\kappa/2}} < \rw_1$ follows from
+  $w_1 - \rw_1 < Lqn 2^{-\kappa/2}$ (Corollary~\ref{cor:chain-work-approximation}).
   The third inequality is also obtained from the conditioning on $\CLOSE$,
-  noting that $\aw - \frac{1}{2^{\kappa/2}} < w$ follows from
-  $\aw - w < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
+  noting that $w - \frac{1}{2^{\kappa/2}} < \rw$ follows from
+  $w - \rw < 2^{-\kappa/2}$ (Lemma~\ref{lem:block-work-approximation}).
   It follows that $\lnot \FLIP_{C_1,C_2}$.
 
-  \textbf{Case 2: } $w_1 + w > w_2$.
+  \textbf{Case 2: } $\rw_1 + \rw > \rw_2$.
   From the conditioning on $\lnot \BADRANGE$, we have
-  $w_1 + w > w_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} > w_2 + \frac{nqL}{2^{\kappa/2}}$,
+  $\rw_1 + \rw > \rw_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} > \rw_2 + \frac{nqL}{2^{\kappa/2}}$,
   therefore
-  $w_1 + w > \aw_2 - \frac{nqL}{2^{\kappa/2}} + \frac{nqL}{2^{\kappa/2}} \Rightarrow w_1 + w > \aw_2 \Rightarrow
-    \aw_1 + \aw > \aw_2 \Rightarrow \aw'_1 > \aw_2$.
+  $\rw_1 + \rw > w_2 - \frac{nqL}{2^{\kappa/2}} + \frac{nqL}{2^{\kappa/2}} \Rightarrow \rw_1 + \rw > w_2 \Rightarrow
+    w_1 + w > w_2 \Rightarrow w'_1 > w_2$.
   Again, it follows that $\lnot \FLIP_{C_1,C_2}$.
 
   From this and $\HS_{j-1}$ it follows that $\HS_j$ holds.
@@ -474,12 +547,12 @@ of chains do not fall dangerously close to each other.
 
 \begin{corollary}[Approximate Fork Choice]
   In Hash Separated executions of PoEM, for any two chains $C_1, C_2$
-  it holds that $\awork(C_1) < \awork(C_2) \rightarrow \work(C_1) < \work(C_2)$.
+  it holds that $\work(C_1) < \work(C_2) \rightarrow \rwork(C_1) < \rwork(C_2)$.
 \end{corollary}
 \begin{proof}
-  Suppose towards a contradiction $\awork(C_1) < \awork(C_2)$, but
-  $\work(C_1) \geq \work(C_2)$. From Hash Separation, it follows that
-  $\awork(C_1) \geq \awork(C_2)$, which is a contradiction.
+  Suppose towards a contradiction $\work(C_1) < \work(C_2)$, but
+  $\rwork(C_1) \geq \rwork(C_2)$. From Hash Separation, it follows that
+  $\work(C_1) \geq \work(C_2)$, which is a contradiction.
   \Qed
 \end{proof}
 
@@ -524,7 +597,7 @@ of chains do not fall dangerously close to each other.
 
 \begin{definition}[Block Work Interval]
   A block $B$ of chain $C$ has \emph{work interval}
-  $I(B) = \{\xi \geq 0: [\xi] \lhd C = B\}$.
+  $I(B) = \{\xi \geq 0: [\xi] \rlhd C = B\}$.
 \end{definition}
 
 \begin{lemma}[Entropic Pairing Lemma] \label{lem:pairing}
@@ -543,14 +616,14 @@ of chains do not fall dangerously close to each other.
   on which $B$ or $B'$ was computed, and $C$ be the chain whose tip this block is.
   Since it was computed by
   an honest party, at round $r + 1$, every other honest party receives
-  a chain with work greater or equal to $\xi$.
+  a chain with real work greater or equal to $\xi$.
 
   \textbf{Claim: } Every block computed after round $r$ will be extending a
-  chain with work at least $\xi$. To see this, consider a chain $C^*$ that an honest
+  chain with real work at least $\xi$. To see this, consider a chain $C^*$ that an honest
   party is extending after $r$. Since the party has adopted $C^*$, by the heaviest
-  chain rule, $\awork(C^*) \geq \awork(C)$. By Hash Separation, $\work(C^*) \geq \work(C) \geq \xi$.
+  chain rule, $\work(C^*) \geq \work(C)$. By Hash Separation, $\rwork(C^*) \geq \rwork(C) \geq \xi$.
 
-  If $B$ is computed after round $r$, it holds that $\xi \not \in I$ (noting that $\work(B) > 0$).
+  If $B$ is computed after round $r$, it holds that $\xi \not \in I$ (noting that $\rwork(B) > 0$).
   If $B'$ is computed after round $r$, it holds that $B' \neq [\xi] \lhd C'$.
   Both lead to a contradiction. \Qed
 \end{proof}
@@ -568,24 +641,24 @@ of chains do not fall dangerously close to each other.
 % \end{conjecture}
 
 \begin{lemma}[Entropic Chain Growth Lemma]\label{lem:chain-growth}
-  Suppose that at round $r_1$ an honest party has a chain of work $w$.
-  Then, by round $r_2 \geq r_1$, every honest party adopts a chain of work at least
-  $w + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
+  Suppose that at round $r_1$ an honest party has a chain which has real work $\rw$.
+  Then, by round $r_2 \geq r_1$, every honest party adopts a chain which has real work at least
+  $\rw + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
 \end{lemma}
 \begin{proof}
   By induction on $r_2$. For the inductive base ($r_2 = r_1$), observe that
-  if at round $r_1$ an honest party has a chain $C$ of work $w$, then
+  if at round $r_1$ an honest party has a chain $C$ of work $\rw$, then
   that party broadcasted $C$ at the end or round $r_1 - 1$. It follows that
   every honest party receives $C$ at round $r_1$ and adopts a chain with
-  greater or equal work.
+  greater or equal real work. % TODO: this is approximate work; invoke Hash Separation here
 
   For the inductive step, note that by the inductive hypothesis,
-  every honest party has received a chain of work at least $w' = w + \sum_{r = r_1}^{r_2 - 2}{X_r}$
+  every honest party has received a chain of real work at least $\rw' = \rw + \sum_{r = r_1}^{r_2 - 2}{X_r}$
   by round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
   $X_{r_2 - 1} > 0$. Observe that an honest party successfully queried the random oracle
-  with a chain of work at least $w' + X_{r_2 - 1}$ and broadcasted it to the network.
+  with a chain of real work at least $\rw' + X_{r_2 - 1}$ and broadcasted it to the network.
   At round $r_2$, every honest party receives the chain and adopts a chain
-  of work at least $w' + X_{r_2 - 1} = w + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
+  of real work at least $\rw' + X_{r_2 - 1} = \rw + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
 \end{proof}
 
 \begin{lemma}[Typical Bounds] \label{lem:typical-bounds}
@@ -636,7 +709,7 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\atnote{Define Chained Work}
+% \atnote{Define Chained Work}
 
 \begin{theorem}[Entropic Growth] \label{thm:entropic-growth}
   Typical executions of \poem satisfy the Entropic Growth property
@@ -650,17 +723,17 @@ of chains do not fall dangerously close to each other.
   By
   Lemma~\ref{lem:expectation-bounds}, $\E[\underline{X}(S)] \geq \frac{f}{\ln2}|S|$.
   Hence, $X(S) > (1 - \epsilon)\frac{f}{\ln2}|S|$.
-  By Lemma~\ref{lem:chain-growth}, $\work(C_2) \geq \work(C_1) + X(S)$, as desired.
+  By Lemma~\ref{lem:chain-growth}, $\rwork(C_2) \geq \rwork(C_1) + X(S)$, as desired.
   \Qed
 \end{proof}
 
 \begin{lemma}[Entropic Patience] \label{lem:patience}
-  In a typical execution, any chained work $k \geq 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$ is computed
+  In a typical execution, any chained real work $k \geq 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$ is computed
   in more than $\frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}} \geq \lambda$ consecutive rounds.
 \end{lemma}
 \begin{proof}
   Assume, towards a contradiction, there is a set of consecutive rounds $S'$ in which
-  the chained work $k$ was computed and $|S'| \leq \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}$.
+  the chained real work $k$ was computed and $|S'| \leq \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}$.
   It holds that $X(S') + Z(S') \geq k$.
   Then, there is a set $S \supseteq S'$ of consecutive rounds with
   $|S| = \ceil*{\frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}}} + 1 < \frac{k - 8}{2 \frac{f}{1 - f} \frac{1}{\ln2}} + 2$
@@ -686,61 +759,63 @@ of chains do not fall dangerously close to each other.
 
 \begin{corollary} \label{cor:slicing-work-bound}
   In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
-  $\work([{:}{-k}] \lhd \Chain[P][][r]) < 2k$.
+  $\rwork([{:}{-k}] \rlhd \Chain[P][][r]) < 2k$.
 \end{corollary}
 \begin{proof}
-  From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ work. Therefore,
-  $\work([-k] \lhd \Chain[P][][r]) < k$.
-  From the definition of the slicing notation ($[{:}]\lhd$)
-  it holds that $\work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) \leq k$. Summing the two constituents,
+  From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ real work. Therefore,
+  $\rwork([-k] \rlhd \Chain[P][][r]) < k$.
+  From the definition of the slicing notation ($[{:}]\rlhd$)
+  it holds that $\rwork(([-k{:}] \rlhd \Chain[P][][r])[1{:}]) \leq k$. Summing the two constituents,
   we obtain
   \begin{align*}
-    \work([-k{:}] \lhd \Chain[P][][r]) =\\
-    \work(([-k{:}] \lhd \Chain[P][][r])[1{:}]) + \work([-k] \lhd \Chain[P][][r]) < 2k\,.
+    \rwork([-k{:}] \rlhd \Chain[P][][r]) =\\
+    \rwork(([-k{:}] \rlhd \Chain[P][][r])[1{:}]) + \rwork([-k] \rlhd \Chain[P][][r]) < 2k\,.
   \end{align*}
   \Qed
 \end{proof}
 
 \begin{lemma}[Entropic Common Prefix Lemma] \label{lem:common-prefix-lemma}
   For all rounds $r$, and all honest parties $P_1, P_2$, where $P_1$ has $C_1$ and $P_2$ adopts $C_2$ at round $r$
-  of a typical PoEM execution, it holds that $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$
+  of a typical PoEM execution, it holds that $[{:}{-k}] \rlhd C_1 \preccurlyeq C_2$ and $[{:}{-k}] \rlhd C_2 \preccurlyeq C_1$
   for $k = 2 \lambda \frac{f}{1 - f} \frac{1}{\ln2} + 8$.
 \end{lemma}
 \begin{proof}
   Consider an execution as in the statement and suppose,
-  towards a contradiction, that $[{:}{-k}] \lhd C_1 \not \preccurlyeq C_2$
-  or $[{:}{-k}] \lhd C_2 \not \preccurlyeq C_1$.
+  towards a contradiction, that $[{:}{-k}] \rlhd C_1 \not \preccurlyeq C_2$
+  or $[{:}{-k}] \rlhd C_2 \not \preccurlyeq C_1$.
   Consider the last block $B^*$ with index $i^*$ on the common prefix of
   $C_1$ and $C_2$ that was computed by an honest party and let $r^*$
   be the round at which it was computed; if no such block exists let $r^* = 0$.
   Define the set of rounds $S = \{i: r^* < i < r\}$. We claim that
   $Z(S) \geq Y(S)$.
 
-  We show this by pairing all work of blocks computed by honest parties during
-  convergence opportunities in $S$ with adversarial work computed during $S$.
+  We show this by pairing all real work of blocks computed by honest parties during
+  convergence opportunities in $S$ with adversarial real work computed during $S$.
   Let $\mathcal{Y}(S)$ be the set of honestly produced blocks in convergence opportunities
   during $S$, and $\Xi = \bigcup \{I(B): B \in \mathcal{Y}(S)\}$.
 
   Note that, if $\Xi \neq \emptyset$, then $\inf{\Xi} \geq \max{I(B^*)}$
   because the chain ending in block $B^*$
   was diffused at round $r^*$, and all honestly produced blocks after round $r^*$
-  are extending a chain with greater or equal work.
-  Also note that $\work(C_1) \geq \max{\Xi}$ and $\work(C_2) \geq \max{\Xi}$ because
+  are extending a chain with greater or equal real work.
+  Also note that $\rwork(C_1) \geq \max{\Xi}$ and $\rwork(C_2) \geq \max{\Xi}$ because
   the honest party that computed the chain with work $\max \Xi$ diffused it and any chain adopted
-  by honest parties at any later round should have at least $\max \Xi$ work. \atnote{Why is $\work(C_1) \geq \max \Xi$?}
+  by honest parties at any later round should have at least $\max \Xi$ work. % TODO: this is real work, but parties are adopting based on approximate work. Need to use Hash Separation.
+  \atnote{Why is $\work(C_1) \geq \max \Xi$?}
+  \dznote{I believe this was a mistake in Backbone.}
   Hence, for every $\xi \in \Xi$ it holds that
-  $[\xi] \lhd C_1 \neq \bot$ and $[\xi] \lhd C_2 \neq \bot$.
+  $[\xi] \rlhd C_1 \neq \bot$ and $[\xi] \rlhd C_2 \neq \bot$.
 
-  We now argue that for every $\xi \in \Xi$ either block $[\xi] \lhd C_1$
-  or block $[\xi] \lhd C_2$ is adversarial. If the block lies on the
-  common prefix of $C_1$ and $C_2$, namely $[\xi] \lhd C_1 = [\xi] \lhd C_2$,
+  We now argue that for every $\xi \in \Xi$ either block $[\xi] \rlhd C_1$
+  or block $[\xi] \rlhd C_2$ is adversarial. If the block lies on the
+  common prefix of $C_1$ and $C_2$, namely $[\xi] \rlhd C_1 = [\xi] \rlhd C_2$,
   then it is adversarial by the definition of $B^*$. Otherwise,
   there is one block in $C_1$ and another one in $C_2$, and by
-  Lemma~\ref{lem:pairing}, it holds that $[\xi] \lhd C_1$ and
-  $[\xi] \lhd C_2$ cannot both be honest.
+  Lemma~\ref{lem:pairing}, it holds that $[\xi] \rlhd C_1$ and
+  $[\xi] \rlhd C_2$ cannot both be honest.
   This completes the proof of the claim $Z(S) \geq Y(S)$.
 
-  All the chained work $\max(\work(C_1[{i^*} {:}]), \work(C_2[{i^*} {:}])) \geq k$
+  All the chained real work $\max(\rwork(C_1[{i^*} {:}]), \rwork(C_2[{i^*} {:}])) \geq k$
   was produced during $S \cup \{r^*\}$.
   Hence, from Lemma~\ref{lem:patience}, $|S \cup \{r^*\}| > \lambda \Rightarrow |S| \geq \lambda$ and
   the properties of a typical execution apply.
@@ -757,21 +832,22 @@ of chains do not fall dangerously close to each other.
   Prefix is violated, and let $r_2$ be the first round during which it is violated.
   At $r_2$ there is an honest party $P_2$ who adopts chain $C_2$
   inconsistent with the chain $C_1$ adopted by an honest party
-  $P_1$ at a round $r_1 \leq r_2$, namely $[{:}{-k}] \lhd C_1 \not\preceq C_2$.
+  $P_1$ at a round $r_1 \leq r_2$, namely $[{:}{-k}] \rlhd C_1 \not\preceq C_2$.
 
   % TODO: Change algorithm so that has r => adopts r + 1
   \noindent
   \textbf{Case $r_1 < r_2$.}
   At round $r_2$, party $P_1$ has a chain $C$,
   which it adopted at $r_2 - 1$ (not excluding the case
-  where $C = C_1$). It holds that $[{:}{-k}] \lhd C_1 \preceq C$
+  where $C = C_1$). It holds that $[{:}{-k}] \rlhd C_1 \preceq C$
   due to the minimality of $r_2$ (otherwise, the Common Prefix virtue would
   have been broken at $r_2 - 1$ by chains $C_1$ and $C$).
-  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
-  rule followed by $P_1$. Therefore, $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
-  By the Common Prefix lemma, we have $[{:}{-k}] \lhd C \preceq C_2$
+  Furthermore, $\rwork(C) \geq \rwork(C_1)$ due to the heaviest chain
+  rule followed by $P_1$. % TODO: Hash Separation needed for this part?
+  Therefore, $[{:}{-k}] \rlhd C_1 \preceq [{:}{-k}] \rlhd C$.
+  By the Common Prefix lemma, we have $[{:}{-k}] \rlhd C \preceq C_2$
   (at $r_2$, party $P_1$ has $C$ and party $P_2$ adopts $C_2$).
-  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  By transitivity of $\preceq$, we have $[{:}{-k}] \rlhd C_1 \preceq C_2$,
   which contradicts the violation of Common Prefix.
 
   \noindent
@@ -779,13 +855,13 @@ of chains do not fall dangerously close to each other.
   Let $C$ be the chain that $P_1$ adopts at $r_1 + 1$ (not excluding the case
   where $C = C_1$).
   By the Common Prefix lemma, we have that
-  $[{:}{-k}] \lhd C_1 \preceq C$ (at $r_1 + 1$, party $P_1$ adopts $C$ and has $C_1$).
-  Furthermore, $\work(C) \geq \work(C_1)$ due to the heaviest chain
-  rule followed by $P_1$.
-  Because $\work(C) \geq \work(C_1)$, therefore $[{:}{-k}] \lhd C_1 \preceq [{:}{-k}] \lhd C$.
+  $[{:}{-k}] \rlhd C_1 \preceq C$ (at $r_1 + 1$, party $P_1$ adopts $C$ and has $C_1$).
+  Furthermore, $\rwork(C) \geq \rwork(C_1)$ due to the heaviest chain
+  rule followed by $P_1$. % TODO: Hash Separation is needed here too?
+  Because $\rwork(C) \geq \rwork(C_1)$, therefore $[{:}{-k}] \rlhd C_1 \preceq [{:}{-k}] \rlhd C$.
   By the Common Prefix lemma, we have that
-  $[{:}{-k}] \lhd C \preceq C_2$ (at $r_1 + 1$, party $P_1$ adopts $C$ and party $P_2$ has $C_2$).
-  By transitivity of $\preceq$, we have $[{:}{-k}] \lhd C_1 \preceq C_2$,
+  $[{:}{-k}] \rlhd C \preceq C_2$ (at $r_1 + 1$, party $P_1$ adopts $C$ and party $P_2$ has $C_2$).
+  By transitivity of $\preceq$, we have $[{:}{-k}] \rlhd C_1 \preceq C_2$,
   which contradicts the violation of Common Prefix.
   \Qed
 \end{proof}
@@ -800,10 +876,10 @@ of chains do not fall dangerously close to each other.
   \poem execution. Then there is an honest party $P$ who adopts a chain $C_3$
   at round $r$ for which chain quality is violated.
   This means there are $u, v$ such that the chain $C_1 = C_3[u{:}v]$
-  has $\work(C_1) \geq \ell$ and quality lower than $\mu$, namely
+  has $\rwork(C_1) \geq \ell$ and quality lower than $\mu$, namely
   the sum $x$ of works of all honestly generated blocks in $C_1$ is less than
-  $\mu \work(C_1)$.
-  Consider the minimum work chain $C_2 = C_3[{u'}{:}{v'}]$
+  $\mu \rwork(C_1)$.
+  Consider the minimum real work chain $C_2 = C_3[{u'}{:}{v'}]$
   such that $C_1$ is fully included in $C_2$ (i.e., $u' \leq u$ and $v' \geq v$)
   with the following properties:
 
@@ -812,17 +888,18 @@ of chains do not fall dangerously close to each other.
     \item $C_3[v']$ was the tip of the adopted chain by an honest party $P_2$ at some round $r_2$ (this will exist because $P$ adopts $C_3$).
   \end{enumerate}
 
-  Let $L = \work(C_2)$ and $S = \{r_1, \ldots, r_2 - 1\}$. Note that, by causality,
+  Let $L = \rwork(C_2)$ and $S = \{r_1, \ldots, r_2 - 1\}$. Note that, by causality,
   all the work $L$ was computed in $S$. By the supposition, we have
   $x < \mu \ell \leq \mu L$.
 
   We have that $Z(S) \geq L - x$. To see this, observe that, by the minimality of $C_2$, all the blocks
-  with heights $u', \ldots, u$ as well as the blocks with heights $v, \ldots, v'$ were computed by the adversary, and so the only honest work computed within $L$ is $x$.
+  with heights $u', \ldots, u$ as well as the blocks with heights $v, \ldots, v'$ were computed by the adversary, and so the only honest real work computed within $L$ is $x$.
 
   Additionally, $L \geq X(S)$. To see this, note that at round $r_1$, party $P_1$ produced $C_3[u']$,
-  and so every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}])$ from round $r_1 + 1$
-  onwards. Therefore, by Lemma~\ref{lem:chain-growth}, at round $r_2$, every honest party adopts a chain of weight at least $\work(C_3[{u'}{:}]) + X(S)$. But we know that $P_2$ adopts a chain
-  of length $\work(C_3[{u'}{:}]) + L$, and so $L \geq X(S)$.
+  and so every honest party adopts a chain of real work at least $\rwork(C_3[{u'}{:}])$ from round $r_1 + 1$
+  onwards. % TODO: Hash Separation is needed to make this argument
+  Therefore, by Lemma~\ref{lem:chain-growth}, at round $r_2$, every honest party adopts a chain of real work at least $\rwork(C_3[{u'}{:}]) + X(S)$. But we know that $P_2$ adopts a chain
+  of real work $\rwork(C_3[{u'}{:}]) + L$, and so $L \geq X(S)$.
 
   Therefore,
   \[
@@ -846,11 +923,12 @@ of chains do not fall dangerously close to each other.
   any rounds $r_1, r_2$. Let $C_1, C_2$ be the chains that $P_1, P_2$
   adopt at rounds $r_1, r_2$ respectively.
   From Entropic Common Prefix (Theorem~\ref{thm:common-prefix}), it follows that
-  if $r_1 \leq r_2$, then $[{:}{-k}] \lhd C_1 \preccurlyeq C_2$; and
-  if $r_2 \leq r_1$, then $[{:}{-k}] \lhd C_2 \preccurlyeq C_1$.
-  In both cases, it follows that $[{:}{-k}] \lhd C_1 \sim [{:}{-k}] \lhd C_2$.
+  if $r_1 \leq r_2$, then $[{:}{-k}] \rlhd C_1 \preccurlyeq C_2$; and
+  if $r_2 \leq r_1$, then $[{:}{-k}] \rlhd C_2 \preccurlyeq C_1$.
+  In both cases, it follows that $[{:}{-k}] \rlhd C_1 \sim [{:}{-k}] \lhd C_2$.
   Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
   \lread is invoked on parties $P_1, P_2$ after rounds $r_1, r_2$ respectively,
+  % TODO: \lread uses \lhd, not \rlhd; a Hash Separation is needed
   it holds that $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{proof}
 
@@ -861,11 +939,11 @@ of chains do not fall dangerously close to each other.
   Consider any round $r$.
   Because $u \geq s$, invoking Entropic Growth($s, \tau$) (Theorem~\ref{thm:entropic-growth}), we conclude that
   for all honest parties $P$ and all rounds $r' \geq r + u$, it holds that
-  $\work(\Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq u \tau \geq \ell + 2k$.
+  $\rwork(\Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq u \tau \geq \ell + 2k$.
   From Corollary~\ref{cor:slicing-work-bound}, it follows that
-  $\work([{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq \ell$.
+  $\rwork([{:}{-k}] \rlhd \Chain[P][][r'][|\Chain[P][][r]|{:}]) \geq \ell$.
   Invoking Entropic Quality (Theorem~\ref{thm:entoropic-quality}),
-  it holds that in the chain segment $[{:}{-k}] \lhd \Chain[P][][r'][|\Chain[P][][r]|{:}]$,
+  it holds that in the chain segment $[{:}{-k}] \rlhd \Chain[P][][r'][|\Chain[P][][r]|{:}]$,
   there is at least one honestly generated block that was produced after round $r$.
 
   Now, consider that an honest party attempts to inject a transaction \tx

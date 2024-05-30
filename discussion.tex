@@ -33,7 +33,7 @@ We leave the formal analysis of these questions for future work.
 
 \noindent
 \myparagraph[Work functions]
-We used the function $\work(B) = \gamma - \lg H(B)$.
+We used the function $\rwork(B) = \gamma - \lg \frac{\rH(B)}{T}$.
 This definition corresponds to the intuitive idea that
 each successful query to the random oracle reduces the number of possible evolutionary
 paths of the system, thus reducing its entropy
@@ -65,7 +65,10 @@ In our security proof, we assumed a static population in accordance with
 the Bitcoin Backbone analysis~\cite{backbone}. The practical deployments of
 both Bitcoin and PoEM adjust their difficulty in response to changes in the
 miner population. Bitcoin was proven secure in this variable difficulty
-setting~\cite{varbackbone}. We leave the variable difficulty analysis of PoEM
+setting~\cite{varbackbone}. One of the technical challenges in this analysis
+is to also consider whether the value $\gamma$ should be adjusted in response
+to changes in the miner population.
+We leave the variable difficulty analysis of PoEM
 for future work.
 
 \noindent

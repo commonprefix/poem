@@ -106,32 +106,13 @@ the difficulty depending on the observed block production rate of the system.
 We perform our analysis in the static population model, and leave the analysis in the variable
 population model for future work.
 
-We work in the following variant of the Random Oracle model~\cite{ro}, in which
-the random oracle returns a \emph{real number} instead of $\kappa$ bits of output.
-One technicality with this model is that the real number cannot be directly returned
-to the machine invoking the oracle. Instead, we allow the querying machine to choose which
-bit of the number to obtain.
-
-\begin{definition}[Real-Valued Random Oracle]
-  The \emph{real-valued random oracle} $H$ can be queried with an input value $x$
-  and a bit index $j$ and returns the value $H(x)[j]$ as follows.
-  When queried with $x$ for the first time,
-  it samples a real value $y$ uniformly at random from the continuous interval $(0, 1)$,
-  and returns its $j$-th bit from the binary representation of the real number $y$.
-  It then remembers the pair $(x, y)$. We denote by $H(x)$ this sampled value $y$.
-  When queried with $x$ for a subsequent time, it returns the $j$-th bit
-  of the stored $y$.
-\end{definition}
-
-We denote by $H(x)[{i}{:}{j}]$ the query that obtains the slice of $H(x)$ from bit index $i$ to $j$.
-We liberally use the rest of the previously introduced slicing notation with the hash output,
-implying that the random oracle is queried with the desired number of bits.
-In particular, we will write $\aH(x)$ to denote $H(x)[{:}{\kappa}]$.
+We let $H(x)$ be a $\kappa$-bit hash function, normalized to the interval $[0, 1)$.
+One can construct such a normalized hash function by invoking a usual $\kappa$-bit hash
+function (e.g., SHA256) and dividing the output by $2^\kappa$. We model $H$ as a random oracle.
 
 \noindent
 \textbf{The $q$-bounded model.}
 Following the tradition of the Bitcoin Backbone~\cite{backbone} paper,
 during each round, each honest party is allowed to query the random oracle with $q$
 different $x$ values. Similarly, the adversary is allowed to query the random oracle
-with $t q$ different $x$ values. No constraints are imposed on the bit index $j$
-of the query.
+with $t q$ different $x$ values.

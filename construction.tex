@@ -9,11 +9,7 @@ of each round, now adopt the chain with the most intrinsic work.
 A block is any triplet of the
 form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
 The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
-The $h$ is a reference to a previous block $B'$ and
-contains the first $\kappa$ bits of its hash $H(B')[{:}{\kappa}]$
-(recall that, in the real-valued random oracle model, each hash
-output has an infinite real-valued bit expansion, but only the first
-$\kappa$ bits are included in this reference).
+The $h$ is a reference to the previous block hash $H(B')$.
 
 A \emph{chain} $C$ is a sequence of blocks. The chains considered by honest
 parties begin with a designated
@@ -24,29 +20,22 @@ which we consider honest by definition.
 When a chain $C$ appears in the execution,
 we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 
-\begin{definition}[Block Intrinsic Work]
+\begin{definition}[Block Intrinsic Work]\label{def:quantized-block-work}
   The \emph{intrinsic work} of a block hash
-  $A$ is denoted as $\work(A) = \gamma - \lg \frac{A}{T}$.
-  The \emph{approximate intrinsic work} of a block hash $A$ is denoted
-  $\awork(A) = \gamma - \lg \frac{A[{:}{\kappa}]}{T}$, where $\gamma \in \mathbb{R}^+$
+  $A \in \{0, \frac{1}{2^\kappa}, \frac{2}{2^\kappa}, \ldots, \frac{2^\kappa - 1}{2^\kappa}\}$
+  is denoted $\work(A) = \gamma - \lg \frac{A}{T} \in [\gamma, \infty]$,
+  where $\gamma \in \mathbb{R}^+$
   is the \emph{bias} parameter of the protocol.
 \end{definition}
 
 For genesis, we set $\work(G) = 1$ (an arbitrary constant) by convention.
 To simplify the analysis, we will set $\gamma = 0$.
 
-In this definition, the full hash value, interpreted as a real number in the interval
-$(0, 1)$, is used, whereas approximate work uses only the first $\kappa$ bits of the
-value. Said differently, for any $A \in (0, 1)$,
-$\awork(A) = -\lg \frac{\lfloor 2^\kappa A \rfloor}{2^\kappa T}$.
-
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain
   $C$ is the sum of the
   intrinsic work of all blocks in $C$.
   It is denoted as $\work(C) = \sum_{B \in C}{\work(H(B))}$.
-  The \emph{approximate intrinsic work} of a chain
-  is $\awork(C) = \sum_{B \in C}{\awork(H(B))}$.
 \end{definition}
 
 \noindent
@@ -90,9 +79,9 @@ function \maxvalid in Line~\ref{alg-backbone.maxvalid}, and
 is the single point that we deviate from the original Bitcoin protocol.
 Next, the honest party attempts to mine a block using the \pow function (Line~\ref{alg.pow}),
 which also remains the same as the original protocol: He repeatedly tries to find a block $B$
-that satisfies the \pow equation $\aH(B) < T$, where the target $T$ is a small real number in
-the interval $(0, 1)$ satisfying $T = T[{:}\kappa]$ (this last equality guarantees that $T$ can be stored in
-$\kappa$ bits).
+that satisfies the \pow equation $H(B) < T$, where the target
+$T \in \{0, \frac{1}{2^\kappa}, \frac{2}{2^\kappa}, \ldots, \frac{2^\kappa - 1}{2^\kappa}\}$ is a small real number in
+the interval $[0, 1)$.
 If a block is found, this block is broadcast\footnote{We use the term \emph{broadcast}
 to mean the unreliable, best-effort anonymous manner of communication between honest parties that
 guarantees message delivery from one honest party to all other honest parties.
