@@ -150,7 +150,7 @@
   For all $0 < t < \lambda$:
 
   \begin{align*}
-    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]\\
+    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]= \Pr[e^{tX} > e^{t(1 + \epsilon)\frac{np}{\lambda}}]\\
     \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
     = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
   \end{align*}
@@ -160,7 +160,7 @@
   in front of $n$ in the exponent. Taking its derivative with respect to $t$:
 
   \begin{align*}
-    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda} = \\
+    \frac{d}{dt} \left(\ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}\right) = \\
     \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
     \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
   \end{align*}
@@ -182,8 +182,7 @@
   For all $t < 0$:
 
   \begin{align*}
-    \Pr[X < (1 - \epsilon)\E[X]] = \Pr\left[X < (1 - \epsilon)\frac{np}{\lambda}\right]\\
-    % = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
+    \Pr[X < (1 - \epsilon)\E[X]] = \Pr\left[X < (1 - \epsilon)\frac{np}{\lambda}\right] = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
     % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
     \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
     = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 - \epsilon)\frac{p}{\lambda}}
@@ -194,7 +193,7 @@
   in front of $n$ in the exponent. Taking its derivative with respect to $t$:
 
   \begin{align*}
-    \frac{d}{dt} \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} = \\
+    \frac{d}{dt} \left( \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} \right) = \\
     \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)\frac{p}{\lambda} = \\
     \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 - \epsilon)\frac{p}{\lambda}
   \end{align*}
