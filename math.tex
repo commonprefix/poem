@@ -123,7 +123,8 @@
 \begin{lemma}[Concentration of $\Bern \times \Exp$]\label{lem:bern-exp}
   Let $\{ A_i \}_{i \in [n]}$ and $\{ B_i \}_{i \in [n]}$ be two families of i.i.d. random variables,
   all mutually independent,
-  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\Exp(\lambda)$.
+  with $A_i$ distributed as $\Bern(p)$ and $B_i$ distributed as $\gamma + \Exp(\lambda)$,
+  the exponential distribution shifted by $\gamma \geq 0$.
   Let $X_i = A_i B_i$, and $X = \sum_{i = 1}^n X_i$.
   Then for any $0 < \epsilon < 1$, it holds that
   $\Pr[X > (1 + \epsilon) \E[X]] < e^{-\Omega(n)}$ and
@@ -131,44 +132,46 @@
   which is negligible in $n$.
 \end{lemma}
 \begin{proof}
-  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = \frac{p}{\lambda}$, therefore
-  $\E[X] = \frac{np}{\lambda}$. For the moment generating functions we have
+  $\E[X_i] = \E[A_i B_i] = \E[A_i] \E[B_i] = p(\gamma + \frac{1}{\lambda})$, therefore
+  $\E[X] = np(\gamma + \frac{1}{\lambda})$. For the moment generating functions we have
 
   \begin{align*}
     &\E[e^{t X_i}] = \E[e^{t A_i B_i}] =\\
       &\E[e^{t A_i B_i}|A_i = 0] \Pr[A_i = 0]\\
     + &\E[e^{t A_i B_i}|A_i = 1] \Pr[A_i = 1] = \\
     \E[e^{t A_i B_i}|A_i = 0] (1 - p) + &\E[e^{t A_i B_i}|A_i = 1] p = \\
-    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + p \frac{\lambda}{\lambda - t}\,.
+    (1 - p) + p \E[e^{t B_i}] &= (1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\,.
   \end{align*}
 
   \begin{align*}
     \E[e^{tX}] = \E[e^{t \sum_{i = 1}^n X_i}] = \E[\prod_{i = 1}^n e^{t X_i}] = \prod_{i = 1}^n \E[e^{t X_i}] = \\
-    \E[e^{t A_i B_i}]^n = \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]^n = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right]}\,.
+    \E[e^{t A_i B_i}]^n = \left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right]^n =
+    e^{n \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right]}\,.
   \end{align*}
 
   For all $0 < t < \lambda$:
 
   \begin{align*}
-    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)\frac{np}{\lambda}]= \Pr[e^{tX} > e^{t(1 + \epsilon)\frac{np}{\lambda}}]\\
-    \leq \E[e^{tX}] e^{-t(1 + \epsilon)\frac{np}{\lambda}}
-    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 + \epsilon)\frac{p}{\lambda}}\,.
+    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)np(\gamma + \frac{1}{\lambda})] =
+    \Pr[e^{tX} > e^{t(1 + \epsilon)np(\gamma + \frac{1}{\lambda})}]\\
+    \leq \E[e^{tX}] e^{-t(1 + \epsilon)np(\gamma + \frac{1}{\lambda})}
+    = e^{n \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - nt(1 + \epsilon)p(\gamma + \frac{1}{\lambda})}\,.
   \end{align*}
 
   Consider the factor
-  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}$
+  $f(t) = \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)p(\gamma + \frac{1}{\lambda})$
   in front of $n$ in the exponent. Taking its derivative with respect to $t$:
 
   \begin{align*}
-    \frac{d}{dt} \left(\ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)\frac{p}{\lambda}\right) = \\
-    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)\frac{p}{\lambda} = \\
-    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 + \epsilon)\frac{p}{\lambda}
+    \frac{d}{dt} \left(\ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right)\right) = \\
+    \frac{1}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right) = \\
+    \frac{pe^{t\gamma}\frac{\lambda}{\lambda - t}(\gamma + \frac{1}{\lambda - t})}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right)
   \end{align*}
 
   At $t = 0$ we have $f(0) = 0$ and
   \begin{align*}
-    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 + \epsilon)\frac{p}{\lambda} =\\
-    \frac{p}{\lambda}(1 - 1 - \epsilon) = -\frac{\epsilon p}{\lambda} < 0\,.
+    \frac{d}{dt} f(0) = \frac{p(\gamma + \frac{1}{\lambda})}{1 - p + p} - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right) =\\
+    p \left(\gamma + \frac{1}{\lambda}\right) - (1 + \epsilon)p \left(\gamma + \frac{1}{\lambda}\right) = -\epsilon p \left(\gamma + \frac{1}{\lambda}\right) < 0\,.
   \end{align*}
 
   Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0) < 0$, there must exist some $0 < t^* < \lambda$ such that for all
@@ -182,26 +185,26 @@
   For all $t < 0$:
 
   \begin{align*}
-    \Pr[X < (1 - \epsilon)\E[X]] = \Pr\left[X < (1 - \epsilon)\frac{np}{\lambda}\right] = \Pr[e^ {tX} > e^{t(1 - \epsilon)\frac{np}{\lambda}}]\\
+    \Pr[X < (1 - \epsilon)\E[X]] = \Pr\left[X < (1 - \epsilon)np(\gamma + \frac{1}{\lambda})\right] = \Pr[e^{tX} > e^{t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})}]\\
     % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
-    \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
-    = e^{n \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - n t(1 - \epsilon)\frac{p}{\lambda}}
+    \leq \E[e^{tX}] e^{-t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})} \\
+    = e^{n \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})}
   \end{align*}
 
   Consider the factor
-  $f(t) = \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda}$
+  $f(t) = \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)p(\gamma + \frac{1}{\lambda})$
   in front of $n$ in the exponent. Taking its derivative with respect to $t$:
 
   \begin{align*}
-    \frac{d}{dt} \left( \ln\left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)\frac{p}{\lambda} \right) = \\
-    \frac{1}{(1 - p) + p\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + p\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)\frac{p}{\lambda} = \\
-    \frac{p\frac{\lambda}{(\lambda - t)^2}}{(1 - p) + p\frac{\lambda}{\lambda - t}} - (1 - \epsilon)\frac{p}{\lambda}
+    \frac{d}{dt} \left( \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)p(\gamma + \frac{1}{\lambda}) \right) = \\
+    \frac{1}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - (1 - \epsilon)p(\gamma + \frac{1}{\lambda}) = \\
+    \frac{pe^{t\gamma}\frac{\lambda}{\lambda - t}(\gamma + \frac{1}{\lambda - t})}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} - (1 - \epsilon)p(\gamma + \frac{1}{\lambda})
   \end{align*}
 
   At $t = 0$ we have $f(0) = 0$ and
   \begin{align*}
-    \frac{d}{dt} f(0) = \frac{\frac{p}{\lambda}}{(1 - p) + p} - (1 - \epsilon)\frac{p}{\lambda} =\\
-    \frac{p}{\lambda}(1 - 1 + \epsilon) = \frac{\epsilon p}{\lambda} > 0\,.
+    \frac{d}{dt} f(0) = \frac{p(\gamma + \frac{1}{\lambda})}{(1 - p) + p} - (1 - \epsilon)p(\gamma + \frac{1}{\lambda}) =\\
+    p (\gamma + \frac{1}{\lambda}) - (1 - \epsilon)p (\gamma + \frac{1}{\lambda}) = \epsilon p (\gamma + \frac{1}{\lambda}) > 0\,.
   \end{align*}
 
   Since $\frac{d}{dt} f$ is continuous at $0$ and $\frac{d}{dt} f(0)>  0$, there must exist some $t^* < 0$ such that for all
