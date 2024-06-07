@@ -644,24 +644,31 @@ of chains do not fall dangerously close to each other.
 % \end{conjecture}
 
 \begin{lemma}[Entropic Chain Growth Lemma]\label{lem:chain-growth}
-  Suppose that at round $r_1$ an honest party has a chain which has real work $\rw$.
-  Then, by round $r_2 \geq r_1$, every honest party adopts a chain which has real work at least
+  Suppose that at round $r_1$ an honest party $P_1$ has a chain which has real work $\rw$.
+  Then, at round $r_2 \geq r_1$, every honest party $P_2$
+  adopts a chain which has real work at least
   $\rw + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
 \end{lemma}
 \begin{proof}
   By induction on $r_2$. For the inductive base ($r_2 = r_1$), observe that
-  if at round $r_1$ an honest party has a chain $C$ of work $\rw$, then
-  that party broadcasted $C$ at the end or round $r_1 - 1$. It follows that
-  every honest party receives $C$ at round $r_1$ and adopts a chain with
-  greater or equal real work. % TODO: this is approximate work; invoke Hash Separation here
+  if at round $r_1$ party $P_1$ has a chain $C$ of work $\rw$, then
+  $P_1$ broadcasted $C$ at the end or round $r_1 - 1$.
+  Party $P_2$ receives $C$ at round $r_1$.
+  Consider the chain $C_2$ that $P_2$ adopts at $r_1$.
+  Due to the heaviest chain rule, $\work(C_2) \geq \work(C)$,
+  therefore, by Hash Separation, $\rwork(C_2) \geq \rw$,
+  and the statement follows.
 
   For the inductive step, note that by the inductive hypothesis,
-  every honest party has received a chain of real work at least $\rw' = \rw + \sum_{r = r_1}^{r_2 - 2}{X_r}$
-  by round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
-  $X_{r_2 - 1} > 0$. Observe that an honest party successfully queried the random oracle
-  with a chain of real work at least $\rw' + X_{r_2 - 1}$ and broadcasted it to the network.
-  At round $r_2$, every honest party receives the chain and adopts a chain
-  of real work at least $\rw' + X_{r_2 - 1} = \rw + \sum_{r = r_1}^{r_2 - 1}{X_r}$. \Qed
+  every honest party has adopted a chain of real work at least $\rw' = \rw + \sum_{r = r_1}^{r_2 - 2}{X_r}$
+  at round $r_2 - 1$. When $X_{r_2 - 1} = 0$ the statement follows directly, so assume
+  $X_{r_2 - 1} > 0$. Observe that an honest party $P_3$ successfully queried the random oracle
+  at round $r_2 - 1$
+  and obtained a chain $C_3$ of real work at least $\rw' + X_{r_2 - 1}$ and broadcasted it to the network.
+  At round $r_2$, party $P_2$ receives $C_3$ and
+  adopts a chain $C_2$, with $\work(C_2) \geq \work(C_3)$ due to the heaviest chain rule.
+  By Hash Separation, $\rwork(C_2) \geq \rwork(C_3) \geq \rw' + X_{r_2 - 1} = \rw + \sum_{r = r_1}^{r_2 - 1}{X_r}$.
+  \Qed
 \end{proof}
 
 \begin{lemma}[Typical Bounds] \label{lem:typical-bounds}
