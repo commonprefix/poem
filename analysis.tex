@@ -256,6 +256,11 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
   one which is computed at a later or the same random oracle query.
 \end{definition}
 
+\begin{definition}[Hash Separation]
+  An execution has Hash Separation if for all two (adversarial or honest) chains
+  $C_1, C_2$ appearing in the execution, if $\rwork(C_1) < \rwork(C_2)$, then $\work(C_1) < \work(C_2)$.
+\end{definition}
+
 \begin{definition}[\poem Typical Execution]\label{def:typicality}
   An execution of \poem is \emph{($\epsilon,\lambda$)-typical} (or just typical),
   for $\epsilon \in (0,1)$ and integer $\lambda > 4$, if for any set $S$ of at
@@ -286,7 +291,7 @@ Observe $\underbar{X}(S) \leq X(S) \leq \overline{X}(S)$.
     \end{minipage}
 
     \item It is causal.
-    \item It has hash separation. % TODO: this is undefined, but it looks like it's not needed due to the lemma that follows (Hash Seperation proven from causality); if removed, please also remove from Typicality Theorem proof
+    \item It has hash separation.
   \end{itemize}
 \end{definition}
 
@@ -468,11 +473,8 @@ of chains do not fall dangerously close to each other.
 \end{proof}
 
 \begin{lemma}[Hash Separation]\label{lem:hash-separation}
-  Consider a causal execution of PoEM. Let $\HS$ be the event that for
-  all two (adversarial or honest) chains
-  $C_1, C_2$ appearing in the execution, if
-  $\rwork(C_1) < \rwork(C_2)$, then $\work(C_1) < \work(C_2)$.
-  The probability that $\lnot \HS$ is negligible in $\kappa$.
+  A causal execution of PoEM has Hash Separation except with negligible
+  probability in $\kappa$.
 \end{lemma}
 \begin{proof}
   % There are at most $Lqn$ random oracle queries in the execution.
@@ -488,6 +490,7 @@ of chains do not fall dangerously close to each other.
   Conditioned on this event, we will
   show that the desired statement holds with probability $1$.
 
+  Let $\HS$ be the event that Hash Separation holds.
   Let $\HS_j$ denote the predicate that $\HS$ holds for all chains appearing
   before, or at, the $j$-th random oracle query, with $j = 0$ indicating
   the beginning of the execution.
