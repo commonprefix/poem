@@ -19,8 +19,28 @@ We report on the results of both the simulation experiments and the real-world d
 
 \subsection{Real-world Deployment}\label{sec:deployment}
 
-We have implemented and deployed PoEM in a real-world permissionless peer-to-peer
-setting\footnote{
+We have implemented and deployed\ifanonymous\else\footnote{
+    The source code resides in the following \ifanonymous anonymized \fi repository:
+    \ifanonymous
+        % TODO: add anonymous link here and remove anonymous guard
+    \else
+        \url{https://github.com/dominant-strategies/go-quai/releases/tag/v0.28.2}
+    \fi
+}\fi PoEM in a real-world permissionless peer-to-peer
+setting.
+The deployment is on a testnet that has been continuously operating for
+four months. During this period, the network generated over 7.5 million blocks
+with participation from
+more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
+confirmation of over 500 million testnet transactions. This deployment maintained an
+average hash rate exceeding 50GH/s using the ProgPoW~\cite{progpow} hash algorithm.
+The network participants computed more than 518 petahashes in 4 months.
+The network operated in a variable difficulty and bias setting with the difficulty ($\frac{2^{256}}{T}$)
+varying between 18 billion and 790 billion and $\gamma$ varying between 32 and 38.
+
+\subsection{Experimental Methodology}\label{sec:methodology}
+
+We ran multiple simulations\footnote{
     The source code resides in the following \ifanonymous anonymized \fi repositories:
     \ifanonymous
     \begin{enumerate}
@@ -40,20 +60,7 @@ setting\footnote{
         \item \url{https://github.com/gameofpointers/simulation}
     \end{enumerate}
     \fi
-}.
-The deployment is on a testnet that has been continuously operating for
-four months. During this period, the network generated over 7.5 million blocks
-with participation from
-more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
-confirmation of over 500 million testnet transactions. This deployment maintained an
-average hash rate exceeding 50GH/s using the ProgPoW~\cite{progpow} hash algorithm.
-The network participants computed more than 518 petahashes in 4 months.
-The network operated in a variable difficulty and bias setting with the difficulty ($\frac{2^{256}}{T}$)
-varying between 18 billion and 790 billion and $\gamma$ varying between 32 and 38.
-
-\subsection{Experimental Methodology}\label{sec:methodology}
-
-We ran multiple simulations
+}
 in order to ascertain the optimal configuration for
 operating both Bitcoin and PoEM in order to achieve the minimum confirmation delay.
 We simulated an artificial network delay of $\Delta$ (measured in seconds) in the
