@@ -396,16 +396,16 @@ close to its real work.
 The discrete work of a chain is also close to the real work of a chain.
 
 \begin{corollary}[Chain Work Approximation]\label{cor:chain-work-approximation}
-  In a PoEM execution, the probability that all chains $C$
-  have $\work(C) - \rwork(C) < Lqn 2^{-\kappa/2}$
+  In a PoEM execution, the probability that all subchains $C^*$
+  have $\work(C^*) - \rwork(C^*) < Lqn 2^{-\kappa/2}$
   is overwhelming in $\kappa$.
 \end{corollary}
 \begin{proof}
   Conditioned on the overwhelming event of Lemma~\ref{lem:block-work-approximation}, for all
-  chains $C$ it holds that
+  subchains $C^*$ it holds that
   \begin{align*}
-     &\work(C) - \rwork(C) = \sum_{B \in C}{\work(B) - \rwork(B)}\\
-    <& \sum_{B \in C}{2^{-\kappa/2}} = |C| 2^{-\kappa/2} \leq Lqn 2^{-\kappa/2}\,.
+     &\work(C^*) - \rwork(C^*) = \sum_{B \in C^*}{\work(B) - \rwork(B)}\\
+    <& \sum_{B \in C^*}{2^{-\kappa/2}} = |C*| 2^{-\kappa/2} \leq Lqn 2^{-\kappa/2}\,.
   \end{align*}
   \Qed
 \end{proof}
@@ -926,11 +926,69 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{conjecture}
-  For any $k \in \mathbb{N}$ and any chain $C$, it holds that
-  $[{:}{-k}] \rlhd C \preccurlyeq C = [{:}{-k}] \lhd C \preccurlyeq C$
-  except with negligible probability.
-\end{conjecture}
+\begin{lemma}[Confirmation Separation]
+  For any function $k = k(\kappa)$, it holds that, in a PoEM execution,
+  $\Pr[\exists C: [{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C]$
+  is negligible in $\kappa$.
+\end{lemma}
+\begin{proof}
+  Consider the event that there exists a \emph{chain} $C$ with
+  $[{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C$. Since these two subchains
+  differ, there must be a block $B$ such that $B \in [{:}{-k}] \rlhd C$
+  but $B \not\in [{:}{-k}] \lhd C$. Note that the other direction is impossible
+  since, for any suffix $j \in \mathbb{N}$,
+  $\rwork(C[{:}{-j}]) \leq \work(C[{:}{-j}])$,
+  and, in particular, any $k$-work suffix of the real-work chain
+  must necessarily contain at least the same blocks as the $k$-work suffix
+  of the discrete-work chain, because the real work is at most
+  the discrete work. % TODO: Add figure
+  Let $B$ be the earliest such
+  block. Therefore, $B = [-k] \rlhd C \neq [-k] \lhd C$.
+  We conclude that there exists a \emph{subchain} $C^*$
+  with $\work(C^*) \geq k(\kappa) > \rwork(C^*)$, namely
+  $C^* = [{:}{-k}] \rlhd C$, noting that $B = C^*[0]$.
+  Define $\borderline$ the bad event that there exists some subchain $C^*$
+  in the execution such that $\work(C^*) \geq k(\kappa) > \rwork(C^*)$.
+
+  It suffices to show that $\Pr[\borderline]$ is negligible.
+
+  Let $E_1$ be the event that there exists a subchain $C^*$ such that
+  $\work(C^*) - \rwork(C^*) \geq Lqn2^{−\kappa/2}$, and let $p_1 = \Pr[E_1]$.
+  Let $E_2$ be the event that there exists a subchain $C^*$ such that
+  $k - Lqn2^{\kappa/2} \leq \rwork(C^*) < k$, and let $p_2 = \Pr[E_2]$.
+  We observe that $\lnot E_1 \land \lnot E_2 \rightarrow \lnot \borderline$,
+  hence $\borderline \rightarrow E_1 \lor E_2$.
+  Therefore, from the union bound, we have
+  \[
+  \Pr[E_1] + \Pr[E_2] = p_1 + p_2 \geq \Pr[E_1 \lor E_2] \geq \Pr[\borderline]\~.
+  \]
+
+  From Corollary~\ref{cor:chain-work-approximation}, we have that
+  $p_1$ is negligible.
+
+  Let us calculate the probability $p_2$. Consider all the, at most $(nqL)^2$, subchains
+  $C^*_1, C^*_2, \ldots, C^*_{(nqL)^2}$ appearing in an execution, and consider an aribtrary
+  subchain $C^*_i$ among them. Because the work of each
+  block $B$ in $C^*_i$ is distributed as $\Exp(\ln2)$,
+  the points $(\rwork(C^*_i[{:}{1}]), \rwork(C^*_i[{:}{2}]), \ldots, \rwork(C^*_i))$
+  correspond to the initial $\rwork(C^*_i)$ segment of a Poisson stochastic
+  process with rate $\ln2$ (do not
+  confuse the \emph{work} between blocks, which exactly follows a Poisson process with rate $\ln2$,
+  and the \emph{time} between consecutive block generation).
+  We are interested in the number of Poisson points that fall within the interval
+  $[k - Lqn2^{-\kappa/2}, k)$. This is a random variable distributed as a Poisson
+  distribution with rate $Lqn2^{-\kappa/2} \lambda$. Let $F_i$ be the bad event that
+  the number of points of the process corresponding to the subchain $C^*_i$ that fall
+  within the interval $[k - Lqn2^{-\kappa/2}, k)$ is at least one.
+  Using the probability mass function of the Poisson distribution evaluated at $0$
+  we have $\Pr[F_i] = 1 - \Pr[\lnot F_i] = 1 - e^{-\lambda Lqn2^{-\kappa/2}}
+  = 1 - 2^{-(\lg e) \lambda Lqn2^{-\kappa/2}} < (\lg e) \lambda Lqn2^{-\kappa/2}$,
+  where the last inequality follows from Lemma~\ref{lem:bernoulli}.
+  Taking a union bound over all subchains, we have
+  $p_2 = \Pr[E_2] = \Pr[\bigcup_{i=1}^{(nqL)^2}F_i] \leq \sum_{i = 1}^{(nqL)^2}\Pr[F_i] = (nqL)^2 \Pr[F_i] < (nqL)^3 (\lg e) \lambda 2^{-\kappa/2}$
+  which is negligible. Therefore, $\Pr[\borderline]$ is negligible.
+  \Qed
+\end{proof}
 
 \begin{theorem}[\poem is Safe]\label{thm:safety}
   Typical executions of \poem are safe.
