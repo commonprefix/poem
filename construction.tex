@@ -41,12 +41,12 @@ To simplify the analysis, we will set $\gamma = 0$.
 \noindent
 \myparagraph[Blockchain notation]
 For chain $C$, we write $[\alpha] \lhd C$
-to denote the $i^\text{th}$ block of $C$ such that
-$\work(C[{:}{i - 1}]) < \alpha \leq \work(C[{:}{i}])$.
+to denote the block $C[i]$ of $C$ such that
+$\work(C[{:}{i}]) < \alpha \leq \work(C[{:}{i + 1}])$.
 If $\work(C) < \alpha$, then let $[\alpha] \lhd C = \bot$.
 If $\alpha$ is negative, then $[\alpha] \lhd C$ is defined as
-the $i^\text{th}$ block of $C$ such that
-$\work(C[{i - 1}{:}]) < -\alpha \leq \work(C[{i}{:}])$.
+the block $C[i]$ block of $C$ such that
+$\work(C[{i}{:}]) < -\alpha \leq \work(C[{i + 1}{:}])$.
 We use the slicing notation $[{\alpha}{:}{\beta}] \lhd C$ to denote
 $C[{i}{:}{j}]$ where $i$ is the index of $[\alpha] \lhd C$
 and $j$ is the index of $[\beta] \lhd C$ in $C$ respectively.

@@ -59,11 +59,11 @@ we define the \emph{real} chain addressing notation $[\alpha] \rlhd C$ as follow
 \myparagraph[Real blockchain addressing]
 Let $[\alpha] \rlhd C = C[i]$
 where
-$\rwork(C[{:}{i - 1}]) < \alpha \leq \rwork(C[{:}{i}])$.
+$\rwork(C[{:}{i}]) < \alpha \leq \rwork(C[{:}{i + 1}])$.
 If $\rwork(C) < \alpha$, then $[\alpha] \rlhd C = \bot$.
 If $\alpha < 0$, then $[\alpha] \rlhd C = C[i]$
 where
-$\rwork(C[{i - 1}{:}]) < -\alpha \leq \rwork(C[{i}{:}])$.
+$\rwork(C[{i}{:}]) < -\alpha \leq \rwork(C[{i + 1}{:}])$.
 Let $[{\alpha}{:}{\beta}] \rlhd C = C[{i}{:}{j}]$,
 where $i$ is the index of $[\alpha] \rlhd C$
 and $j$ is the index of $[\beta] \rlhd C$ in $C$.
