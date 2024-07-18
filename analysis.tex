@@ -996,6 +996,8 @@ of chains do not fall dangerously close to each other.
   if $r_1 \leq r_2$, then $[{:}{-k}] \rlhd C_1 \preccurlyeq C_2$; and
   if $r_2 \leq r_1$, then $[{:}{-k}] \rlhd C_2 \preccurlyeq C_1$.
   In both cases, it follows that $[{:}{-k}] \rlhd C_1 \sim [{:}{-k}] \rlhd C_2$.
+  From Confirmation Separation (Lemma~\ref{lem:confirmation-separation}),
+  it follows that $[{:}{-k}] \lhd C_1 \sim [{:}{-k}] \lhd C_2$.
   Therefore, for the ledgers $\Ledger[P_1][][r_1], \Ledger[P_2][][r_2]$ returned when
   \lread is invoked on parties $P_1, P_2$ after rounds $r_1, r_2$ respectively,
   % TODO: \lread uses \lhd, not \rlhd; a Hash Separation is needed
