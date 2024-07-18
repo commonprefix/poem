@@ -926,29 +926,24 @@ of chains do not fall dangerously close to each other.
   \Qed
 \end{proof}
 
-\begin{lemma}[Confirmation Separation]
+\begin{lemma}[Confirmation Separation] \label{lem:confirmation-separation}
   For any function $k = k(\kappa)$, it holds that, in a PoEM execution,
   $\Pr[\exists C: [{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C]$
   is negligible in $\kappa$.
 \end{lemma}
 \begin{proof}
   Consider the event that there exists a \emph{chain} $C$ with
-  $[{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C$. Since these two subchains
-  differ, there must be a block $B$ such that $B \in [{:}{-k}] \lhd C$
-  but $B \not\in [{:}{-k}] \rlhd C$. Note that the other direction is impossible
-  since, for any suffix $j \in \mathbb{N}$,
-  $\rwork(C[{:}{-j}]) \leq \work(C[{:}{-j}])$,
-  and, in particular, any $k$-work suffix of the real-work chain
-  must necessarily contain at least the same blocks as the $k$-work suffix
-  of the discrete-work chain, because the real work is at most
-  the discrete work. % TODO: Add figure
-  Let $B$ be the earliest such
-  block. Therefore, $B = [-k] \rlhd C \neq [-k] \lhd C$.
-  We conclude that there exists a \emph{subchain} $C^*$
-  with $\work(C^*) \geq k(\kappa) > \rwork(C^*)$, namely
-  $C^* = [{:}{-k}] \rlhd C$, noting that $B = C^*[0]$.
+  $[{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C$. Since the prefixes
+  differ, the suffixes must also differ, namely
+  $[{-k}{:}] \rlhd C \neq [{-k}{:}] \lhd C$.
+  Let $C^* = [{-k}{:}] \lhd C$.
+  By the slicing notation, it directly follows that $\work(C^*) \geq k$.
+  Additionally, we observe that $k > \rwork(C^*)$
+  (otherwise, $[{-k}{:}] \rlhd C = [{-k}{:}] \lhd C$).
+  % TODO: Add figure
   Define $\borderline$ the bad event that there exists some subchain $C^*$
-  in the execution such that $\work(C^*) \geq k(\kappa) > \rwork(C^*)$.
+  in the execution such that $\work(C^*) \geq k > \rwork(C^*)$.
+  We have shown that $\exists C: [{:}{-k}] \rlhd C \neq [{:}{-k}] \lhd C \rightarrow \borderline$.
 
   It suffices to show that $\Pr[\borderline]$ is negligible.
 
