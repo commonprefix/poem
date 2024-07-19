@@ -1,3 +1,12 @@
+# This simulation is in continuous time
+# and samples a Poisson stochastic process for
+# both Bitcoin and PoEM and simulates the
+# Everything is a Race private miner,
+# calculating the honest subtree height VS
+# the adversarial private chain height.
+# At the end, it compares their growth rates
+# with the analytical expression for PoEM.
+
 import numpy as np
 from scipy.optimize import newton
 from pprint import pprint
@@ -123,7 +132,7 @@ def find_poem_resilience(g, L):
 
 # backbone_resiliences = []
 # poem_resiliences = []
-# 
+#
 def monte_carlo(f, iterations):
   weights = 0
   for _ in range(iterations):
@@ -132,11 +141,16 @@ def monte_carlo(f, iterations):
 
 def get_poem_analytic_expressions(g):
   def f(α):
+    # From the analytical calculations, we know that the
+    # growth rate is some α that satisfies the following
+    # expression. This equation is irrational and cannot
+    # be solved analytically, therefore we resort to
+    # Newton–Raphson's numerical method.
     return α * 2**α - g / log(2, e)
 
   def f_prime(α):
     return 2**α + α * log(2, e) * 2**α
-  
+
   return f, f_prime
 
 for g in np.arange(0.01, 2, 0.01):
