@@ -383,7 +383,10 @@ close to its real work.
        <& -\lg\left(\rH(B) - \frac{1}{2^\kappa}\right) - (-\lg \rH(B))\\
     \leq& -\lg\left(\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}\right) - \left(-\lg{\frac{1}{2^{\kappa/2}}}\right)\\
        =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
-       =& -\lg{1 - 2^{-\kappa/2}} \leq -\ln{1 - 2^{-\kappa/2}} \leq 2^{-\kappa/2}\,.
+       =& -\lg\left({1 - 2^{-\kappa/2}}\right) + \lg2^{\frac{\kappa}{2}} - \frac{\kappa}{2} \\
+       =& -\lg\left({1 - 2^{-\kappa/2}}\right) + \frac{\kappa}{2} - \frac{\kappa}{2} \\
+       =& -\lg\left({1 - 2^{-\kappa/2}}\right)
+       % TODO: Fix the proof
   \end{align*}
 
   The first inequality stems from the fact that $H(B)$ and $\rH(B)$ must
