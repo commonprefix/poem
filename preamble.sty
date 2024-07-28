@@ -22,6 +22,8 @@
 \usepackage{mathtools}
 \usepackage{xargs}
 \usepackage[shortcuts]{extdash}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
 
 \usepackage{amsfonts}
 \ifccs
@@ -222,3 +224,18 @@
 
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newcounter{numrellocal}% Local counter for numering relations
+\renewcommand{\thenumrellocal}{\roman{numrellocal}}% Counter numrellocal uses lowercase roman numerals
+\newcounter{numrelglobal}% Global counter for numering relations
+\renewcommand{\thenumrelglobal}{\roman{numrellocal}}% Counter numrelglobal uses lowercase roman numerals, but results in value from numrellocal
+
+\makeatletter
+\newcommand{\numrel}[2]{% Relation numbering
+  \stepcounter{numrellocal}% Increment local counter
+  \refstepcounter{numrelglobal}% Increment global counter and create correct reference hook, with label-text from local counter
+  \ltx@label{#2}% Label numrel counter
+  \overset{(\thenumrellocal)}{#1}% Print counter + relation
+}
+\makeatother
+\AfterEndEnvironment{align*}{\setcounter{numrellocal}{0}}% Resets numrellocal at the end of align*

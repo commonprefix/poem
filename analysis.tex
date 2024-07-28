@@ -366,13 +366,13 @@ close to its real work.
 \end{lemma}
 \begin{proof}
   Consider the event $E$ in which for all blocks $B$ it holds that
-  $\rH(B) > \frac{1}{2^{\kappa/2}}$.
+  $\rH(B) > 2^{-(\kappa/2 - 2)}$.
   Let us calculate the probability of $\lnot E$. For $\lnot E$ to happen,
-  at least one block must have $\rH(B) \leq \frac{1}{2^{\kappa/2}}$.
-  For any block $B$, it holds that $\Pr[\rH(B) \leq \frac{1}{2^{\kappa/2}}] = \frac{1}{2^{\kappa/2}}$ (from the
+  at least one block must have $\rH(B) \leq 2^{-(\kappa/2 - 2)}$.
+  For any block $B$, it holds that $\Pr[\rH(B) \leq 2^{-(\kappa/2 - 2)}] = 2^{-(\kappa/2 - 2)}$ (from the
   uniform distribution of $\rH(B)$ in the interval $(0, 1)$ due to it being a real-valued random oracle).
   Since there are at most $nqL$ blocks in the execution, by applying a union bound, we have
-  $\Pr[\lnot E] = \Pr[\exists B: \rH(B) \leq \frac{1}{2^{\kappa/2}}] \leq \sum_B \Pr[\rH(B) \leq \frac{1}{2^{\kappa/2}}] \leq \frac{nqL}{2^{\kappa/2}}$,
+  $\Pr[\lnot E] = \Pr[\exists B: \rH(B) \leq 2^{-(\kappa/2 - 2)}] \leq \sum_B \Pr[\rH(B) \leq 2^{-(\kappa/2 - 2)}] \leq nqL 2^{-(\kappa/2 - 2)}$,
   which is negligible in $\kappa$,
   so $E$ happens with overwhelming probability.
 
@@ -380,19 +380,26 @@ close to its real work.
   Then
   \begin{align*}
         &\work(B) - \rwork(B) = -\lg H(B) - (-\lg \rH(B))\\
-       <& -\lg\left(\rH(B) - \frac{1}{2^\kappa}\right) - (-\lg \rH(B))\\
-    \leq& -\lg\left(\frac{1}{2^{\kappa/2}} - \frac{1}{2^\kappa}\right) - \left(-\lg{\frac{1}{2^{\kappa/2}}}\right)\\
-       =& -\lg\frac{1 - 2^{-\kappa/2}}{2^{\kappa/2}} - \frac{\kappa}{2} \\
-       =& -\lg\left({1 - 2^{-\kappa/2}}\right) + \lg2^{\frac{\kappa}{2}} - \frac{\kappa}{2} \\
-       =& -\lg\left({1 - 2^{-\kappa/2}}\right) + \frac{\kappa}{2} - \frac{\kappa}{2} \\
-       =& -\lg\left({1 - 2^{-\kappa/2}}\right)
-       % TODO: Fix the proof
+        \numrel{<}{lem:block-work-approximation-floor}& \lg \rH(B) - \lg\left(\rH(B) - 2^{-\kappa}\right)
+        \numrel{<}{lem:block-work-approximation-log-dec} \lg{2^{-(\kappa/2 - 2)}} - \lg\left(2^{-(\kappa/2 - 2)} - 2^{-\kappa}\right)\\
+       =& -\left(\frac{\kappa}{2} - 2\right) - \lg(2^{-(\kappa/2 - 2)}(1 - 2^{-(\kappa/2 + 2)})) \\
+       =& -\left(\frac{\kappa}{2} - 2\right) + \left(\frac{\kappa}{2} - 2\right) - \lg\left(1 - 2^{-(\kappa/2 + 2)}\right)
+       = -\lg\left(1 - 2^{-(\kappa/2 + 2)}\right)\\
+       =& -\ln\left(1 - 2^{-(\kappa/2 + 2)}\right) \cdot \frac{1}{\ln2}
+    \numrel{\leq}{lem:block-work-approximation-log-ineq} -\frac{-2^{-(\kappa/2 + 2)}}{1 - 2^{-(\kappa/2 + 2)}} \cdot \frac{1}{\ln2} \\
+    \leq& \frac{2^{-(\kappa/2 + 2)}}{1 - \frac{1}{2}} \cdot \frac{1}{\ln2}
+    = 2^{-(\kappa/2 + 1)} \cdot \frac{1}{\ln2}
+    \leq 2^{-\kappa/2}
   \end{align*}
 
-  The first inequality stems from the fact that $H(B)$ and $\rH(B)$ must
-  differ by less than $\frac{1}{2^\kappa}$. The second inequality stems from
-  the fact that the function $-\lg\left(x - \frac{1}{2^\kappa}\right) - (-\lg x)$ is
-  decreasing for $x > \frac{1}{2^\kappa}$.
+  Inequality~(\ref{lem:block-work-approximation-floor}) stems from the fact that
+  $\rH(B) - 2^{-\kappa} < H(B) \leq \rH(B)$ and the monotonicity of $\lg$.
+  Inequality~(\ref{lem:block-work-approximation-log-dec}) stems from
+  the fact that the function $\lg x - \lg\left(x - 2^{-\kappa}\right) = \lg \frac{x}{x - 2^{-\kappa}}$ is
+  decreasing for $x > 2^{-\kappa}$, remembering our conditioning on
+  $\rH(B) > 2^{-(\kappa/2 - 2)} > 2^{-\kappa}$.
+  Inequality~(\ref{lem:block-work-approximation-log-ineq}) stems from the standard logarithm
+  inequality $\ln(1 + x) \geq \frac{x}{1 + x}$ for all $x > -1$.
   \Qed
 \end{proof}
 
