@@ -5,7 +5,7 @@ fork choice rule of traditional proof-of-work. We posit that the intrinsic work 
 provides better adversarial resilience than the longest (or heaviest) fork choice rule.
 
 For this analysis, we work in a simplified model in which time is continuous
-and the cryptographic machinary of hash functions is abstracted away as a perfect
+and the cryptographic machinery of hash functions is abstracted away as a perfect
 stochastic processes (cf., the previous section where our model was discrete time
 and the imperfect stochastic process was constructed by a hash function modelled as
 a random oracle). This treatment was introduced in \emph{Everything is a Race}~\cite{eiar},
@@ -42,7 +42,7 @@ than the longest chain of any honest party, namely the height of the honest subt
 any other attack can be reduced to this attack, to show security it suffices that the expected
 growth rate of the adversary's private chain is less than the expected growth rate of the
 height of the honest subtree. In their work, they calculate the honest subtree growth rate to be
-$\frac{g}{1 + g}$. By taking the inequality $g \frac{beta}{1 - \beta} > \frac{g}{1 + g}$,
+$\frac{g}{1 + g}$. By taking the inequality $g \frac{\beta}{1 - \beta} < \frac{g}{1 + g}$,
 requiring that the honest subtree growth rate is larger than the adversarial private chain
 growth rate, in expectation, they find that the maximum adversarial resilience in Bitcoin is
 $\beta < \frac{1}{g + 2}$.
@@ -53,8 +53,7 @@ the adversary mines blocks following a Poisson process with a block production r
 $g \frac{\beta}{1 - \beta}$. Each newly produced valid block $B$ has work $\work(B)$ which follows
 an exponential distribution with rate $\ln2$, and all of these works are mutually independent.
 
-\dznote{TODO: Make work ~ exponential + const. Consider different exponential rates, and calculate
-the different Chernoff bounds depending on the exp rate.}
+\dznote{TODO: Make work ~ exponential + const. Consider different exponential rates.}
 
 The adversary follows a private
 mining strategy and the honest parties mine on their own honest subtree. At the conclusion of the
