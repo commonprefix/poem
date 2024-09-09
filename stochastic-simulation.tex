@@ -1,0 +1,31 @@
+\section{Stochastic Simulation}
+In these section we compare Bitcoin's and PoEM's latency experimentally.
+We simulate various executions of Bitcoin and PoEM with different parameterizations.
+In each simulation, we fix the block production rate $g$ and adversarial ratio $\beta$, and we
+measure the latency of the system.
+The latency of the system is the rate at which blocks get confirmed.
+We use the private mining attack as the adversarial strategy, which was
+proven~\cite{eiar} to be the best possible attack against Bitcoin in the continuous-time domain~\cite{bitcoin-made-simple}.
+This means that the adversary mines blocks in private on her own chain, whereas the honest parties mine
+their own blocktree, following the heaviest chain rule (in Bitcoin) or the most intrinsic work rule (in PoEM) respectively.
+The adversary imposes a network delay of $\Delta$ to honest parties.
+% TODO: Prove that the adversary's strategy is optimal.
+
+Instead of performing simulations were proof of work takes place, we can simulate it by following a stochastic process.
+We first simulate the execution of honest parties. We observe that the time between the creation of two blocks is
+exponentially distributed with rate $g$. Hence, we sample from $\exp(g)$ to get the time that each honest block in the
+execution was created. In Bitcoin, the work of each block is equal to one, whereas the work of a PoEM block is exponentially
+distributed with rate $\frac{1}{\ln2}$. Hence, in PoEM's case, we must sample from $\exp(\frac{1}{\ln2})$ to get the work
+of each block in the execution. The creation time of each block and its work are enough to simulate the honest parties' execution
+and determine the blocktree that was constructed.
+
+Then, independently we simulate the adversary's execution. Like in the honest execution, we sample from $\exp(g\frac{1 - beta}{beta})$
+to get the time that each block in the adversary's execution was created, where $g\frac{1 - beta}{beta}$ is the adversary's block production rate.
+Then, we sample from $\exp(\frac{1}{\ln2})$ to get the work of each block in the execution.
+Since the adversary has no network delay, all her blocks are chained in series.
+
+Having simulated the honest and adversary executions, we can now determine the latency of the system.
+To do this, we determine the last point in time when the adversary had a chain with more work than the honest parties,
+and we record the work $k$ of the honest chain that surpasses the adversary's chain immediately after that time.
+For this execution, any confirmation parameter larger or equal to $k$ would keep the adversary from violating Common Prefix.
+Hence, the latency of the system is $\frac{k}{d}$, were $d$ is the time it takes to produce $k$ work.
