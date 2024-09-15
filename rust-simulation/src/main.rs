@@ -1,9 +1,13 @@
-use std::collections::VecDeque;
+use rayon::prelude::*;
+use std::{
+    cmp::Reverse,
+    collections::{BinaryHeap, VecDeque},
+};
 
-use rand::rngs::ThreadRng;
-use rand_distr::{Exp, Distribution};
+use float_ord::FloatOrd;
+use rand_distr::{Distribution, Exp};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 struct Progress {
     timestamp: f64,
     work: f64,
@@ -14,234 +18,178 @@ type Samples = Vec<Sample>;
 
 const INF: f64 = f64::INFINITY;
 
-// def sample_honest(g, max_weight, get_work=lambda: 1):
-//   weight_improvements = [(0,0)] # (arrival_time, weight)
-//   block_time = 0
-//   heaviest_chain_weight = 0
-//   receive_events = deque()
-//   while weight_improvements[-1][1] < max_weight:
-//     block_time += np.random.exponential(1/g)
-
-//     # Before processing the newly mined block first process all received blocks before it
-//     while len(receive_events) > 0:
-//       arrival_time, weight = receive_events[0]
-//       if arrival_time > block_time:
-//         break
-//       heaviest_chain_weight = max(heaviest_chain_weight, weight)
-//       receive_events.popleft()
-
-//     block_arrival_time = block_time + 1 # Δ = 1
-//     this_block_weight = get_work()
-//     new_chain_weight = heaviest_chain_weight + this_block_weight
-//     receive_events.append((block_arrival_time, new_chain_weight)) # the optimal adversary delays as much as allowed
-
-//     if weight_improvements[-1][1] < new_chain_weight:
-//       weight_improvements.append((block_time, new_chain_weight))
-//   return weight_improvements
-
-
-fn sample_honest(g: f64, max_weight: f64, mut get_work: impl FnMut() -> f64) -> Sample {
-    let mut weight_improvements = vec![Progress { timestamp: 0.0, work: 0.0 }];
-    let mut block_time = 0.0;
-    let mut heaviest_chain_weight: f64 = 0.0;
-    let mut receive_events: VecDeque<(f64, f64)> = VecDeque::new();
-
-    let exponential_distribution = Exp::new(g).unwrap();
-    let mut rng = rand::thread_rng();
-
-    while weight_improvements.last().unwrap().work < max_weight {
-        block_time += exponential_distribution.sample(&mut rng);
-
-        // Before processing the newly mined block first process all received blocks before it
-        while let Some((arrival_time, weight)) = receive_events.front() {
-            if *arrival_time > block_time {
-                break;
-            }
-            heaviest_chain_weight = heaviest_chain_weight.max(*weight);
-            receive_events.pop_front();
-        }
-
-        let block_arrival_time = block_time + 1.0; // Δ = 1
-        let this_block_weight = get_work();
-        let new_chain_weight = heaviest_chain_weight + this_block_weight;
-        receive_events.push_back((block_arrival_time, new_chain_weight)); // the optimal adversary delays as much as allowed
-
-        if weight_improvements.last().unwrap().work < new_chain_weight {
-            weight_improvements.push(Progress { timestamp: block_time, work: new_chain_weight });
-        }
-    }
-
-    weight_improvements
-}
-
-fn sample_adversary(g: f64, max_weight: f64, mut get_work: impl FnMut() -> f64) -> Sample {
+fn sample_adversary<T: rand::Rng>(g: f64, max_weight: f64, mut get_work: impl FnMut(&mut T) -> f64, mut rng: &mut T) -> Sample {
     let mut block_time = 0.0;
     let mut block_weight = 0.0;
 
-    let mut weight_improvements = vec![Progress { timestamp: 0.0, work: 0.0 }];
+    let mut weight_improvements = vec![Progress {
+        timestamp: 0.0,
+        work: 0.0,
+    }];
 
     let exponential_distribution = Exp::new(g).unwrap();
-    let mut rng = rand::thread_rng();
 
     while weight_improvements.last().unwrap().work < max_weight {
+        block_weight += get_work(&mut rng);
         block_time += exponential_distribution.sample(&mut rng);
-        block_weight += get_work();
-        weight_improvements.push(Progress { timestamp: block_time, work: block_weight });
+        weight_improvements.push(Progress {
+            timestamp: block_time,
+            work: block_weight,
+        });
     }
 
     return weight_improvements;
 }
 
-fn sample_multiple_adversaries(g: f64, max_weight: f64, mut get_work: impl FnMut() -> f64, monte_carlo: usize) -> Samples {
-    let mut samples = Vec::new();
-    for _i in 0..monte_carlo {
-        samples.push(sample_adversary(g, max_weight, &mut get_work));
+// Call this with different g and gamma values (by changing get_work() and transform_adversary(progress, beta))
+fn get_latency<T: rand::Rng>(
+    g: f64,
+    mut get_work: impl FnMut(&mut T) -> f64,
+    adversary_samples: &Samples,
+    mut transform_adversary: impl FnMut(&Progress, f64) -> Progress,
+    beta_range: Vec<f64>,
+    epsilon: f64,
+    mut rng: &mut T,
+) -> Vec<f64> {
+    let exponential_distribution = Exp::new(g).unwrap();
+
+
+    let mut f = 0.0; // work per Delta
+    let mut max_k: Vec<BinaryHeap<Reverse<FloatOrd<f64>>>> = vec![BinaryHeap::new(); beta_range.len()];
+
+    for adversary_sample in adversary_samples {
+        let mut block_time = 0.0;
+        let mut heaviest_chain_weight: f64 = 0.0;
+        let mut receive_events: VecDeque<(f64, f64)> = VecDeque::new();
+        let mut mem_adv_progress = vec![0; beta_range.len()];
+
+        let mut previous_weight_improvement = Progress {
+            timestamp: 0.0,
+            work: 0.0,
+        };
+
+        let mut latest_weight_improvement = Progress {
+            timestamp: 0.0,
+            work: 0.0,
+        };
+
+        let mut k = vec![INF; beta_range.len()];
+        let max_work = transform_adversary(adversary_sample.last().unwrap(), 0.2).work; // 0.2 is a random value since beta does not affect work, only timestamps
+
+        while latest_weight_improvement.work < max_work {
+            block_time += exponential_distribution.sample(&mut rng);
+
+            // Before processing the newly mined block first process all received blocks before it
+            while let Some((arrival_time, weight)) = receive_events.front() {
+                if *arrival_time > block_time {
+                    break;
+                }
+                heaviest_chain_weight = heaviest_chain_weight.max(*weight);
+                receive_events.pop_front();
+            }
+
+            let block_arrival_time = block_time + 1.0; // Δ = 1
+            let this_block_weight = get_work(&mut rng);
+            let new_chain_weight = heaviest_chain_weight + this_block_weight;
+            receive_events.push_back((block_arrival_time, new_chain_weight)); // the optimal adversary delays as much as allowed
+
+            if new_chain_weight <= latest_weight_improvement.work {
+                continue;
+            }
+
+            // honest heaviest chain grows
+            previous_weight_improvement = latest_weight_improvement;
+
+            latest_weight_improvement = Progress {
+                timestamp: block_time,
+                work: new_chain_weight,
+            };
+            // println!("Extended longest chain: {:?}", latest_weight_improvement);
+
+            // ----
+
+            for beta_index in 0..beta_range.len() {
+                let beta = beta_range[beta_index];
+
+                for j in mem_adv_progress[beta_index]..adversary_sample.len() {
+                    let adv_progress = transform_adversary(&adversary_sample[j], beta);
+                    if adv_progress.timestamp > latest_weight_improvement.timestamp {
+                        // update k if needed
+                        let prev_adv_progress = transform_adversary(&adversary_sample[j - 1], beta);
+                        // println!("Found Adversary Progress with timestamp in front: {:?}", adv_progress);
+                        // println!("Previous: {:?}", prev_adv_progress);
+                        if prev_adv_progress.work >= previous_weight_improvement.work {
+                            // found latest k
+                            k[beta_index] = latest_weight_improvement.work;
+                            // println!("Found latest k: {:?}", latest_weight_improvement.work);
+                        }
+                        if prev_adv_progress.work > latest_weight_improvement.work {
+                            // adversary is ahead, no k found yet
+                            k[beta_index] = INF;
+                            // println!("Made k INF");
+                        }
+                        mem_adv_progress[beta_index] = j;
+                        break;
+                    }
+                }
+            }
+        }
+
+        f += latest_weight_improvement.work / latest_weight_improvement.timestamp;
+
+        let error_count = (epsilon * adversary_samples.len() as f64).round() as usize;
+        for beta_index in 0..beta_range.len() {
+            if max_k[beta_index].len() < error_count {
+                max_k[beta_index].push(Reverse(FloatOrd(k[beta_index])));
+            } else if let Some(&Reverse(smallest)) = max_k[beta_index].peek() {
+                if k[beta_index] > smallest.0 {
+                    max_k[beta_index].pop();
+                    max_k[beta_index].push(Reverse(FloatOrd(k[beta_index])));
+                }
+            }
+        }
     }
-    samples
+    f = f / adversary_samples.len() as f64;
+
+    beta_range.iter().enumerate().map(|(beta_index, _)| max_k[beta_index].peek().unwrap().0 .0 / f).collect()
 }
 
-
-fn entropy_function(gamma: f64) -> impl FnMut() -> f64 {
+fn entropy_function<T: rand::Rng>(gamma: f64) -> impl FnMut(&mut T) -> f64 {
     let exponential_distribution = Exp::new(std::f64::consts::LN_2).unwrap();
-    let mut rng = rand::thread_rng();
+    // let mut rng = rand::thread_rng();
 
-    move || {
-        exponential_distribution.sample(&mut rng) + gamma
-    }
+    move |rng| exponential_distribution.sample(rng) + gamma
 }
 
-fn sample_multiple_honest(g: f64, max_weight: f64, mut get_work: impl FnMut() -> f64, monte_carlo: usize) -> Samples {
-    let mut samples = Vec::new();
-    for _i in 0..monte_carlo {
-        samples.push(sample_honest(g, max_weight, &mut get_work));
-    }
-    samples
-}
-
-
-fn get_k(honest_sample: Sample, adversary_sample: Sample) -> Option<f64> {
-    if honest_sample.last().unwrap().timestamp >= adversary_sample.last().unwrap().timestamp {
-        return Some(INF);
-    }
-
-    let mut j = adversary_sample.len() - 1;
-    for i in (1..honest_sample.len()).rev() {
-        while honest_sample[i].timestamp < adversary_sample[j - 1].timestamp {
-            j -= 1;
-        }
-        if honest_sample[i - 1].work <= adversary_sample[j - 1].work {
-            return Some(honest_sample[i].work)
+fn adversary_transform_function(g: f64, gamma: f64) -> impl FnMut(&Progress, f64) -> Progress {
+    move |progress, beta| {
+        Progress {
+            timestamp: progress.timestamp / (g * beta / (1.0 - beta)),
+            work: if progress.work == 0.0 {0.0} else {progress.work + gamma},
         }
     }
-
-    return None;
 }
-
-fn ternary_search(left: f64, right: f64, function: fn(f64) -> f64) -> f64 {
-    todo!()
-}
-
-fn get_latency(honest_samples: Samples, adversary_samples: Samples, epsilon: f64) -> f64 {
-    let mut potential_k = vec![];
-    let mut f = 0.0;
-    let monte_carlo = honest_samples.len();
-    for i in 0..monte_carlo {
-        potential_k.push(get_k(honest_samples[i].clone(), adversary_samples[i].clone()).unwrap());
-        f += honest_samples[i].last().unwrap().work / honest_samples[i].last().unwrap().timestamp;
-    }
-    potential_k.sort_by(|a, b| b.partial_cmp(a).unwrap());
-    let k = potential_k[(monte_carlo as f64 * epsilon).ceil() as usize];
-    f = f / monte_carlo as f64;
-    let latency = k / f;
-
-    latency
-}
-
-fn get_latency_for_beta_g_gamma(beta: f64, g: f64, gamma: f64, monte_carlo: usize) -> f64 {
-    let mut get_entropy = entropy_function(gamma);
-    // println!("gamma: {}", entropy_function(gamma)());
-    let honest_samples = sample_multiple_honest(g, 400.0, &mut get_entropy, monte_carlo);
-    let adversary_samples = sample_multiple_adversaries(g * beta / (1.0 - beta), 400.0, get_entropy, monte_carlo);
-
-    get_latency(honest_samples, adversary_samples, 0.1)
-}
-
 
 fn main() {
-    // let sample_honest = sample_honest(0.3, 10.0, || 1.0);
-    // println!("{:?}", sample_honest);
     let start = std::time::Instant::now();
+    let g = 0.4;
+    let get_work = entropy_function(0.5);
 
-    for gamma in 0..120 {
-        println!("{gamma}: {:?}", get_latency_for_beta_g_gamma(0.3, 0.3, gamma as f64, 100000));
-    }
+    let monte_carlo = 100000;
+    let adversary_samples: Samples = (0..monte_carlo)
+    .into_par_iter() // Use Rayon’s parallel iterator
+    .map(|_| {
+        let mut rng = rand::thread_rng();
+        sample_adversary(1.0, 600.0, entropy_function(0.0), &mut rng)
+    })
+    .collect();
 
-    // sample_multiple_honest(0.3, 400.0, get_entropy(20 as f64), 100000);
-    for _i in 0..1000000 {
-        // sample_honest(0.3, 10.0, || 1.0);
-    }
+    let transform_adversary = adversary_transform_function(g, 0.5);
+    let beta_range = vec![0.4];
+    let epsilon = 0.1;
+
+    let mut rng = rand::thread_rng();
+    println!("{:?}", get_latency(g, get_work, &adversary_samples, transform_adversary, beta_range, epsilon, &mut rng));
     let duration = start.elapsed().as_secs_f64();
     println!("Time elapsed: {:.2} seconds", duration);
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_k() {
-        let honest_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 2.0, work: 1.0 },
-            Progress { timestamp: 3.0, work: 2.0 }
-        ];
-        let adversary_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 1.0, work: 1.0 },
-            Progress { timestamp: 4.0, work: 2.0 }
-        ];
-        assert_eq!(get_k(honest_sample, adversary_sample).unwrap(), 2.0);
-
-        println!("-----");
-        let honest_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 1.0, work: 2.0 },
-            Progress { timestamp: 4.0, work: 3.0 }
-        ];
-        let adversary_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 2.0, work: 1.0 },
-            Progress { timestamp: 3.0, work: 3.0 }
-        ];
-        assert_eq!(get_k(honest_sample, adversary_sample).unwrap(), INF);
-
-        println!("-----");
-        let honest_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 1.0, work: 1.0 },
-            Progress { timestamp: 3.0, work: 2.0 }
-        ];
-        let adversary_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 2.0, work: 1.0 },
-            Progress { timestamp: 4.0, work: 2.0 }
-        ];
-
-        assert_eq!(get_k(honest_sample, adversary_sample).unwrap(), 2.0);
-
-        println!("-----");
-        let honest_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 1.0, work: 1.0 },
-            Progress { timestamp: 3.0, work: 3.0 }
-        ];
-        let adversary_sample = vec![
-            Progress { timestamp: 0.0, work: 0.0 },
-            Progress { timestamp: 2.0, work: 0.5 },
-            Progress { timestamp: 4.0, work: 2.0 }
-        ];
-
-        assert_eq!(get_k(honest_sample, adversary_sample).unwrap(), 1.0);
-    }
 }
