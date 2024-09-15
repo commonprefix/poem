@@ -217,6 +217,45 @@ fn get_min_bitcoin_latency(
         })
 }
 
+fn get_poem_optimal_gamma_for_latency(
+    monte_carlo: i32,
+    epsilon: f64,
+    g_range: Vec<f64>,
+    beta_range: Vec<f64>,
+    gamma_range: Vec<f64>,
+) -> Vec<f64> {
+    let poem_adversary_samples: Samples = (0..monte_carlo)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = rand::thread_rng();
+            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
+        })
+        .collect();
+
+    gamma_range.into_iter().map(|gamma| {
+            println!("PoEM gamma: {gamma}");
+            g_range
+            .clone()
+            .into_iter()
+            .fold(vec![INF; beta_range.len()], |min_latency_g, g| {
+                let latency_g = get_latency(
+                    g,
+                    gamma,
+                    get_poem_work,
+                    &poem_adversary_samples,
+                    &beta_range,
+                    epsilon,
+                );
+
+                min_latency_g
+                    .iter()
+                    .zip(latency_g.iter())
+                    .map(|(&a, &b)| a.min(b))
+                    .collect()
+            })[0]
+    }).collect()
+}
+
 fn get_min_poem_latency(
     monte_carlo: i32,
     epsilon: f64,
@@ -266,9 +305,7 @@ fn get_min_poem_latency(
         })
 }
 
-fn main() {
-    let start = std::time::Instant::now();
-
+fn poem_vs_bitcoin() {
     let monte_carlo = 10000;
     let epsilon = 0.1;
 
@@ -288,6 +325,26 @@ fn main() {
 
     println!("PoEM: {:?}", poem_latency);
     println!("Bitcoin: {:?}", bitcoin_latency);
+}
+
+fn gamma_latency() {
+    let monte_carlo = 10000;
+    let epsilon = 0.1;
+
+    let g_range = (1..=30).map(|x| x as f64 * 0.1).collect();
+    let gamma_range: Vec<f64> = (1..=50).map(|x| x as f64).collect();
+    let beta_range = vec![0.3];
+
+    let latency = get_poem_optimal_gamma_for_latency(monte_carlo, epsilon, g_range, beta_range, gamma_range.clone());
+    println!("gamma: {:?}", gamma_range);
+    println!("latency: {:?}", latency);
+}
+
+fn main() {
+    let start = std::time::Instant::now();
+
+    // gamma_latency();
+    poem_vs_bitcoin();
 
     let duration = start.elapsed().as_secs_f64();
     println!("Time elapsed: {:.2} seconds", duration);
