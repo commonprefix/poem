@@ -90,7 +90,7 @@ fn get_latency(
         };
 
         let mut k = vec![INF; beta_range.len()];
-        let max_work = adversary_sample.last().unwrap().work + gamma;
+        let max_work = adversary_sample.last().unwrap().work + gamma * (adversary_sample.len() as f64 - 1.0);
 
         while latest_weight_improvement.work < max_work {
             block_time += time_distribution.sample(&mut rng);
@@ -190,7 +190,7 @@ fn get_min_bitcoin_latency(
     beta_range: Vec<f64>,
 ) -> Vec<f64> {
     let bitcoin_adversary_samples: Samples = (0..monte_carlo)
-        .into_par_iter() // Use Rayon’s parallel iterator
+        .into_par_iter()
         .map(|_| {
             let mut rng = rand::thread_rng();
             sample_adversary(1.0, 600.0, get_bitcoin_work, &mut rng)
@@ -225,7 +225,7 @@ fn get_min_poem_latency(
     gamma_range: Vec<f64>,
 ) -> Vec<f64> {
     let poem_adversary_samples: Samples = (0..monte_carlo)
-        .into_par_iter() // Use Rayon’s parallel iterator
+        .into_par_iter()
         .map(|_| {
             let mut rng = rand::thread_rng();
             sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
