@@ -90,7 +90,8 @@ fn get_latency(
         };
 
         let mut k = vec![INF; beta_range.len()];
-        let max_work = adversary_sample.last().unwrap().work + gamma * (adversary_sample.len() as f64 - 1.0);
+        let max_work =
+            adversary_sample.last().unwrap().work + gamma * (adversary_sample.len() as f64 - 1.0);
 
         while latest_weight_improvement.work < max_work {
             block_time += time_distribution.sample(&mut rng);
@@ -146,9 +147,6 @@ fn get_latency(
             }
         }
 
-        let mut local_f = f_mutex.lock().unwrap();
-        *local_f += latest_weight_improvement.work / latest_weight_improvement.timestamp;
-
         let mut local_max_k = max_k_mutex.lock().unwrap();
 
         let error_count = (epsilon * adversary_samples.len() as f64).round() as usize;
@@ -162,6 +160,9 @@ fn get_latency(
                 }
             }
         }
+
+        let mut local_f = f_mutex.lock().unwrap();
+        *local_f += latest_weight_improvement.work / latest_weight_improvement.timestamp;
     });
 
     let f =
@@ -232,55 +233,15 @@ fn get_poem_optimal_gamma_for_latency(
         })
         .collect();
 
-    gamma_range.into_iter().map(|gamma| {
+    gamma_range
+        .into_iter()
+        .map(|gamma| {
             println!("PoEM gamma: {gamma}");
             g_range
-            .clone()
-            .into_iter()
-            .fold(vec![INF; beta_range.len()], |min_latency_g, g| {
-                let latency_g = get_latency(
-                    g,
-                    gamma,
-                    get_poem_work,
-                    &poem_adversary_samples,
-                    &beta_range,
-                    epsilon,
-                );
-
-                min_latency_g
-                    .iter()
-                    .zip(latency_g.iter())
-                    .map(|(&a, &b)| a.min(b))
-                    .collect()
-            })[0]
-    }).collect()
-}
-
-fn get_min_poem_latency(
-    monte_carlo: i32,
-    epsilon: f64,
-    g_range: Vec<f64>,
-    beta_range: Vec<f64>,
-    gamma_range: Vec<f64>,
-) -> Vec<f64> {
-    let poem_adversary_samples: Samples = (0..monte_carlo)
-        .into_par_iter()
-        .map(|_| {
-            let mut rng = rand::thread_rng();
-            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
-        })
-        .collect();
-
-    g_range
-        .clone()
-        .into_iter()
-        .fold(vec![INF; beta_range.len()], |min_latency_g, g| {
-            println!("PoEM g: {g}");
-            let latency_g = gamma_range.clone().into_iter().fold(
-                vec![INF; beta_range.len()],
-                |min_latency_gamma, gamma| {
-                    println!(" - gamma: {gamma}");
-                    let latency_gamma = get_latency(
+                .clone()
+                .into_iter()
+                .fold(vec![INF; beta_range.len()], |min_latency_g, g| {
+                    let latency_g = get_latency(
                         g,
                         gamma,
                         get_poem_work,
@@ -289,20 +250,81 @@ fn get_min_poem_latency(
                         epsilon,
                     );
 
-                    min_latency_gamma
+                    min_latency_g
                         .iter()
-                        .zip(latency_gamma.iter())
+                        .zip(latency_g.iter())
                         .map(|(&a, &b)| a.min(b))
                         .collect()
-                },
+                })[0]
+        })
+        .collect()
+}
+
+fn get_optimal_poem_parameters(
+    monte_carlo: i32,
+    epsilon: f64,
+    g_range: Vec<f64>,
+    beta_range: Vec<f64>,
+    gamma_range: Vec<f64>,
+) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
+    let poem_adversary_samples: Samples = (0..monte_carlo)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = rand::thread_rng();
+            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
+        })
+        .collect();
+
+    let mut optimal_g = vec![INF; beta_range.len()];
+    let mut optimal_gamma = vec![INF; beta_range.len()];
+    let mut optimal_latency = vec![INF; beta_range.len()];
+    for g in &g_range {
+        println!("working on g: {g}");
+        for gamma in &gamma_range {
+            println!(" - working on gamma: {gamma}");
+            let latency = get_latency(
+                *g,
+                *gamma,
+                get_poem_work,
+                &poem_adversary_samples,
+                &beta_range,
+                epsilon,
             );
 
-            min_latency_g
-                .iter()
-                .zip(latency_g.iter())
-                .map(|(&a, &b)| a.min(b))
-                .collect()
-        })
+            for (i, &lat) in latency.iter().enumerate() {
+                if lat < optimal_latency[i] {
+                    optimal_g[i] = *g;
+                    optimal_gamma[i] = *gamma;
+                    optimal_latency[i] = lat;
+                }
+            }
+        }
+    }
+
+    (optimal_g, optimal_gamma, optimal_latency)
+}
+
+fn optimal_poem() {
+    let monte_carlo = 10000;
+    let epsilon = 0.1;
+
+    let g_range: Vec<f64> = (1..=30).map(|x| x as f64 * 0.1).collect();
+    let mut gamma_range: Vec<f64> = (1..=49).map(|x| x as f64 * 0.02).collect();
+    gamma_range.extend((1..=20).map(|x| x as f64).collect::<Vec<f64>>());
+    let beta_range: Vec<f64> = (1..=40).map(|x| x as f64 * 0.01).collect();
+
+    let optimal_poem_parameters = get_optimal_poem_parameters(
+        monte_carlo,
+        epsilon,
+        g_range.clone(),
+        beta_range.clone(),
+        gamma_range.clone(),
+    );
+
+    println!("beta: {:?}", beta_range);
+    println!("g: {:?}", optimal_poem_parameters.0);
+    println!("gamma: {:?}", optimal_poem_parameters.1);
+    println!("latency: {:?}", optimal_poem_parameters.2);
 }
 
 fn poem_vs_bitcoin() {
@@ -313,7 +335,7 @@ fn poem_vs_bitcoin() {
     let gamma_range: Vec<f64> = (1..=50).map(|x| x as f64).collect();
     let beta_range: Vec<f64> = (1..=40).map(|x| x as f64 * 0.01).collect();
 
-    let poem_latency = get_min_poem_latency(
+    let optimal_poem_parameters = get_optimal_poem_parameters(
         monte_carlo,
         epsilon,
         g_range.clone(),
@@ -323,7 +345,7 @@ fn poem_vs_bitcoin() {
     let bitcoin_latency =
         get_min_bitcoin_latency(monte_carlo, epsilon, g_range.clone(), beta_range.clone());
 
-    println!("PoEM: {:?}", poem_latency);
+    println!("PoEM: {:?}", optimal_poem_parameters.2);
     println!("Bitcoin: {:?}", bitcoin_latency);
 }
 
@@ -335,16 +357,138 @@ fn gamma_latency() {
     let gamma_range: Vec<f64> = (1..=50).map(|x| x as f64).collect();
     let beta_range = vec![0.3];
 
-    let latency = get_poem_optimal_gamma_for_latency(monte_carlo, epsilon, g_range, beta_range, gamma_range.clone());
+    let latency = get_poem_optimal_gamma_for_latency(
+        monte_carlo,
+        epsilon,
+        g_range,
+        beta_range,
+        gamma_range.clone(),
+    );
     println!("gamma: {:?}", gamma_range);
     println!("latency: {:?}", latency);
+}
+
+pub fn latency_per_gamma_fixed_g(
+    monte_carlo: i32,
+    epsilon: f64,
+    g: f64,
+    beta_range: Vec<f64>,
+    gamma_range: Vec<f64>,
+) -> Vec<Vec<f64>> {
+    let poem_adversary_samples: Samples = (0..monte_carlo)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = rand::thread_rng();
+            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
+        })
+        .collect();
+
+    let latency_per_gamma = gamma_range
+        .into_iter()
+        .map(|gamma| {
+            println!("working on gamma: {gamma}");
+            get_latency(
+                g,
+                gamma,
+                get_poem_work,
+                &poem_adversary_samples,
+                &beta_range,
+                epsilon,
+            )
+        })
+        .collect();
+    latency_per_gamma
+}
+
+pub fn optimal_gamma_fixed_g(
+    monte_carlo: i32,
+    epsilon: f64,
+    g: f64,
+    beta_range: Vec<f64>,
+    gamma_range: Vec<f64>,
+) -> (Vec<f64>, Vec<f64>) {
+    let poem_adversary_samples: Samples = (0..monte_carlo)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = rand::thread_rng();
+            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
+        })
+        .collect();
+
+    let mut optimal_gamma_per_beta = vec![INF; beta_range.len()];
+    let mut optimal_latency_per_beta = vec![INF; beta_range.len()];
+
+    for &gamma in &gamma_range {
+        let latency_per_beta = get_latency(
+            g,
+            gamma,
+            get_poem_work,
+            &poem_adversary_samples,
+            &beta_range,
+            epsilon,
+        );
+
+        for (i, &lat) in latency_per_beta.iter().enumerate() {
+            if lat < optimal_latency_per_beta[i] {
+                optimal_gamma_per_beta[i] = gamma;
+                optimal_latency_per_beta[i] = lat;
+            }
+        }
+    }
+
+    (optimal_gamma_per_beta, optimal_latency_per_beta)
+}
+
+pub fn optimal_gamma(monte_carlo: i32, epsilon: f64) {
+    let g_range: Vec<f64> = (1..=30).map(|x| x as f64 * 0.1).collect();
+    let gamma_range: Vec<f64> = (1..=50).map(|x| x as f64).collect();
+    let beta = 0.18;
+
+    let poem_adversary_samples: Samples = (0..monte_carlo)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = rand::thread_rng();
+            sample_adversary(1.0, 600.0, get_poem_work, &mut rng)
+        })
+        .collect();
+
+    let ideal_gamma_per_g: Vec<f64> = g_range
+        .clone()
+        .into_iter()
+        .map(|g| {
+            println!("working on g: {g}");
+            let mut optimal_latency = INF;
+            let mut optimal_gamma = INF;
+            for gamma in &gamma_range {
+                let latency_gamma = get_latency(
+                    g,
+                    *gamma,
+                    get_poem_work,
+                    &poem_adversary_samples,
+                    &vec![beta],
+                    epsilon,
+                );
+
+                if latency_gamma[0] < optimal_latency {
+                    optimal_latency = latency_gamma[0];
+                    optimal_gamma = *gamma;
+                }
+            }
+            optimal_gamma
+        })
+        .collect();
+
+    println!("g: {:?}", g_range);
+    println!("gamma: {:?}", ideal_gamma_per_g);
 }
 
 fn main() {
     let start = std::time::Instant::now();
 
     // gamma_latency();
-    poem_vs_bitcoin();
+    // poem_vs_bitcoin();
+    // optimal_gamma(10000, 0.1);
+    // optimal_poem();
 
     let duration = start.elapsed().as_secs_f64();
     println!("Time elapsed: {:.2} seconds", duration);

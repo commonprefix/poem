@@ -1,4 +1,5 @@
 # Exclude compiled output file
+
 poem.pdf
 poem.synctex.gz
 
@@ -64,3 +65,5 @@ experiments/*.pdf
 __pycache__/
 *.synctex*
 venv/
+
+target/
