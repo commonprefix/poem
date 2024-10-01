@@ -27,5 +27,11 @@ Since the adversary has no network delay, all her blocks are chained in series.
 Having simulated the honest and adversary executions, we can now determine the latency of the system.
 To do this, we determine the last point in time when the adversary had a chain with more work than the honest parties,
 and we record the work $k$ of the honest chain that surpasses the adversary's chain immediately after that time.
-For this execution, any confirmation parameter larger or equal to $k$ would keep the adversary from violating Common Prefix.
-Hence, the latency of the system is $\frac{k}{d}$, were $d$ is the time it takes to produce $k$ work.
+For this execution, a confirmation parameter larger or equal to $k$ would safeguard the protocol from a Common Prefix violation.
+
+To accurately calculate the latency of a given system parameterization $(g, \beta)$, we simulate multiple such executions and record the minimum confirmation
+parameter $k$ for each. We set $k^*$ to be the minimum confirmation parameter that would safeguard $90\%$ of the executions against a Common Prefix violation.
+The latency of the system is now calculated as $\frac{k^*}{d}$, were $d$ is the average time it takes to produce $k^*$ work in the executions.
+
+To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$.
+The $g$ that minimizes the latency of the system is the optimal block production rate for a given adversarial ratio $\beta$.
