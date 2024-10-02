@@ -1,7 +1,8 @@
 \section{Stochastic Simulation}
 In this section we compare Bitcoin's and PoEM's latency experimentally.
 We simulate various executions of Bitcoin and PoEM with different parameterizations.
-In each simulation, we fix the block production rate $g$ and adversarial ratio $\beta$, and we
+In each execution simulation, we fix the block production rate $g$, the adversarial ratio $\beta$,
+and, for PoEM also the bias parameter $\gamma$, and we
 measure the latency of the system.
 The latency of the system is the time it takes for a block to become confirmed.
 Namely, we measure the time needed from the moment an honest block is mined until
@@ -12,21 +13,36 @@ proven~\cite{eiar} to be the best possible attack against Bitcoin in the continu
 In a nutshell, in this strategy, the adversary mines blocks in private on her own chain, whereas the honest parties mine
 their own blocktree, following the heaviest chain rule (in Bitcoin) or the most intrinsic work rule (in PoEM) respectively.
 The adversary imposes a network delay of $\Delta$ to honest parties.
-% TODO: Cite proof that the adversary's strategy is optimal, wrt to largest possible Δ. (cite EiaR)
-% TODO: Our analysis is in the discrete-time model, but the simulations are in the continuous-time model.
+Our simulation begins with all honest parties and the adversary agreeing on a particular block
+$B$ with no premining having occurred. At that point, the adversary uses the private mining strategy
+to conduct a double spend in a block immediately following $B$.
+For a particular execution simulation sample, we determine the \emph{safe} confirmation parameter $k$
+that the honest parties \emph{should} have used to avoid this double spend.
+Whereas in our experiments, this confirmation parameter is determined retroactively,
+in the real implementation, the confirmation parameter should be determined prospectively.
 
-To save time, instead of wastefully simulating proof of work, we artificially simulate block production by a stochastic process
-as follows.
-We first simulate the execution of honest parties. We observe that the time between the creation of two blocks is
-exponentially distributed~\cite{bitcoin-made-simple} with rate $g$.
+We simulate the adversary and the honest parties independently. On the one hand, the adversary mines blocks
+in a chain without incurring any delay, and therefore without any forks. The adversary's block production rate is
+$g\frac{\beta}{1 - \beta}$. On the other hand, the honest parties incur a network delay of $\Delta$ for each mined block,
+and they mine blocks at a rate of $g$. Because of this delay, the blocks mined by the honest parties form a blocktree.
+
+To save time, instead of wastefully simulating proof of work, we artificially simulate block production by a
+continuous-time stochastic process.
+We observe that the time between the creation of two honest blocks is exponentially distributed~\cite{bitcoin-made-simple}
+with rate $g$.
 Hence, we take multiple independent samples from $\exp(g)$ to get the interval between each successive honest block production event,
-thereby giving rise to a Poisson process of block creations. In the static Bitcoin model, the work of each block is equal to one,
+thereby giving rise to a Poisson process of honest block creations. We simulate a similar independent Poisson process for the adversary
+by sampling from $\exp(g\frac{\beta}{1 - \beta})$. These two stochastic processes produce the block creation times of the honest and
+adversary parties, from which we can determine the blocktree that was constructed.
+
+In the static Bitcoin model, the work of each block is equal to one,
 whereas the work of a PoEM block is exponentially
 distributed with rate $\frac{1}{\ln2}$ (and note that these exponential samples of work are a different, parallel process
 from the exponential samples of time intervals). Hence, in PoEM's case, we sample from $\exp(\frac{1}{\ln2})$ to get the work
 of each block in the execution. The creation time of each block and its work are enough to simulate the honest parties' execution
 and determine the blocktree that was constructed.
 % TODO: How do you determine the height of the blocktree?
+% TODO: Cite EiaR for the Δ optimality
 
 Then, independently we simulate the adversary's execution. Like in the honest execution, we sample from $\exp(g\frac{\beta}{1 - \beta})$
 to get the interval between the time of successive adversarially produced blocks, where $g\frac{\beta}{1 - \beta}$ is the adversary's block production rate.
@@ -53,6 +69,31 @@ The latency of the system is now calculated as $\frac{k^*}{d}$, were $d$ is the 
 To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$.
 The $g$ that minimizes the latency of the system is the optimal block production rate for a given adversarial ratio $\beta$.
 
+% TODO: Quantization
+% TODO: Rust code, lines of code, visualization in Python
+
 % TODO: Figures?
 % TODO: What about γ?
 % TODO: Interpret the plots and tell us a narrative about the results.
+
+% Figure 1:
+%   Latency of Bitcoin and PoEM for various parameterizations (horizontal axis is β, vertical axis is latency, optimize over g and γ)
+
+% Figure 2:
+%   PoEM executions across different βs (horizontal axis is β, vertical axes are larency, optimal g, optimal γ)
+%
+% Figure 3:
+%   Optimization of γ. Fix (β=0.1, g=0.7) and (β=0.3, g=1.5), vary γ, plot latency. 100k iterations.
+%
+% Figure 4:
+%   Optimization of g. Fix β=0.2, fix γ=0, vary g, plot latency. 100k iterations.
+
+We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
+for Bitcoin only, and not for PoEM, but in our experiments we have used the same attack for both protocols.
+Secondly, the optimality of the private attack previously proven~\cite{eiar} is a reduction illustrating
+that, for a given resilience $\beta$, if the private attack is not possible, then no attack is possible.
+In our experiments, we obtain a safe confirmation parameter $k$ against the private mining attack,
+but this confirmation parameter has not been shown to be safe against other attacks, even though the private
+mining attack is optimal when it pertains to resilience.
+Lastly, there is a discrepancy between the continuous-time model used in our experimental simulations
+and the discrete-time model used in our theoretical analysis.
