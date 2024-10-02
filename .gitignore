@@ -67,3 +67,4 @@ __pycache__/
 venv/
 
 target/
+simulation_data/
