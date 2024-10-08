@@ -88,6 +88,27 @@ The $g$ that minimizes the latency of the system is the optimal block production
 % Figure 4:
 %   Optimization of g. Fix β=0.2, fix γ=0, vary g, plot latency. 100k iterations.
 
+\begin{figure}[pt]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width = \textwidth]{figures/gamma_latency_0.1.pdf}
+    \caption{$\beta = 0.1$ and $g = 0.7$}
+    \label{fig:gamma_latency_0.1}
+    \end{subfigure}
+    \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width = \textwidth]{figures/gamma_latency_0.3.pdf}
+    \caption{$\beta = 0.3$ and $g = 0.7$}
+    \label{fig:gamma_latency_0.3}
+    \end{subfigure}
+
+  \caption{Fixing $\beta$ and $g$, we compare the latency of PoEM parameterized under different $\gamma$ values
+          and the latency of Bitcoin. We observe that the plot is convex and for large $\gamma$, the latency
+          converges asymptotically to a value lower than Bitcoin's latency.}
+    \label{fig:gamma_latency}
+\end{figure}
+
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
 for Bitcoin only, and not for PoEM, but in our experiments we have used the same attack for both protocols.
 Secondly, the optimality of the private attack previously proven~\cite{eiar} is a reduction illustrating
