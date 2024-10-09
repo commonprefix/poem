@@ -68,6 +68,30 @@ we use the notation $\Ledger[P_1][][r_1] \sim \Ledger[P_2][][r_2]$.
 \end{definition}
 
 \noindent
+\myparagraph[Blocks & Mining]
+Similar to Bitcoin, our protocol consists of miners who attempt to find blocks.
+Each miner locally maintains their \emph{adopted chain} $C$, which is the best
+chain so far. A chain is a sequence of blocks beginning with a known genesis block $G$,
+considered honest by definition.
+A block is a triplet of the
+form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$ is a reference to the previous block,
+$x \in \{0, 1\}^*$ contains the transactions of the block, and $\ctr \in \N$ is a nonce
+used to produce proof-of-work.
+The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+We let $H$ be a $\kappa$-bit hash function, normalized to the interval
+$[0, 1)$.
+\footnote{The deployed hash function of, e.g., Bitcoin,
+is SHA-256, which outputs a $256$-bit string. The value can be scaled to the interval
+$[0, 1)$ by dividing by $2^{256}$.}
+Despite the normalization, the hash can be stored in a $\kappa$-bit string.
+When a chain $C$ appears in the execution, we say that block $C[j]$ \emph{extends} block $C[i]$
+if $i < j$.
+
+Each honest party attempts to \emph{mine} a block extending the chain they currently have
+by brute forcing the nonce $\ctr$ until $H(B) < T$, where $T$ is the fixed \emph{target}.
+When this happens, the block is broadcast to all other parties.
+
+\noindent
 \myparagraph[Bitcoin Backbone]
 We analyze the protocol using the model introduced in the Bitcoin Backbone~\cite{backbone} paper.
 The polynomially bound protocol execution is parametrized by a security parameter $\kappa \in \mathbb{N}$ and
