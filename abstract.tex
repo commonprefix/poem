@@ -4,14 +4,18 @@
   \emph{intrinsic work}. The intrinsic work of a block is roughly the number of
   zeroes at the front of its hash. This modification allows us to safely
   decrease the confirmations required,
-  yielding a $28.5\%$ improvement in \emph{confirmation delay} or, dually,
-  safely increase the block production rate,
-  yielding a $16.3\%$ improvement in \emph{throughput}, as compared to the vanilla
-  Bitcoin proof-of-work fork choice rule. Our modification is at the
+  yielding a $28.5\%$ improvement in \emph{confirmation delay} as compared
+  to Bitcoin for adversaries close to $1/2$. At these
+  improved latency configurations, PoEM also performs better in terms of
+  \emph{throughput}, yielding a $16.3\%$ improvement. Our modification is at the
   level of the proof-of-work inequality, and thus can be composed with
   any other methods to improve latency or throughput that have been
-  proposed in the literature. We report the experimental findings by
-  measuring them on a production-grade implementation of our system,
-  whose testnet is already deployed in the wild. Lastly, we formally prove the
+  proposed in the literature.
+  We compile detailed simulation evidence from over $2$ billion
+  monte carlo executions of our system across different parameters
+  to support our claims.
+  Lastly, we formally prove the
   security of our new protocol in the Bitcoin Backbone model.
+  These proofs use a new technical tool, the \emph{real-valued Random Oracle}
+  which may be of independent interest.
 \end{abstract}
