@@ -1,56 +1,27 @@
 \section{Introduction}
 
-In Bitcoin~\cite{bitcoin}, a population of \emph{miners}
-attempt to find \emph{blocks} in the form $B = h \concat x \concat ctr$,
-where $h$ is a pointer to the previous block, $x$ contains a sequence of
-\emph{transactions}, and $ctr$ is a \emph{nonce}. The nonce is brute forced
-by the miner to satisfy the \emph{proof-of-work} inequality $H(B) < T$, where
-$H$ is a hash function with output in the interval\footnote{The deployed hash function of, e.g., Bitcoin,
-is SHA-256, which outputs a $256$-bit string. The value can be scaled to the interval $(0, 1)$ by
-dividing by $2^{256}$.}
-$(0, 1)$
-and $T$ is a small \emph{target} in the interval $(0, 1)$. Any $B$ that satisfies this
-inequality is considered a \emph{valid block}, whereas candidates that do not satisfy
-the inequality are invalid. Simply put, valid blocks must have
-hashes that begin with a desired number of $0$s.
-These blocks form linked lists known as \emph{chains}.
-Among such chains, the \emph{heaviest} chain is chosen as the canonical one.
-
-Some blocks $B$ satisfy the proof-of-work inequality better than others.
-Namely, they satisfy not only $H(B) < T$, but also $H(B) < \frac{T}{2^w}$
-for some $w \in \mathbb{R}^+$. Nevertheless, these heavier blocks are counted all the same when choosing
+In Bitcoin~\cite{bitcoin}, a valid block must satisfy the
+\emph{proof-of-work} inequality $H(B) < T$, where
+$H$ is a hash function and $T$ is a small \emph{target}.
+Simply put, valid blocks must have hashes that begin with a desired number of $0$s.
+Some blocks $B$ satisfy the inequality better than others:
+They have a bunch of extra zeroes at the front of their hash.
+Nevertheless, these heavier blocks are counted all the same when choosing
 which chain to pick.
 We posit that the weight of a block is information
 that can be useful to improve the protocol.
 In this paper, we introduce \emph{\poem}.
-We modify the fork choice rule of Bitcoin to take this information into account.
-We build a protocol which retains the same level of security as Bitcoin, while achieving
-better confirmation latency or transaction throughput, because the number of confirmations
-can be safely reduced, or the block production rate can be safely increased respectively.
-
-We report on our production implementation of a real-world system
-in which we employ this new rule, and show that it achieves a $28.5\%$
-improvement in confirmation latency
-or a $16.3\%$ improvement in throughput as compared to Bitcoin.
-We also theoretically prove our new protocol is secure
-using the Bitcoin Backbone model. Our theoretical analysis introduces
-a new technique, the \emph{real-valued random oracle}, which we prove behaves
-similarly to the usual random oracle. This variant of the
-random oracle allows for the use of an arsenal of theoretical tools from the
-continuous domain (such as continuous distributions), easing the theoretical
-exposition, and may be of independent interest.
+We modify the fork choice rule of Bitcoin to take this information into account,
+achieving better confirmation latency and transaction throughput.
 
 \noindent
 \myparagraph[Construction overview]
-The classical Bitcoin protocol uses the heaviest chain fork choice. Among two different
-chains, the one with the \emph{most work} is chosen as the canonical one, where the work (or difficulty) of a block
-is defined as $\frac{1}{T}$, with $T$ being the mining target. We modify this
-rule as follows: Each block counts for its \emph{intrinsic} work $-\lg \frac{H(B)}{T}$,
-where $H(B)$ denotes the hash of the block. Intuitively, this corresponds to counting the
-``number of extra zeroes'' at the front of the actually achieved hash of each block, not just accounting
-for its nominal target. The zeroes at the front of the hash are already guaranteed
-to be at least $-\lg T$, but can be more. The score of each block is \emph{how many extra zeroes}
-it has. The chain with the most total intrinsic work is chosen as the canonical chain.
+In Bitcoin, every block counts the same\footnote{Bitcoin blocks can count differently when
+difficulty adjusts, but count the same during the same epoch. Our analysis is in the
+static population setting, where the population does not change with time.}.
+In \poem, we give each block a score equal to the number of \emph{extra} zeroes at the front of its hash,
+a value we call its \emph{intrinstic work}. Honest parties adopt the chain with the most total
+intrinsic work.
 
 \iftwocolumn
 \begin{figure*}
@@ -86,26 +57,41 @@ it has. The chain with the most total intrinsic work is chosen as the canonical 
 \end{figure*}
 \fi
 
-To see the benefits of this rule, first observe that it provides a natural tie-breaking rule:
-If two honest parties observe the same block tree, they will agree on
-the canonical chain, regardless of the order of network message arrival. The \poem protocol
-outperforms Bitcoin when the block production rate is increased. It is generally desirable
-to increase the block production rate, because it corresponds to an increase in the chain growth
-rate, which, in turn, increases the transaction throughput.
-However, when the expected block interarrival time approaches the network delay, multiple honest blocks
-can be produced in short succession without allowing for honest nodes to synchronize their views.
-As a result, multiple honest nodes may produce blocks at the same height, and only one of these will
-eventually make it to the canonical chain, while the others will be discarded. These discarded blocks
-do not contribute to the growth of the length of the honest chain. Our protocol is similar to Bitcoin in that,
-whenever multiple honest blocks are found simultaneously, only one of them survives in the canonical chain,
-and the rest are discarded. However, the surviving block is the \emph{heaviest} block among them, in terms of intrinsic
-work, as illustrated in Figure~\ref{fig:poem-wasted-work}. Hence, the discarded
-work is less. This gives an advantage to the honest
-parties when they are racing against a private mining attacker, since they can produce chains that grow
-at a faster rate. This intuition generalizes to arbitrary adversaries.
-The small change we introduce in the fork choice rule allows us to safely increase the block production
-rate, as compared to Bitcoin, without sacrificing adversarial resilience. The resulting protocol
-allows for faster transaction confirmation, or better throughput, while retaining the same level of security.
+This protocol shines when blocks are produced quickly. In this realm, multiple honest blocks
+are produced in parallel extending the same parent.
+These blocks have the same height, and only one of them will
+make it to the canonical chain, while the others will be discarded.
+If blocks are scored equally, the honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
+However, in our protocol, the heaviest block among them survives,
+and the lightest blocks are discarded. The honest chain grows by the heaviest
+block's score, which in expectation is more than one (Figure~\ref{fig:poem-wasted-work}, top right).
+
+The adversary is mining privately independently, and placing all her blocks in one chain.
+In both PoEM and Bitcoin, the adversary's chain grows at the same rate (Figure~\ref{fig:poem-wasted-work},
+bottom left and bottom right).
+This gives an advantage to the honest
+parties, since they produce chains that grow faster.
+
+The resulting protocol allows for faster transaction confirmation and better throughput while
+retaining the same level of security as Bitcoin.
+
+\noindent
+\myparagraph[Our contributions]
+We build a protocol which retains the same level of security as Bitcoin, while achieving
+better confirmation latency or transaction throughput, both because the number of confirmations
+can be safely reduced and the block production rate can be safely increased.
+
+We report on our production implementation of a real-world system
+in which we employ this new rule, and show that it achieves a $28.5\%$
+improvement in confirmation latency compared to Bitcoin. For this improved
+latency, it also achieves a $16.3\%$ improvement in throughput.
+We also theoretically prove our new protocol is secure
+using the Bitcoin Backbone model. Our theoretical analysis introduces
+a new technique, the \emph{real-valued random oracle}, which we prove behaves
+similarly to the usual random oracle. This variant of the
+random oracle allows for the use of an arsenal of theoretical tools from the
+continuous domain (such as continuous distributions), easing the theoretical
+exposition, and may be of independent interest.
 
 \noindent
 \myparagraph[Related work]
