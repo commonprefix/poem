@@ -105,7 +105,7 @@ The $g$ that minimizes the latency of the system is the optimal block production
 
   \caption{Fixing $\beta$ and $g$, we compare the latency of PoEM parameterized under different $\gamma$ values
           and the latency of Bitcoin. We observe that the plot is convex and for large $\gamma$, the latency
-          converges asymptotically to a value lower than Bitcoin's latency. The results were obtained by running 100k simulations.}
+          converges asymptotically to a value lower than Bitcoin's latency. The results were obtained by running 100k simulations per point.}
     \label{fig:gamma_latency}
 \end{figure}
 
@@ -114,11 +114,19 @@ The $g$ that minimizes the latency of the system is the optimal block production
     \includegraphics[width = 0.48\textwidth]{figures/g_latency.pdf}
 
   \caption{Fixing $\beta=0.2$ and $\gamma=0$, we plot the latency of PoEM parameterized under different block production rates $g$.
-          For small block production rates, close to zero, we get high latency because blocks are produced very slow.
-          For large block production rates, we get high latency because honest block create many forks, whereas the adversarial blocks
+          For small block production rates, close to zero, we get high latency because blocks are produced very slowly.
+          For large block production rates, we get high latency because honest blocks effect many forks, whereas the adversarial blocks
           are all chained in series. We get optimal latency somewhere in the middle.
-          The results were obtained by running 100k simulations.}
+          The results were obtained by running 100k simulations per point.}
     \label{fig:g_latency}
+\end{figure}
+
+\begin{figure}[pt]
+    \centering
+    \includegraphics[width = 0.48\textwidth]{figures/bitcoin_vs_poem.png}
+
+  \caption{}
+    \label{fig:bitcoin_vs_poem}
 \end{figure}
 
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
