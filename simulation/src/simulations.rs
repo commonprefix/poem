@@ -3,42 +3,82 @@ use crate::{
     formatting::{
         get_monte_carlo_progresses, scale_monte_carlo_blocks, scale_monte_carlo_progresses,
     },
-    sampling::{
-        get_monte_carlo_bitcoin_executions, sample_monte_carlo_execution_timestamps,
-        sample_monte_carlo_poem_executions,
-    },
+    sampling::{get_monte_carlo_bitcoin_executions, sample_monte_carlo_poem_executions},
     types::INF,
 };
 
-const HONEST_HEIGHT: usize = 1800;
-const ADVERSARY_HEIGHT: usize = 600;
+pub const HONEST_COUNT: usize = 900;
+pub const ADVERSARY_COUNT: usize = 900;
 
-pub fn poem_vs_bitcoin(
+pub struct Data {
+    pub bitcoin_latencies: Vec<f64>,
+    pub bitcoin_optimal_k: Vec<f64>,
+    pub bitcoin_optimal_g: Vec<f64>,
+    pub bitcoin_throughputs: Vec<f64>,
+    pub poem_latencies: Vec<f64>,
+    pub poem_optimal_k: Vec<f64>,
+    pub poem_optimal_g: Vec<f64>,
+    pub poem_optimal_gamma: Vec<f64>,
+    pub poem_throughputs: Vec<f64>,
+}
+
+pub struct PoemData {
+    pub latency: Vec<f64>,
+    pub optimal_k: Vec<f64>,
+    pub optimal_g: Vec<f64>,
+    pub optimal_gamma: Vec<f64>,
+    pub throughput: Vec<f64>,
+    pub max_work: Vec<f64>,
+    pub max_height: Vec<f64>,
+    pub adversary_max_work: Vec<f64>,
+    pub adversary_max_height: Vec<f64>,
+}
+
+pub struct BitcoinData {
+    pub latency: Vec<f64>,
+    pub optimal_k: Vec<f64>,
+    pub optimal_g: Vec<f64>,
+    pub throughput: Vec<f64>,
+    pub max_work: Vec<f64>,
+    pub max_height: Vec<f64>,
+    pub adversary_max_work: Vec<f64>,
+    pub adversary_max_height: Vec<f64>,
+}
+
+pub fn simulate_poem(
+    timestamps: (Vec<[f64; HONEST_COUNT]>, Vec<[f64; ADVERSARY_COUNT]>),
     monte_carlo: usize,
     epsilon: f64,
     beta_range: Vec<f64>,
     g_range: Vec<f64>,
     gamma_range: Vec<f64>,
-) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
-    let monte_carlo_execution_timestamps =
-        sample_monte_carlo_execution_timestamps::<HONEST_HEIGHT, ADVERSARY_HEIGHT>(monte_carlo);
+) -> PoemData {
+    println!("Working on PoEM...");
+    let mut poem_data = PoemData {
+        latency: vec![INF; beta_range.len()],
+        optimal_k: vec![INF; beta_range.len()],
+        optimal_g: vec![0.0; beta_range.len()],
+        optimal_gamma: vec![0.0; beta_range.len()],
+        throughput: vec![0.0; beta_range.len()],
+        max_work: vec![0.0; beta_range.len()],
+        max_height: vec![0.0; beta_range.len()],
+        adversary_max_work: vec![0.0; beta_range.len()],
+        adversary_max_height: vec![0.0; beta_range.len()],
+    };
 
-    // PoEM benchmark
     // Get the block creations
     let (poem_honest_monte_carlo, poem_adversary_monte_carlo) =
-        sample_monte_carlo_poem_executions::<HONEST_HEIGHT, ADVERSARY_HEIGHT>(
-            &monte_carlo_execution_timestamps,
-        );
+        sample_monte_carlo_poem_executions::<HONEST_COUNT, ADVERSARY_COUNT>(&timestamps);
 
     // Create the scaled honest blocks initial vector
     let mut scaled_poem_honest_monte_carlo = poem_honest_monte_carlo.clone();
     // Create the honest progress empty vector
     let mut poem_honest_progress_monte_carlo =
-        vec![Vec::with_capacity(HONEST_HEIGHT + 1); monte_carlo];
+        vec![Vec::with_capacity(HONEST_COUNT + 1); monte_carlo];
 
     // Create the adversary progress empty vector
     let mut original_poem_adversary_progress_monte_carlo =
-        vec![Vec::with_capacity(ADVERSARY_HEIGHT + 1); monte_carlo];
+        vec![Vec::with_capacity(ADVERSARY_COUNT + 1); monte_carlo];
     // Initialize the adversary progress initial vector
     get_monte_carlo_progresses(
         &mut original_poem_adversary_progress_monte_carlo,
@@ -49,11 +89,6 @@ pub fn poem_vs_bitcoin(
     let mut scaled_poem_adversary_progress_monte_carlo =
         original_poem_adversary_progress_monte_carlo.clone();
 
-    let mut poem_latencies = vec![INF; beta_range.len()];
-    let mut poem_optimal_gamma = vec![0.0; beta_range.len()];
-    let mut poem_optimal_g = vec![0.0; beta_range.len()];
-    let mut poem_throughputs = vec![0.0; beta_range.len()];
-    println!("Working on PoEM...");
     for &gamma in gamma_range.iter() {
         println!("gamma: {}", gamma);
         for &g in g_range.iter() {
@@ -83,37 +118,68 @@ pub fn poem_vs_bitcoin(
                 );
 
                 // Get configuration performance
-                let (k, f_work, poem_throughput) = get_monte_carlo_performance(
+                let (
+                    k,
+                    f_work,
+                    f_height,
+                    max_work,
+                    max_height,
+                    adversary_max_work,
+                    adversary_max_height,
+                ) = get_monte_carlo_performance(
                     &poem_honest_progress_monte_carlo,
                     &scaled_poem_adversary_progress_monte_carlo,
                     epsilon,
                 );
                 let poem_latency = k / f_work;
-                if poem_latency < poem_latencies[beta_index] {
-                    poem_latencies[beta_index] = poem_latency;
-                    poem_optimal_gamma[beta_index] = gamma;
-                    poem_optimal_g[beta_index] = g;
-                    poem_throughputs[beta_index] = poem_throughput;
+                if poem_latency < poem_data.latency[beta_index] {
+                    poem_data.latency[beta_index] = poem_latency;
+                    poem_data.optimal_k[beta_index] = k;
+                    poem_data.optimal_gamma[beta_index] = gamma;
+                    poem_data.optimal_g[beta_index] = g;
+                    poem_data.throughput[beta_index] = f_height;
+                    poem_data.max_work[beta_index] = max_work;
+                    poem_data.max_height[beta_index] = max_height;
+                    poem_data.adversary_max_work[beta_index] = adversary_max_work;
+                    poem_data.adversary_max_height[beta_index] = adversary_max_height;
                 }
             }
         }
     }
+    poem_data
+}
 
-    // Bitcoin benchmark
+pub fn simulate_bitcoin(
+    timestamps: (Vec<[f64; HONEST_COUNT]>, Vec<[f64; ADVERSARY_COUNT]>),
+    monte_carlo: usize,
+    epsilon: f64,
+    beta_range: Vec<f64>,
+    g_range: Vec<f64>,
+) -> BitcoinData {
+    println!("Working on Bitcoin...");
+    let mut bitcoin_data = BitcoinData {
+        latency: vec![INF; beta_range.len()],
+        optimal_k: vec![INF; beta_range.len()],
+        optimal_g: vec![0.0; beta_range.len()],
+        throughput: vec![0.0; beta_range.len()],
+        max_work: vec![0.0; beta_range.len()],
+        max_height: vec![0.0; beta_range.len()],
+        adversary_max_work: vec![0.0; beta_range.len()],
+        adversary_max_height: vec![0.0; beta_range.len()],
+    };
+
     let (bitcoin_honest_monte_carlo, bitcoin_adversary_monte_carlo) =
-        get_monte_carlo_bitcoin_executions::<HONEST_HEIGHT, ADVERSARY_HEIGHT>(
-            &monte_carlo_execution_timestamps,
-        );
+        get_monte_carlo_bitcoin_executions::<HONEST_COUNT, ADVERSARY_COUNT>(&timestamps);
 
     // Create the scaled honest blocks initial vector
     let mut scaled_bitcoin_honest_monte_carlo = bitcoin_honest_monte_carlo.clone();
     // Create the honest progress empty vector
     let mut bitcoin_honest_progress_monte_carlo =
-        vec![Vec::with_capacity(HONEST_HEIGHT + 1); monte_carlo];
+        vec![Vec::with_capacity(HONEST_COUNT + 1); monte_carlo];
 
     // Create the adversary progress empty vector
     let mut original_bitcoin_adversary_progress_monte_carlo =
-        vec![Vec::with_capacity(ADVERSARY_HEIGHT + 1); monte_carlo];
+        vec![Vec::with_capacity(ADVERSARY_COUNT + 1); monte_carlo];
     // Initialize the adversary progress initial vector
     get_monte_carlo_progresses(
         &mut original_bitcoin_adversary_progress_monte_carlo,
@@ -124,11 +190,6 @@ pub fn poem_vs_bitcoin(
     let mut scaled_bitcoin_adversary_progress_monte_carlo =
         original_bitcoin_adversary_progress_monte_carlo.clone();
 
-    let mut bitcoin_latencies = vec![INF; beta_range.len()];
-    let mut bitcoin_optimal_g = vec![0.0; beta_range.len()];
-    let mut bitcoin_throughputs = vec![0.0; beta_range.len()];
-
-    println!("Working on Bitcoin...");
     for &g in g_range.iter() {
         println!("g: {}", g);
         // Scale Bitcoin honest blocks
@@ -155,27 +216,62 @@ pub fn poem_vs_bitcoin(
                 0.0,
             );
 
-            let (k, f_work, bitcoin_throughput) = get_monte_carlo_performance(
+            let (
+                k,
+                f_work,
+                f_height,
+                max_work,
+                max_height,
+                adversary_max_work,
+                adversary_max_height,
+            ) = get_monte_carlo_performance(
                 &bitcoin_honest_progress_monte_carlo,
                 &scaled_bitcoin_adversary_progress_monte_carlo,
                 epsilon,
             );
             let bitcoin_latency = k / f_work;
-            if bitcoin_latency < bitcoin_latencies[beta_index] {
-                bitcoin_latencies[beta_index] = bitcoin_latency;
-                bitcoin_optimal_g[beta_index] = g;
-                bitcoin_throughputs[beta_index] = bitcoin_throughput;
+            if bitcoin_latency < bitcoin_data.latency[beta_index] {
+                bitcoin_data.latency[beta_index] = bitcoin_latency;
+                bitcoin_data.optimal_k[beta_index] = k;
+                bitcoin_data.optimal_g[beta_index] = g;
+                bitcoin_data.throughput[beta_index] = f_height;
+                bitcoin_data.max_work[beta_index] = max_work;
+                bitcoin_data.max_height[beta_index] = max_height;
+                bitcoin_data.adversary_max_work[beta_index] = adversary_max_work;
+                bitcoin_data.adversary_max_height[beta_index] = adversary_max_height;
             }
         }
     }
-
-    (
-        bitcoin_latencies,
-        bitcoin_optimal_g,
-        bitcoin_throughputs,
-        poem_latencies,
-        poem_optimal_g,
-        poem_optimal_gamma,
-        poem_throughputs,
-    )
+    bitcoin_data
 }
+
+// pub fn poem_throughput_at_optimal_latency(
+//     monte_carlo: usize,
+//     epsilon: f64,
+//     beta_range: Vec<f64>,
+//     optimal_g_range: Vec<f64>,
+//     optimal_gamma_range: Vec<f64>,
+// ) -> Vec<f64> {
+//     let mut poem_throughputs = vec![];
+//     for (beta, (g, gamma)) in zip(beta_range, zip(optimal_g_range, optimal_gamma_range)) {
+//         let data = poem_vs_bitcoin(
+//             monte_carlo, epsilon, vec![beta], vec![g], vec![gamma]);
+//         poem_throughputs.push(data.poem_throughputs[0]);
+//     }
+//     poem_throughputs
+// }
+
+// pub fn bitcoin_throughput_at_optimal_latency(
+//     monte_carlo: usize,
+//     epsilon: f64,
+//     beta_range: Vec<f64>,
+//     optimal_g_range: Vec<f64>,
+// ) -> Vec<f64> {
+//     let mut bitcoin_throughputs = vec![];
+//     for (beta, g) in zip(beta_range, optimal_g_range) {
+//         let data = poem_vs_bitcoin(
+//             monte_carlo, epsilon, vec![beta], vec![g], vec![0.0]);
+//         bitcoin_throughputs.push(data.bitcoin_throughputs[0]);
+//     }
+//     bitcoin_throughputs
+// }
