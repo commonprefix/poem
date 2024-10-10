@@ -67,6 +67,9 @@ fn parse_range(s: String, exponent: Option<f64>) -> Result<Vec<f64>, RangeParseE
     let num_points: usize = parts[2].parse().expect("Failed to parse num_points");
 
     if let Some(exp) = exponent {
+        if start == 0.0 {
+            return Ok(vec![0.0].into_iter().chain(logarithmic_range(start + 0.005, end, num_points, exp)[1..].to_vec()).collect());
+        }
         Ok(logarithmic_range(start, end, num_points, exp))
     } else {
         Ok(linear_range(start, end, num_points))
@@ -89,9 +92,11 @@ fn main() {
         let (
             bitcoin_latencies,
             bitcoin_optimal_g,
+            bitcoin_throughputs,
             poem_latencies,
             poem_optimal_g,
             poem_optimal_gamma,
+            poem_throughputs,
         ) = poem_vs_bitcoin(
             args.monte_carlo,
             args.error,
@@ -107,9 +112,11 @@ fn main() {
             "gamma": gamma_range,
             "bitcoin_latency": bitcoin_latencies,
             "bitcoin_optimal_g": bitcoin_optimal_g,
+            "bitcoin_throughput": bitcoin_throughputs,
             "poem_latency": poem_latencies,
             "poem_optimal_g": poem_optimal_g,
-            "poem_optimal_gamma": poem_optimal_gamma
+            "poem_optimal_gamma": poem_optimal_gamma,
+            "poem_throughput": poem_throughputs,
         });
         let json_string = serde_json::to_string_pretty(&data).unwrap();
         let file_name = format!(

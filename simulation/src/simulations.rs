@@ -19,7 +19,7 @@ pub fn poem_vs_bitcoin(
     beta_range: Vec<f64>,
     g_range: Vec<f64>,
     gamma_range: Vec<f64>,
-) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
+) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
     let monte_carlo_execution_timestamps =
         sample_monte_carlo_execution_timestamps::<HONEST_HEIGHT, ADVERSARY_HEIGHT>(monte_carlo);
 
@@ -52,7 +52,7 @@ pub fn poem_vs_bitcoin(
     let mut poem_latencies = vec![INF; beta_range.len()];
     let mut poem_optimal_gamma = vec![0.0; beta_range.len()];
     let mut poem_optimal_g = vec![0.0; beta_range.len()];
-
+    let mut poem_throughputs = vec![0.0; beta_range.len()];
     println!("Working on PoEM...");
     for &gamma in gamma_range.iter() {
         println!("gamma: {}", gamma);
@@ -83,7 +83,7 @@ pub fn poem_vs_bitcoin(
                 );
 
                 // Get configuration performance
-                let (k, f_work, _) = get_monte_carlo_performance(
+                let (k, f_work, poem_throughput) = get_monte_carlo_performance(
                     &poem_honest_progress_monte_carlo,
                     &scaled_poem_adversary_progress_monte_carlo,
                     epsilon,
@@ -93,6 +93,7 @@ pub fn poem_vs_bitcoin(
                     poem_latencies[beta_index] = poem_latency;
                     poem_optimal_gamma[beta_index] = gamma;
                     poem_optimal_g[beta_index] = g;
+                    poem_throughputs[beta_index] = poem_throughput;
                 }
             }
         }
@@ -125,6 +126,7 @@ pub fn poem_vs_bitcoin(
 
     let mut bitcoin_latencies = vec![INF; beta_range.len()];
     let mut bitcoin_optimal_g = vec![0.0; beta_range.len()];
+    let mut bitcoin_throughputs = vec![0.0; beta_range.len()];
 
     println!("Working on Bitcoin...");
     for &g in g_range.iter() {
@@ -153,7 +155,7 @@ pub fn poem_vs_bitcoin(
                 0.0,
             );
 
-            let (k, f_work, _) = get_monte_carlo_performance(
+            let (k, f_work, bitcoin_throughput) = get_monte_carlo_performance(
                 &bitcoin_honest_progress_monte_carlo,
                 &scaled_bitcoin_adversary_progress_monte_carlo,
                 epsilon,
@@ -162,6 +164,7 @@ pub fn poem_vs_bitcoin(
             if bitcoin_latency < bitcoin_latencies[beta_index] {
                 bitcoin_latencies[beta_index] = bitcoin_latency;
                 bitcoin_optimal_g[beta_index] = g;
+                bitcoin_throughputs[beta_index] = bitcoin_throughput;
             }
         }
     }
@@ -169,8 +172,10 @@ pub fn poem_vs_bitcoin(
     (
         bitcoin_latencies,
         bitcoin_optimal_g,
+        bitcoin_throughputs,
         poem_latencies,
         poem_optimal_g,
         poem_optimal_gamma,
+        poem_throughputs,
     )
 }
