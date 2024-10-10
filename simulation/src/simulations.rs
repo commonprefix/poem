@@ -7,8 +7,8 @@ use crate::{
     types::INF,
 };
 
-pub const HONEST_COUNT: usize = 900;
-pub const ADVERSARY_COUNT: usize = 900;
+pub const HONEST_COUNT: usize = 1000;
+pub const ADVERSARY_COUNT: usize = 1000;
 
 pub struct Data {
     pub bitcoin_latencies: Vec<f64>,
