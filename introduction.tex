@@ -4,10 +4,10 @@ In Bitcoin~\cite{bitcoin}, a valid block must satisfy the
 \emph{proof-of-work} inequality $H(B) < T$, where
 $H$ is a hash function and $T$ is a small \emph{target}.
 Simply put, valid blocks must have hashes that begin with a desired number of $0$s.
-Some blocks $B$ satisfy the inequality better than others:
-They have a bunch of extra zeroes at the front of their hash.
-Nevertheless, these heavier blocks are counted all the same when choosing
-which chain to pick.
+Some blocks satisfy the inequality better than others:
+They have a bunch of \emph{extra} zeroes at the front of their hash.
+Nevertheless, these ``heavier'' blocks are counted all the same when choosing
+which chain to mine on.
 We posit that the weight of a block is information
 that can be useful to improve the protocol.
 In this paper, we introduce \emph{\poem}.
@@ -16,9 +16,10 @@ achieving better confirmation latency and transaction throughput.
 
 \noindent
 \myparagraph[Construction overview]
-In Bitcoin, every block counts the same\footnote{Bitcoin blocks can count differently when
+Miners still mine on the heaviest chain. We only change how chains are scored.
+In Bitcoin, every block counts for the same work\footnote{Bitcoin blocks can count differently when
 difficulty adjusts, but count the same during the same epoch. Our analysis is in the
-static population setting, where the population does not change with time.}.
+static population setting~\cite{backbone}, where the population does not change with time.}.
 In \poem, we give each block a score equal to the number of \emph{extra} zeroes at the front of its hash,
 a value we call its \emph{intrinstic work}. Honest parties adopt the chain with the most total
 intrinsic work.
@@ -57,23 +58,28 @@ intrinsic work.
 \end{figure*}
 \fi
 
-This protocol shines when blocks are produced quickly. In this realm, multiple honest blocks
+To guarantee security, it suffices~\cite{eiar} that the work of any honest chain grows
+faster than the work of the adversary's chain. Let's look at the example in Figure~\ref{fig:poem-wasted-work}.
+Suppose we have three Bitcoin blocks produced in short succession.
+If they were produced honestly, they will be placed in parallel.
+The honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
+
+This protocol shines when blocks are produced quickly. Due to network delay, sometimes multiple honest blocks
 are produced in parallel extending the same parent.
 These blocks have the same height, and only one of them will
 make it to the canonical chain, while the others will be discarded.
-If blocks are scored equally, the honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
+If blocks are scored equally, as in Bitcoin, the honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
 However, in our protocol, the heaviest block among them survives,
 and the lightest blocks are discarded. The honest chain grows by the heaviest
 block's score, which in expectation is more than one (Figure~\ref{fig:poem-wasted-work}, top right).
 
-The adversary is mining privately independently, and placing all her blocks in one chain.
-In both PoEM and Bitcoin, the adversary's chain grows at the same rate (Figure~\ref{fig:poem-wasted-work},
+On the other hand, the adversary is mining privately independently, and placing all her blocks in sequence.
+The adversary's chain growth rate is the same in PoEM and Bitcoin (Figure~\ref{fig:poem-wasted-work},
 bottom left and bottom right).
-This gives an advantage to the honest
-parties, since they produce chains that grow faster.
-
-The resulting protocol allows for faster transaction confirmation and better throughput while
-retaining the same level of security as Bitcoin.
+This makes PoEM advantageous, since honest parties produce chains whose score grows faster
+than the adversary's. Therefore, a fast PoEM configuration can be as secure as a slow Bitcoin
+configuration. The resulting protocol allows for faster transaction confirmation and better
+throughput while retaining the same level of security as Bitcoin.
 
 \noindent
 \myparagraph[Our contributions]
