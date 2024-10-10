@@ -59,27 +59,101 @@ intrinsic work.
 \fi
 
 To guarantee security, it suffices~\cite{eiar} that the work of any honest chain grows
-faster than the work of the adversary's chain. Let's look at the example in Figure~\ref{fig:poem-wasted-work}.
-Suppose we have three Bitcoin blocks produced in short succession.
-If they were produced honestly, they will be placed in parallel.
-The honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
+faster than the work of the adversary's chain.
+Suppose we have $n$ blocks produced in short succession.
+If they are honestly produced, they will be placed in parallel.
+If they are adversarially produced, since no network delay is incurred, they will be placed in series,
+forming a chain of length $n$.
+In Bitcoin, all blocks count the same constant amount of work $w$. So the honest chain grows by $w$,
+and the adversarial chain grows by $n w$.
+In PoEM, each block is scored differently: $w_1, w_2, \dots, w_n$, but has an expected work of $w$.
+The adversarial chain grows by the sum of its blocks' work, $\sum_{i=1}^n w_i$.
+In expectation, this is equal to $n w$, same as Bitcoin.
+However, the honest chain now grows by the heaviest block's work $\max_i w_i$,
+which in expectation is greater than $w$. Hence, in expectation, honest PoEM chains grow
+faster than honest Bitcoin chains in relation to the adversary's chain.
 
-This protocol shines when blocks are produced quickly. Due to network delay, sometimes multiple honest blocks
-are produced in parallel extending the same parent.
-These blocks have the same height, and only one of them will
-make it to the canonical chain, while the others will be discarded.
-If blocks are scored equally, as in Bitcoin, the honest chain grows by one (Figure~\ref{fig:poem-wasted-work}, top left).
-However, in our protocol, the heaviest block among them survives,
-and the lightest blocks are discarded. The honest chain grows by the heaviest
-block's score, which in expectation is more than one (Figure~\ref{fig:poem-wasted-work}, top right).
+Let's look at the example in Figure~\ref{fig:poem-wasted-work}.
+The same blocks, with the same amount of work, are given to both the adversary and the honest parties.
+The adversary places all her blocks in series, while the honest blocks are necessarily placed in parallel
+due to network delay.
+In Bitcoin, the adversary makes $3$ times the progress that the honest parties make.
+Whereas in PoEM, the adversary only makes $2$ times the progress that the honest parties make.
+This means that honest work is utilized more efficiently in PoEM as compared to Bitcoin.
+Less honest work is wasted.
 
-On the other hand, the adversary is mining privately independently, and placing all her blocks in sequence.
-The adversary's chain growth rate is the same in PoEM and Bitcoin (Figure~\ref{fig:poem-wasted-work},
-bottom left and bottom right).
-This makes PoEM advantageous, since honest parties produce chains whose score grows faster
-than the adversary's. Therefore, a fast PoEM configuration can be as secure as a slow Bitcoin
-configuration. The resulting protocol allows for faster transaction confirmation and better
-throughput while retaining the same level of security as Bitcoin.
+\usetikzlibrary{arrows.meta, positioning}
+\begin{tikzpicture}
+
+  % Define styles
+  \tikzstyle{dot} = [circle, draw, fill=black, minimum size=2pt, inner sep=0pt]
+  \tikzstyle{block} = [rectangle, draw, minimum size=8pt]
+  \tikzstyle{adv_block} = [rectangle, draw, fill=black, minimum size=8pt]
+  \tikzstyle{dashed_line} = [draw, dashed, thick]
+
+  % Labels
+  \node at (1.4, 5.5) {(a) Bitcoin};
+  \node[align=center] at (-2, 4) {Honest \\ block tree};
+  \node[align=center] at (-2, 2.3) {Adversarial \\ blockchain};
+
+  \draw[thick] (-0.9, 1) -- (-0.9, 5.5);
+
+  % Bitcoin Honest
+  \node[dot, fill] (dot1) at (-0.5, 4) {};
+  \node[dot] (dot2) at (-0.3, 4) {};
+  \node[dot] (dot3) at (-0.1, 4) {};
+
+  \node[block, anchor=west] (h2) at (1, 4) {};
+  \node[block, anchor=west] (h1) [above=10pt of h2] {};
+  \node[block, anchor=west] (h3) [below=10pt of h2] {};
+
+  % Honest tree connections
+  \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
+  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
+  \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
+
+  % Bitcoin Adversary
+  \node[dot, fill] (dot1) at (-0.5, 2.3) {};
+  \node[dot] (dot2) at (-0.3, 2.3) {};
+  \node[dot] (dot3) at (-0.1, 2.3) {};
+
+  \node[adv_block, anchor=west] (a1) at (1, 2.3) {};
+  \node[adv_block, anchor=west] (a2) [right=20pt of a1] {};
+  \node[adv_block, anchor=west] (a3) [right=20pt of a2] {};
+
+  % Adversarial chain connections
+  \draw[<-] (dot3.east) ++(0.15,0) -- (a1.west);
+  \draw[<-] (a1) -- (a2);
+  \draw[<-] (a2) -- (a3);
+
+  % Bracket for Bitcoin (2/3)
+  \draw[thick] (dot3.east) ++(0.2,0.7) -- ([xshift=0.0cm,yshift=0.7cm]a1.east) ++(0,-0.5);
+  \draw[thick] (dot3.east) ++(0.2,0.75) -- ([xshift=0.2cm,yshift=0.65cm]dot3.east) ++(0,-0.2);
+  \draw[thick] (a1.east) ++(0.0,0.75) -- ([xshift=0.0cm,yshift=0.65cm]a1.east) ++(0,-0.2);
+  \node at (0.75, 2.8) {\tiny 1/3};
+
+
+  % PoEM Section
+  % Labels
+  \node at (6.4, 5.5) {(b) PoEM};
+
+  \draw[thick] (3.75, 1) -- (3.75, 5.5);
+  % PoEM Honest
+  \node[dot, fill] (dot3) at (4.6, 4) {};
+  \node[dot] (dot2) at (4.4, 4) {};
+  \node[dot] (dot1) at (4.2, 4) {};
+
+  \node[block, minimum width=10pt, anchor=west] (h2) at (5.7, 4) {};
+  \node[block, minimum width=20pt, anchor=west] (h1) at (5.7, 4.5) {};
+  \node[block, minimum width=30pt, anchor=west] (h3) at (5.7, 3.5) {};
+
+  % Honest tree connections
+  \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
+  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
+  \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
+
+
+  \end{tikzpicture}
 
 \noindent
 \myparagraph[Our contributions]
