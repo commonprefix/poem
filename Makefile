@@ -1,4 +1,4 @@
-poem.pdf: *.tex *.bib *.sty algorithms/*.tex
+poem.pdf: *.tex *.bib *.sty algorithms/*.tex figures/*.tex
 	xelatex poem.tex && \
 	bibtex poem && \
 	xelatex poem.tex && \

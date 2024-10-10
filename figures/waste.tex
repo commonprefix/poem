@@ -4,7 +4,7 @@
   \begin{tikzpicture}
 
   % Define styles
-  \tikzstyle{dot} = [circle, draw, fill=black, minimum size=2pt, inner sep=0pt]
+  \tikzstyle{dot} = [circle, draw, fill=white, minimum size=2pt, inner sep=0pt]
   \tikzstyle{block} = [rectangle, draw, minimum size=8pt]
   \tikzstyle{adv_block} = [rectangle, draw, fill=black, minimum size=8pt]
   \tikzstyle{dashed_line} = [draw, dashed, thick]
@@ -22,12 +22,12 @@
   \node[dot] (dot3) at (-0.1, 4) {};
 
   \node[block, anchor=west] (h2) at (1, 4) {};
-  \node[block, anchor=west] (h1) [above=10pt of h2] {};
-  \node[block, anchor=west] (h3) [below=10pt of h2] {};
+  \node[block, anchor=west] (h1) at (1, 4.6) {};
+  \node[block, anchor=west] (h3) at (1, 3.4) {};
 
   % Honest tree connections
   \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
-  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
+  \draw[<-] (dot3.east) ++(0.15,0) -- (h2.west);
   \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
 
   % Bitcoin Adversary
@@ -44,31 +44,48 @@
   \draw[<-] (a1) -- (a2);
   \draw[<-] (a2) -- (a3);
 
-  % Bracket for Bitcoin (2/3)
-  \draw[thick] (dot3.east) ++(0.2,0.7) -- ([xshift=0.0cm,yshift=0.7cm]a1.east) ++(0,-0.5);
-  \draw[thick] (dot3.east) ++(0.2,0.75) -- ([xshift=0.2cm,yshift=0.65cm]dot3.east) ++(0,-0.2);
-  \draw[thick] (a1.east) ++(0.0,0.75) -- ([xshift=0.0cm,yshift=0.65cm]a1.east) ++(0,-0.2);
-  \node at (0.75, 2.8) {\tiny 1/3};
+  % Bracket for Bitcoin (1/3)
+  \draw[thick] (a1.west) ++(0.0,0.5) -- ([xshift=0.0cm,yshift=0.5cm]a1.east) ++(0,-0.5);
+  \draw[thick] (a1.west) ++(0.0,0.55) -- ([xshift=0.0cm,yshift=0.45cm]a1.west) ++(0,-0.2);
+  \draw[thick] (a1.east) ++(0.0,0.55) -- ([xshift=0.0cm,yshift=0.45cm]a1.east) ++(0,-0.2);
+  \node[fill=white, inner sep=1pt] at (0.7, 2.8) {\tiny 1/3};
 
 
-  % PoEM Section
-  % Labels
-  \node at (6.4, 5.5) {(b) PoEM};
-
+  % PoEM
+  \node at (7, 5.5) {(b) PoEM};
   \draw[thick] (3.75, 1) -- (3.75, 5.5);
+
   % PoEM Honest
   \node[dot, fill] (dot3) at (4.6, 4) {};
   \node[dot] (dot2) at (4.4, 4) {};
   \node[dot] (dot1) at (4.2, 4) {};
 
   \node[block, minimum width=10pt, anchor=west] (h2) at (5.7, 4) {};
-  \node[block, minimum width=20pt, anchor=west] (h1) at (5.7, 4.5) {};
-  \node[block, minimum width=30pt, anchor=west] (h3) at (5.7, 3.5) {};
+  \node[block, minimum width=20pt, anchor=west] (h1) at (5.7, 4.6) {};
+  \node[block, minimum width=30pt, anchor=west] (h3) at (5.7, 3.4) {};
 
-  % Honest tree connections
   \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
-  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
+  \draw[<-] (dot3.east) ++(0.15,0) -- (h2.west);
   \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
+
+  % PoEM Adversary
+  \node[dot, fill] (dot3) at (4.6, 2.3) {};
+  \node[dot] (dot2) at (4.4, 2.3) {};
+  \node[dot] (dot1) at (4.2, 2.3) {};
+
+  \node[adv_block, anchor=west, minimum width=30pt] (a1) at (5.7, 2.3) {};
+  \node[adv_block, anchor=west, minimum width=10pt] (a2) [right=20pt of a1] {};
+  \node[adv_block, anchor=west, minimum width=20pt] (a3) [right=20pt of a2] {};
+
+  % Bracket for PoEM (1/2)
+  \draw[thick] (a1.west) ++(0,0.5) -- ([xshift=0.0cm,yshift=0.5cm]a1.east) ++(0,-0.5);
+  \draw[thick] (a1.west) ++(0,0.55) -- ([xshift=0.0cm,yshift=0.45cm]a1.west) ++(0,-0.2);
+  \draw[thick] (a1.east) ++(0,0.55) -- ([xshift=0.0cm,yshift=0.45cm]a1.east) ++(0,-0.2);
+  \node[fill=white, inner sep=1pt] at (5.35, 2.8) {\tiny 1/2};
+
+  \draw[<-] (dot3.east) ++(0.15,0) -- (a1.west);
+  \draw[<-] (a1) -- (a2);
+  \draw[<-] (a2) -- (a3);
 
 
   \end{tikzpicture}
