@@ -24,39 +24,39 @@ In \poem, we give each block a score equal to the number of \emph{extra} zeroes 
 a value we call its \emph{intrinstic work}. Honest parties adopt the chain with the most total
 intrinsic work.
 
-\iftwocolumn
-\begin{figure*}
-  \centering
-  \includegraphics[width=0.6\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
-  \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
-           with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
-           all blocks in one sequence because she does not incur any network delay. The honest parties,
-           due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
-           In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
-           them were abandoned in Bitcoin and did not make it to the canonical longest chain
-           (top-most chain).
-           In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
-           work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
-           We illustrate the intrinsic work of a block by its size.}
-  \label{fig:poem-wasted-work}
-\end{figure*}
-\else
-\begin{figure*}
-  \centering
-  \includegraphics[width=0.8\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
-  \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
-           with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
-           all blocks in one sequence because she does not incur any network delay. The honest parties,
-           due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
-           In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
-           them (shaded) were abandoned in Bitcoin and did not make it to the canonical longest chain
-           (top-most chain).
-           In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
-           work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
-           In PoEM (right), we illustrate the intrinsic work of a block by its size.}
-  \label{fig:poem-wasted-work}
-\end{figure*}
-\fi
+% \iftwocolumn
+% \begin{figure*}
+%   \centering
+%   \includegraphics[width=0.6\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
+%   \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
+%            with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
+%            all blocks in one sequence because she does not incur any network delay. The honest parties,
+%            due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
+%            In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
+%            them were abandoned in Bitcoin and did not make it to the canonical longest chain
+%            (top-most chain).
+%            In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
+%            work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
+%            We illustrate the intrinsic work of a block by its size.}
+%   \label{fig:poem-wasted-work}
+% \end{figure*}
+% \else
+% \begin{figure*}
+%   \centering
+%   \includegraphics[width=0.8\textwidth,keepaspectratio]{figures/poem_work_wasted.pdf}
+%   \caption{The same block mining successes awarded to the honest parties (top) or the adversary (bottom)
+%            with equal mining power on Bitcoin (left) or PoEM (right) respectively. The adversary can place
+%            all blocks in one sequence because she does not incur any network delay. The honest parties,
+%            due to the delay, may place blocks at the same height (dashed section of duration $\Delta$).
+%            In this example, when $3$ honest blocks were found almost simultaneously, $2$ out of
+%            them (shaded) were abandoned in Bitcoin and did not make it to the canonical longest chain
+%            (top-most chain).
+%            In the PoEM example, $2$ out of $3$ of the honest blocks were abandoned, but the cumulative intrinsic
+%            work wasted only happened to be $1/2$ of the intrinsic work produced during this interval.
+%            In PoEM (right), we illustrate the intrinsic work of a block by its size.}
+% \fi
+
+\import{./}{figures/waste.tex}
 
 To guarantee security, it suffices~\cite{eiar} that the work of any honest chain grows
 faster than the work of the adversary's chain.
@@ -78,100 +78,30 @@ The same blocks, with the same amount of work, are given to both the adversary a
 The adversary places all her blocks in series, while the honest blocks are necessarily placed in parallel
 due to network delay.
 In Bitcoin, the adversary makes $3$ times the progress that the honest parties make.
-Whereas in PoEM, the adversary only makes $2$ times the progress that the honest parties make.
-This means that honest work is utilized more efficiently in PoEM as compared to Bitcoin.
+However, in PoEM, the adversary only makes $2$ times the progress that the honest parties make.
+This means that honest work is more effectively utilized in PoEM than in Bitcoin.
 Less honest work is wasted.
-
-\usetikzlibrary{arrows.meta, positioning}
-\begin{tikzpicture}
-
-  % Define styles
-  \tikzstyle{dot} = [circle, draw, fill=black, minimum size=2pt, inner sep=0pt]
-  \tikzstyle{block} = [rectangle, draw, minimum size=8pt]
-  \tikzstyle{adv_block} = [rectangle, draw, fill=black, minimum size=8pt]
-  \tikzstyle{dashed_line} = [draw, dashed, thick]
-
-  % Labels
-  \node at (1.4, 5.5) {(a) Bitcoin};
-  \node[align=center] at (-2, 4) {Honest \\ block tree};
-  \node[align=center] at (-2, 2.3) {Adversarial \\ blockchain};
-
-  \draw[thick] (-0.9, 1) -- (-0.9, 5.5);
-
-  % Bitcoin Honest
-  \node[dot, fill] (dot1) at (-0.5, 4) {};
-  \node[dot] (dot2) at (-0.3, 4) {};
-  \node[dot] (dot3) at (-0.1, 4) {};
-
-  \node[block, anchor=west] (h2) at (1, 4) {};
-  \node[block, anchor=west] (h1) [above=10pt of h2] {};
-  \node[block, anchor=west] (h3) [below=10pt of h2] {};
-
-  % Honest tree connections
-  \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
-  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
-  \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
-
-  % Bitcoin Adversary
-  \node[dot, fill] (dot1) at (-0.5, 2.3) {};
-  \node[dot] (dot2) at (-0.3, 2.3) {};
-  \node[dot] (dot3) at (-0.1, 2.3) {};
-
-  \node[adv_block, anchor=west] (a1) at (1, 2.3) {};
-  \node[adv_block, anchor=west] (a2) [right=20pt of a1] {};
-  \node[adv_block, anchor=west] (a3) [right=20pt of a2] {};
-
-  % Adversarial chain connections
-  \draw[<-] (dot3.east) ++(0.15,0) -- (a1.west);
-  \draw[<-] (a1) -- (a2);
-  \draw[<-] (a2) -- (a3);
-
-  % Bracket for Bitcoin (2/3)
-  \draw[thick] (dot3.east) ++(0.2,0.7) -- ([xshift=0.0cm,yshift=0.7cm]a1.east) ++(0,-0.5);
-  \draw[thick] (dot3.east) ++(0.2,0.75) -- ([xshift=0.2cm,yshift=0.65cm]dot3.east) ++(0,-0.2);
-  \draw[thick] (a1.east) ++(0.0,0.75) -- ([xshift=0.0cm,yshift=0.65cm]a1.east) ++(0,-0.2);
-  \node at (0.75, 2.8) {\tiny 1/3};
-
-
-  % PoEM Section
-  % Labels
-  \node at (6.4, 5.5) {(b) PoEM};
-
-  \draw[thick] (3.75, 1) -- (3.75, 5.5);
-  % PoEM Honest
-  \node[dot, fill] (dot3) at (4.6, 4) {};
-  \node[dot] (dot2) at (4.4, 4) {};
-  \node[dot] (dot1) at (4.2, 4) {};
-
-  \node[block, minimum width=10pt, anchor=west] (h2) at (5.7, 4) {};
-  \node[block, minimum width=20pt, anchor=west] (h1) at (5.7, 4.5) {};
-  \node[block, minimum width=30pt, anchor=west] (h3) at (5.7, 3.5) {};
-
-  % Honest tree connections
-  \draw[<-] (dot3.east) ++(0.15,0.2) -- (h1.west);
-  \draw[<-] (dot3.east) ++(0.2,0) -- (h2.west);
-  \draw[<-] (dot3.east) ++(0.15,-0.2) -- (h3.west);
-
-
-  \end{tikzpicture}
 
 \noindent
 \myparagraph[Our contributions]
-We build a protocol which retains the same level of security as Bitcoin, while achieving
-better confirmation latency or transaction throughput, both because the number of confirmations
-can be safely reduced and the block production rate can be safely increased.
+\begin{itemize}
+  \item We construct a protocol which retains the same level of security as Bitcoin, while achieving
+        better confirmation latency because the block production rate can be safely increased.
 
-We report on our production implementation of a real-world system
-in which we employ this new rule, and show that it achieves a $28.5\%$
-improvement in confirmation latency compared to Bitcoin. For this improved
-latency, it also achieves a $16.3\%$ improvement in throughput.
-We also theoretically prove our new protocol is secure
-using the Bitcoin Backbone model. Our theoretical analysis introduces
-a new technique, the \emph{real-valued random oracle}, which we prove behaves
-similarly to the usual random oracle. This variant of the
-random oracle allows for the use of an arsenal of theoretical tools from the
-continuous domain (such as continuous distributions), easing the theoretical
-exposition, and may be of independent interest.
+  \item We report on the production testnet deployment of our open, real-world system, in which
+        more than 2000 miners from the community have participated with 500 million testnet transactions,
+        and an average hash rate exceeding 50GH/s using the ProgPoW~\cite{progpow} hash algorithm.
+
+  \item We simulate over 3000 years of continuous-time executions of both Bitcoin and PoEM
+        using a combination of numeric and analytic techniques across a range of parameters
+        and conclude that PoEM is roughly $20\%$ faster in latency than Bitcoin for a wide
+        range of adversarial resiliences. % TODO
+
+  \item We prove the security of PoEM in the Bitcoin Backbone~\cite{backbone} model. This
+        requires novel techniques such as the
+        \emph{real-valued random oracle}, a hash model that returns a \emph{continuous} value.
+        We prove it behaves identically to the usual random oracle with overwhelming probability.
+\end{itemize}
 
 \noindent
 \myparagraph[Related work]
@@ -198,9 +128,8 @@ Our work only changes the PoW inequality.
 Other mechanisms refining the fork choice rule
 are orthogonal and can be combined with our approach, yielding even
 further performance gains.
-Such examples include
-PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, GhostDAG~\cite{ghostdag}, and
-GHOST~\cite{ghost}.
+Such examples include GHOST~\cite{ghost},
+PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, and GhostDAG~\cite{ghostdag}.
 Additional mechanisms towards improving the latency and throughput
 of proof-of-work blockchains at the consensus
 layer, also composable with ours, include parallel chains~\cite{parallel-chains},
