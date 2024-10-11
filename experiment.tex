@@ -257,6 +257,15 @@ The $g$ that minimizes the latency of the system is the optimal block production
 
 \begin{figure}[pt]
     \centering
+    \includegraphics[width = 0.9\textwidth]{figures/bitcoin_vs_poem.pdf}
+
+    \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$.
+            The results were obtained by running 100k simulations per point.}
+    \label{fig:bitcoin_vs_poem}
+\end{figure}
+
+\begin{figure}[pt]
+    \centering
     \begin{subfigure}{0.48\textwidth}
     \centering
     \includegraphics[width = \textwidth]{figures/gamma_latency_0.1.pdf}
@@ -286,14 +295,6 @@ The $g$ that minimizes the latency of the system is the optimal block production
           are all chained in series. We get optimal latency somewhere in the middle.
           The results were obtained by running 100k simulations per point.}
     \label{fig:g_latency}
-\end{figure}
-
-\begin{figure}[pt]
-    \centering
-    \includegraphics[width = 0.48\textwidth]{figures/bitcoin_vs_poem.png}
-
-  \caption{}
-    \label{fig:bitcoin_vs_poem}
 \end{figure}
 
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
