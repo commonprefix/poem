@@ -1,42 +1,14 @@
-\section{Experiments \& Deployment}\label{sec:experiments}
+\section{Experiments}\label{sec:experiments}
 
-In this section, we report on a real-world implementation and deployment of our
-protocol, and experimental measurements illustrating the concrete improvements
-in latency and throughput as compared to vanilla Bitcoin. We have deployed:
-
-\begin{enumerate}
-\item a series of simulation experiments, operated in our controlled network
-      environment and in static difficulty, to establish the optimal configuration
-      for PoEM to verify that its performance in throughput and latency
-      compares favourably against Bitcoin (Sections~\ref{sec:methodology}-\ref{sec:results}).
-
-\item a real production-grade testnet, still operating and open to the community
-      for both mining and transaction processing, which employs variable difficulty
-      and is configured with practically realistic parameters (Section~\ref{sec:deployment}).
-\end{enumerate}
-
-We report on the results of both the simulation experiments and the real-world deployment below.
-
-\subsection{Real-world Deployment}\label{sec:deployment}
-
-We have implemented and deployed\ifanonymous\else\footnote{
-    The source code resides in the following \ifanonymous anonymized \fi repository:
+In this section, we report on experimental measurements illustrating the concrete improvements
+in latency of PoEM as compared to Bitcoin. We implemented a stochastic simulation in 1500 lines of
+Rust code\footnote{%
+    The source code will be made available in the full version of this paper. % TODO
     \ifanonymous
-        % TODO: add anonymous link here and remove anonymous guard
+        % TODO
     \else
-        \url{https://github.com/dominant-strategies/go-quai/releases/tag/v0.28.2}
     \fi
-}\fi PoEM in a real-world permissionless peer-to-peer
-setting.
-The deployment is on a testnet that has been continuously operating for
-four months. During this period, the network generated over 7.5 million blocks
-with participation from
-more than 2000 miners/node operators from the community. Moreover, PoEM has facilitated the
-confirmation of over 500 million testnet transactions. This deployment maintained an
-average hash rate exceeding 50GH/s using the ProgPoW~\cite{progpow} hash algorithm.
-The network participants computed more than 518 petahashes in 4 months.
-The network operated in a variable difficulty and bias setting with the difficulty ($\frac{2^{256}}{T}$)
-varying between 18 billion and 790 billion and $\gamma$ varying between 32 and 38.
+} to compare the two protocols.
 
 % \subsection{Experimental Methodology}\label{sec:methodology}
 %
@@ -165,15 +137,17 @@ varying between 18 billion and 790 billion and $\gamma$ varying between 32 and 3
 % % improvement, for a comparable confirmation delay (Bitcoin($d=25.6$),
 % % PoEM($d=27.4$))
 
-\subsection{Stochastic Simulation}
-In this section we compare Bitcoin's and PoEM's latency experimentally.
 We simulate various executions of Bitcoin and PoEM with different parameterizations.
 In each execution simulation, we fix the block production rate $g$, the adversarial ratio $\beta$,
-and, for PoEM also the bias parameter $\gamma$, and we
-measure the latency of the system.
-The latency of the system is the time it takes for a block to become confirmed.
-Namely, we measure the time needed from the moment an honest block is mined until
-the first time any honest party considers the block stable, and only for those blocks
+and, for PoEM, also the bias parameter $\gamma$, and we
+measure the latency of the system. The latency is defined as the time it takes for a new transaction
+to become stable in the system (i.e., $k$-confirmed for a sufficiently large $k$).
+The challenge is to measure the latency of the two
+systems at the same \emph{security level}. As the two systems operate differently, simply
+taking the same number of blocks (or work) does not constitute a fair comparison.
+
+We measure the time needed from the moment an honest block is mined until
+the first time any honest party considers the block \emph{stable}, and only for those blocks
 which eventually do become stable.
 We use the private mining attack as the adversarial strategy, which was
 proven~\cite{eiar} to be the best possible attack against Bitcoin in the continuous-time model~\cite{bitcoin-made-simple}.
@@ -195,43 +169,67 @@ and they mine blocks at a rate of $g$. Because of this delay, the blocks mined b
 
 To save time, instead of wastefully simulating proof of work, we artificially simulate block production by a
 continuous-time stochastic process.
-We observe that the time between the creation of two honest blocks is exponentially distributed~\cite{bitcoin-made-simple}
-with rate $g$.
+We know that the time between the creation of two honest blocks is exponentially distributed
+with rate $g$ (because the times of block creation form a Poisson point process~\cite{bitcoin-made-simple}).
 Hence, we take multiple independent samples from $\exp(g)$ to get the interval between each successive honest block production event,
-thereby giving rise to a Poisson process of honest block creations. We simulate a similar independent Poisson process for the adversary
+thereby giving rise to a Poisson process of honest block creations (even though these blocks may not necessarily be placed in a chain).
+We simulate a similar independent Poisson process for the adversary
 by sampling from $\exp(g\frac{\beta}{1 - \beta})$. These two stochastic processes produce the block creation times of the honest and
-adversary parties, from which we can determine the blocktree that was constructed.
+adversary parties, from which we can determine the blocktree that was constructed taking the delay into account.
 
-In the static Bitcoin model, the work of each block is equal to one,
-whereas the work of a PoEM block is exponentially
-distributed with rate $\frac{1}{\ln2}$ (and note that these exponential samples of work are a different, parallel process
-from the exponential samples of time intervals). Hence, in PoEM's case, we sample from $\exp(\frac{1}{\ln2})$ to get the work
+In Bitcoin, the work of each block is equal to one,
+whereas in PoEM, the work of block is exponentially
+distributed with rate $\gamma + \frac{1}{\ln2}$ (and note that these exponential samples of \emph{work} are a different,
+parallel process from the exponential samples of \emph{time intervals} between block creations).
+Hence, in PoEM's case, we sample from $\exp(\frac{1}{\ln2})$ to get the work
 of each block in the execution. The creation time of each block and its work are enough to simulate the honest parties' execution
 and determine the blocktree that was constructed.
-% TODO: How do you determine the height of the blocktree?
+The honest blocktree is computed as follows. We create a list of \emph{events} pertaining to either the creation of a new honest block,
+or the arrival of the block to the rest of honest parties $\Delta$ later. We sort these events in chronological order and process them one by one.
+Throughout time, we maintain a single value indicating the cumulative work of the heaviest chain seen so far by all honest parties.
+For every block, we also keep the cumulative work of the chain ending at that block.
+At the block creation event, we compute the cumulative work associated with the block as the cumulative work of the
+heaviest chain seen so far plus the work of the block (1 in Bitcoin, sampled in PoEM). At the block arrival event, we compare the
+cumulative work of the chain ending at the arrival block with the cumulative work of the heaviest chain seen so far.
+If it is heavier, we update our best cumulative work value. Every time we update the best cumulative work value,
+we remember this cumulative work together with the creation timestamp associated with the block that cause the work to increase.
 % TODO: Cite EiaR for the Δ optimality
+% TODO: assume n -> inf
 
 Then, independently we simulate the adversary's execution. Like in the honest execution, we sample from $\exp(g\frac{\beta}{1 - \beta})$
 to get the interval between the time of successive adversarially produced blocks, where $g\frac{\beta}{1 - \beta}$ is the adversary's block production rate.
-Then, we set the work of each block to $1$ for the case of static Bitcoin, and sample from $\exp(\frac{1}{\ln2})$ to get the work of each block in the execution for the case of PoEM.
+Then, similar to the honest simulation, we set the work of each block to $1$ in Bitcoin, and sample from $\exp(\frac{1}{\ln2})$ to get the work of each block in PoEM.
 Since the adversary has no network delay, all her blocks are chained in series.
-% TODO: What about the adversary in Bitcoin?
+Again, we maintain an association of timestamps and cumulative work values for every block.
 % TODO: Talk about the initial sampling of the adversarial execution and the scaling with $\beta$ retroactively
 
-Having simulated the honest and adversary executions, we can determine the latency of the system.
-To do this, we determine the last point in time when the adversary had a chain with more work than the honest parties,
-and we record the work $k$ of the honest chain that surpasses the adversary's chain immediately after that time.
+Having simulated the honest and adversary executions, we can determine the latency of the system (whether this system is Bitcoin or PoEM).
+To find this latency, we must find the minimum \emph{safe} confirmation parameter $k$ (where $k$ is denominated in amount of work per block, as measured
+by the respective system).
+To do this, we determine the \emph{last} point in time when the adversary had a chain with more work than the honest parties,
+and we record the work $k$ of the honest chain that first surpasses the adversary's chain immediately after.
 For this execution, a confirmation parameter larger or equal to $k$ would safeguard the protocol from a Common Prefix violation.
 % TODO: Footnote that this k is safe only against the EiaR attack, and not other possible attacks, even though EiaR is the
 % best possible attack wrt resilience.
 
-To accurately calculate the latency of a given system parameterization $(g, \beta)$, we simulate multiple such executions and record the minimum confirmation
+To accurately calculate the latency of a given system parameterization $(g, \beta)$, we simulate multiple such executions and record the minimum safe confirmation
 % TODO: What is your Monte Carlo iteration count?
-parameter $k$ for each. We set $k^*$ to be the minimum confirmation parameter that would safeguard $90\%$ of the executions against a Common Prefix violation.
-% TODO: Can you explain how k^* is calculated precisely?
-The latency of the system is now calculated as $\frac{k^*}{d}$, were $d$ is the average time it takes to produce $k^*$ work in the executions
-(both in Bitcoin and PoEM).
-% TODO: Explicitly write out what d is in case of Bitcoin and PoEM.
+parameter $k$ for each execution. We collect these $k$ values into a list $K$. We wish to determine the value of $k$ that gives a specific
+security level -- in our case, we want $90\%$ of the executions to be safe from a Common Prefix violation (i.e., $3.32$ bits of
+security\footnote{While $\lg_2(10\%) = 3.32$ bits of security are not enough for cryptographic security, we use this as a qualitative
+reference to compare the latency of the two systems. Our theoretical analysis shows that PoEM is secure with overwhelming probability
+in the security parameter $\kappa$.}).
+Intuitively, using a common reference security level is what allows us to fairly compare these disparate systems.
+
+In a nutshell, we set $k^*$ to be the minimum confirmation parameter that would safeguard $90\%$ of the executions against a Common Prefix violation.
+More precisely, we take the $20\%$ highest percentile of the list $K$ and set $k^*$ to be the mean of these values (i.e., the \emph{expected shortfall}
+at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ percentile).
+% TODO: infinite values not taken into account
+% TODO: lifetime of simulations
+
+The latency of the system is now calculated as $d = \frac{k^*}{f}$, were $f$ is the average cumulative work increase rate for the honest chains.
+Roughly, $d$ measures the average time it takes to produce $k^*$ chained work in the system (both in Bitcoin and PoEM).
+% TODO: Explicitly write out what f is
 
 To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$.
 The $g$ that minimizes the latency of the system is the optimal block production rate for a given adversarial ratio $\beta$.
@@ -306,3 +304,25 @@ but this confirmation parameter has not been shown to be safe against other atta
 mining attack is optimal when it pertains to resilience.
 Lastly, there is a discrepancy between the continuous-time model used in our experimental simulations
 and the discrete-time model used in our theoretical analysis.
+
+\noindent
+\textbf{Real-world Deployment.}
+In addition to the above simulations,
+we have implemented and deployed\ifanonymous\else\footnote{
+    \ifanonymous
+        % TODO: add anonymous link here and remove anonymous guard
+        The source code will be made available in the full version of this paper.
+    \else
+        The source code can be found at
+        \url{https://github.com/dominant-strategies/go-quai/releases/tag/v0.28.2}
+    \fi
+}\fi PoEM in a real-world permissionless peer-to-peer
+setting.
+The deployment is on a testnet that has been continuously operating for
+four months. During this period, the network generated 7.5 million blocks
+and 500 million transactions
+with participation from 2000 miners from the community, maintaining an
+average hash rate of 50GH/s using ProgPoW~\cite{progpow}.
+The miners computed 518 petahashes in 4 months,
+with the difficulty ($\frac{2^{256}}{T}$)
+varying between 18 billion and 790 billion.
