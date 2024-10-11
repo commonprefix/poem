@@ -133,7 +133,8 @@ Rust code\footnote{The source code is available in the following anonymized repo
 % % PoEM($d=27.4$))
 
 We simulate various executions of Bitcoin and PoEM with different parameterizations.
-In each simulated execution, we fix the block production rate $g$, the adversarial ratio $\beta$,
+In each simulated execution, we fix the block production rate $g$ (honest blocks produced per network delay $\Delta$),
+the adversarial ratio $\beta$ (ratio of adversary's mining power divided by the total mining power),
 and, for PoEM, also the bias parameter $\gamma$, and we
 measure the latency of the system. The latency is defined as the time it takes for a new transaction
 to become stable in the system (i.e., $k$-confirmed for a sufficiently large $k$).
@@ -198,7 +199,7 @@ Since the adversary has no network delay, all her blocks are chained in series.
 Again, we maintain an association of timestamps and cumulative work values for every block.
 % TODO: Talk about the initial sampling of the adversarial execution and the scaling with $\beta$ retroactively
 
-Having simulated the honest and adversary executions, we can now determine the latency of the system (whether this system is Bitcoin or PoEM).
+Having simulated the honest and adversary executions, we can now determine the latency of the system (whether Bitcoin or PoEM).
 To find this latency, we must find the minimum \emph{safe} confirmation parameter $k$ (where $k$ is denominated in \emph{amount of work} per block, as measured
 by the respective system).
 To do this, we determine the \emph{last} point in time when the adversary had a chain with more work than the honest parties,
@@ -208,17 +209,17 @@ For this execution, a confirmation parameter larger or equal to $k$ would safegu
 % best possible attack wrt resilience.
 
 To accurately calculate the latency of a given system parameterization $(g, \beta)$ -- and, for PoEM, also $\gamma$ -- we
-simulate multiple such executions and record the minimum safe confirmation
-% TODO: What is your Monte Carlo iteration count?
-parameter $k$ for each execution. We collect these $k$ values into a list $K$. We wish to determine the value of $k$ that gives a specific
+simulate $100{,}000$ such executions and record the minimum safe confirmation
+parameter $k$ for each execution. We wish to determine the value of $k$ that gives a specific
 security level -- in our case, we want $90\%$ of the executions to be safe from a Common Prefix violation (i.e., $3.32$ bits of
-security\footnote{While $\lg_2(10\%) = 3.32$ bits of security are not enough for cryptographic security, we use this as a qualitative
-reference to compare the latency of the two systems. Our theoretical analysis shows that PoEM is secure with overwhelming probability
+security\footnote{While $-\lg_2(10\%) = 3.32$ bits of security are not enough for cryptographic security, we use this as a
+reference to compare the latency of the two systems. On the contrary, our theoretical analysis shows that PoEM is secure with \emph{overwhelming} probability
 in the security parameter $\kappa$.}).
 Intuitively, using a common reference security level is what allows us to fairly compare these disparate systems.
 
 In a nutshell, we set $k^*$ to be the minimum confirmation parameter that would safeguard $90\%$ of the executions against a Common Prefix violation.
-More precisely, we take the $20\%$ highest percentile of the list $K$ and set $k^*$ to be the mean of these values (i.e., the \emph{expected shortfall}
+To do this, we collect all the safe $k$ values of the $100{,}000$ Monte Carlo iterations into a list.
+We take the $20\%$ highest percentile of the list and set $k^*$ to be the mean of these values (i.e., the \emph{expected shortfall}
 at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ percentile).
 % TODO: infinite values not taken into account
 % TODO: lifetime of simulations
@@ -230,20 +231,27 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
     \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$.
              The results were obtained by running 240 million simulations per point.
              For every value of the triplet $(\beta, g, \gamma)$, we perform
-             $100,000$ Monte Carlo iterations and obtain the latency-optimal parameters
+             $100{,}000$ Monte Carlo iterations and obtain the latency-optimal parameters
              $(g, \gamma)$ for which the latency is illustrated on the vertical axis.}
     \label{fig:bitcoin_vs_poem}
 \end{figure}
 
 The latency of the system is calculated as $d = \frac{k^*}{f}$, where $f$ is the average cumulative work increase rate for the honest chains.
-Roughly, $d$ measures the average time it takes to produce $k^*$ chained work in the system (both in Bitcoin and PoEM).
-To acquire $f$, we calculate the honest cumulative work increase rate for each execution and take their average.
-Namely, for each execution, we take the last cumulative work increase that happened during its lifetime, and divide it by the time at which it occurred.
+The latency $d$ is the average time it takes to produce $k^*$ chained honest work in the system (both in Bitcoin and PoEM).
+To acquire $f$, we calculate the honest cumulative work increase rate for each execution and take their average across all Monte Carlo iterations.
+Namely, for each execution, we take the maximum honest cumulative work achieved during the execution's lifetime, and divide it by the time
+at which it occurred.
 
-To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$,
-and for PoEM, also various bias parameters $\gamma$. The value of $g$ -- and potentially $\gamma$ -- that minimizes the latency of the system is
-the optimal system parameterization for a given adversarial ratio $\beta$.
-
+We get the optimal system latency for $30$ different adversarial ratios $\beta$ ranging linearly from $0$ to $0.4$.
+We explore the latency of the system for $50$ different block production rates $g$ increasing geometrically from $0.05$ to $85$ blocks per network delay.
+For PoEM, we explore $40$ different bias parameters $\gamma$ starting at $0$ and then ranging geometrically from $0.01$ to $20$.
+For each tuple $(\beta, g, \gamma)$, we run the $100{,}000$ Monte Carlo iterations to obtain the
+confirmation delay that achieves $90\%$ security, and find the minimum delay across all configurations $(g, \gamma)$ (for PoEM)
+and $g$ (for Bitcoin) for each $\beta$.
+These optimal latencies are illustrated in Figure~\ref{fig:bitcoin_vs_poem}.
+For each point in the plot, we ran $100{,}000 \times 50 \times 40 = 200{,}000{,}000$ PoEM simulations
+and $100{,}000 \times 50 = 5{,}000{,}000$ Bitcoin simulations,
+for a total of $6.15$ billion simulation runs across all points in the plot.
 
 % TODO: Quantization
 % TODO: Rust code, lines of code, visualization in Python
@@ -265,7 +273,6 @@ the optimal system parameterization for a given adversarial ratio $\beta$.
 %   Optimization of g. Fix β=0.2, fix γ=0, vary g, plot latency. 100k iterations.
 
 
-Following the above methodology, we obtain the results illustrated in Figures~\ref{fig:bitcoin_vs_poem}.
 We observe that PoEM outperforms Bitcoin in terms of latency across all adversarial ratios $\beta$.
 For small values of $\beta$, PoEM has as much as $70\%$ faster confirmation than Bitcoin.
 The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratio around $0.4$.
@@ -278,7 +285,8 @@ forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
     \includegraphics[width = 0.8\textwidth]{figures/g.pdf}
 
     \caption{Bitcoin vs PoEM optimal block production rate $g$ over different adversarial ratios $\beta$.
-            The results were obtained by running 100k simulations per point.}
+             The results were obtained by running $100{,}000$ Monte Carlo iterations for each parametrization triplet
+             $(\beta, g, \gamma)$, for a total of $240{,}000{,}000$ simulations per point.}
     \label{fig:g}
 \end{figure}
 
