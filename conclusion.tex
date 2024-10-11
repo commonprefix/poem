@@ -1,18 +1,18 @@
 \section{Conclusion}
 
 In this paper, we introduced \poem, a new fork choice rule, in which each block
-counts for $\work(B) = -\lg \frac{H(B)}{T}$ instead of the usual $\work(B) = \frac{1}{T}$
+counts for $\work(B) = \gamma - \lg \frac{H(B)}{T}$ instead of the usual $\work(B) = \frac{1}{T}$
 (Section~\ref{sec:construction}).
-We illustrated experimentally (Section~\ref{sec:results}) that \poem achieves better transaction confirmation latency (28.5\% improvement),
-or better transaction throughput (16.3\% improvement), for the same level of adversarial resilience ($\beta = \frac{t}{n}$) and level
-of security (security parameter $\kappa$). We formally proved the security of \poem (Corollary~\ref{cor:security}) in the Bitcoin Backbone model
+We illustrated experimentally (Section~\ref{sec:experiments}) that \poem achieves better transaction confirmation latency
+(roughly $40\%$ improvement). We formally proved the security of \poem (Corollary~\ref{cor:security})
+in the Bitcoin Backbone model
 (Section~\ref{sec:analysis}).
 In our proof, we introduced the novel \emph{real-valued random oracle} model (Section~\ref{sec:model}), which allowed us
 to use tools from the continuous domain such as the exponential distribution. We showed this
 model to be closely related to the \emph{discrete random oracle} model (Lemma~\ref{lem:hash-separation}),
 and believe this new mathematical tooling may be independently useful for the analysis of other protocols.
 We reported on the production-grade deployment of our protocol, which has an already deployed testnet
-and has seen wide community adoption (Section~\ref{sec:deployment}).
-Our protocol only changes the proof-of-work inequality, and thus is composable with a multitude
-of previously proposed improvements for latency and throughput in proof-of-work blockchains. We are hopeful
+(Section~\ref{sec:deployment}).
+Our protocol only changes the proof-of-work inequality, and thus is composable with
+previously proposed improvements for latency and throughput in proof-of-work blockchains. We are hopeful
 that our modification will be adopted by existing and future proof-of-work protocols in the community.
