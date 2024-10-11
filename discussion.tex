@@ -4,7 +4,7 @@
 \myparagraph[Composability]
 Because PoEM changes only the proof-of-work inequality, it can be composed with other
 previously proposed improvements upon PoW to give cumulative benefits.
-Such examples are hierarchical chain constructions like
+Such examples are different block topologies like
 Bitcoin-NG~\cite{bitcoin-ng}, Fruit\-Chains~\cite{fruitchains},
 Prism~\cite{prism}, Parallel Chains~\cite{parallel-chains},
 PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, GhostDAG~\cite{ghostdag},
@@ -39,17 +39,17 @@ are well-behaved, as we analytically prove in Lemma~\ref{lem:bern-exp}.
 We used the function $\rwork(B) = \gamma - \lg \frac{\rH(B)}{T}$.
 This definition corresponds to the intuitive idea that
 each successful query to the random oracle reduces the number of possible evolutionary
-paths of the system, thus reducing its entropy
+paths of the system, thus reducing its ``entropy''
 (hence the name \emph{\poem}, Proof of Entropy Minima).
 An open question
 is whether this function is optimal, or whether
-a different function optimizes delay and throughput.
+a different function optimizes confirmation latency.
 
 \noindent
 \myparagraph[Tight bounds]
 In our proofs, we have used the conservative configuration $f = \frac{\delta}{6}$,
 which yields a small value for the honest block production rate $g$, following the model
-of~\cite{backbone}. Follow up works in Bitcoin~\cite{tight-bounds} have shown tighter
+of Backbone~\cite{backbone}. Follow up works in Bitcoin~\cite{eiar,tight-bounds} have shown tighter
 operating limits for Bitcoin, and we expect that similar results can be obtained for PoEM.
 We have experimentally demonstrated that consensus is achieved with higher values
 of $g$ when the honest parties play against a private mining adversary. This instills
