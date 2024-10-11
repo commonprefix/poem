@@ -6,20 +6,6 @@ of each round, now adopt the chain with the most intrinsic work.
 
 \import{./}{algorithms/algorithm-honest.tex}
 
-A block is any triplet of the
-form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$, $x \in \{0, 1\}^*$, and $\ctr \in \N$.
-The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
-The $h$ is a reference to the previous block hash $H(B')$.
-
-A \emph{chain} $C$ is a sequence of blocks. The chains considered by honest
-parties begin with a designated
-block $G$, the \emph{genesis block}. The genesis block is a constant block
-known to all parties at the beginning of the execution,
-which we consider honest by definition.
-
-When a chain $C$ appears in the execution,
-we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
-
 \begin{definition}[Block Intrinsic Work]\label{def:quantized-block-work}
   The \emph{intrinsic work} of a block hash
   $A \in \{0, \frac{1}{2^\kappa}, \frac{2}{2^\kappa}, \ldots, \frac{2^\kappa - 1}{2^\kappa}\}$
@@ -29,7 +15,6 @@ we say that block $C[j]$ \emph{extends} block $C[i]$ if $i < j$.
 \end{definition}
 
 For genesis, we set $\work(G) = 1$ (an arbitrary constant) by convention.
-To simplify the analysis, we will set $\gamma = 0$.
 
 \begin{definition}[Chain Intrinsic Work]
   The \emph{intrinsic work} of a chain

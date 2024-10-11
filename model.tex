@@ -78,6 +78,7 @@ form $B = (h, x, \ctr)$, where $h \in \{0,1\}^\kappa$ is a reference to the prev
 $x \in \{0, 1\}^*$ contains the transactions of the block, and $\ctr \in \N$ is a nonce
 used to produce proof-of-work.
 The hash of block $B$ is denoted as $H(B) = H(h \concat x \concat \ctr)$.
+The $h$ is a reference to the previous block hash $H(B')$.
 We let $H$ be a $\kappa$-bit hash function, normalized to the interval
 $[0, 1)$.
 \footnote{The deployed hash function of, e.g., Bitcoin,

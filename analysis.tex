@@ -35,17 +35,21 @@ for $A \in [0, 1)$.
   where $\gamma \in \mathbb{R}^+$ is the \emph{bias} parameter of the protocol.
 \end{definition}
 
-As in the construction, we will set bias $\gamma = 0$.
+To simplify the analysis, we will set bias $\gamma = 0$.
 We observe that, for a block hash $H(x)$,
 the actual protocol uses $\work(H(x))$, which is an approximation
 of $\rwork(\rH(x))$. Because $T \in \{ 0, \frac{1}{2^\kappa}, \frac{2}{2^\kappa}, \ldots, \frac{2^\kappa - 1}{2^\kappa}\}$,
 we have $\work(H(B)) \leftrightarrow \rwork(\rH(B))$.
 We will use the latter value in our analysis.
 Looking ahead, our goal will be to demonstrate that the small discrepancy
-between these two values is immaterial to the protocol's output; see the technical
-\emph{Hash Separation} lemma (Lemma~\ref{lem:hash-separation}) in the appendix.
+between these two values is immaterial to the protocol's output. The cornerstone of this
+result is stated and proven in the technical \emph{Hash Separation} lemma (Lemma~\ref{lem:hash-separation})
+in the appendix. The reason why this real-valued random oracle is useful is that it allows us to
+borrow tools from analysis to prove statements about the protocol. In particular, the work of a block
+is distributed as $\exp(\frac{1}{\ln 2})$. The sum of the works of multiple blocks in a chain has
+a variance that can be bounded using Chernoff bounds that would not be available if we were to use the quantized work.
 
-In a similar vein, we define the \emph{real} intrinsic work $\rwork(C)$ of a chain $C$, which
+In a similar vein to the block real intrinsic work, we define the \emph{real} intrinsic work $\rwork(C)$ of a chain $C$, which
 is approximated by its intrinsic work $\work(C)$:
 
 \begin{definition}[Real Intrinsic Chain Work]
