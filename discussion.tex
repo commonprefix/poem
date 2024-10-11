@@ -19,7 +19,7 @@ the real-world PoEM deployment uses positive values for $\gamma$.
 We also used positive values for $\gamma$ when conducting our experiments
 in Section~\ref{sec:experiments}. We have experimentally observed that
 increasing $\gamma$ improves the rate at which the
-sum of independent random variables each distributed as $\Bern(\cdot) (\gamma + \Exp(\ln2))$
+sum of independent random variables each distributed as $\Bern(\cdot) (\gamma + \Exp(\frac{1}{\ln2}))$
 converges, but the expectations deteriorate as far as security is concerned.
 We suspect that, for a given acceptable probability of failure given by the security
 parameter $\kappa$, there is an optimal parametrization triplet $(g, \gamma, k)$ that
@@ -27,7 +27,7 @@ minimizes the confirmation delay. Can this optimal parametrization be found anal
 
 Additionally,
 we know that, at the operating limit of $\gamma \to \infty$, the protocol
-is exactly Bitcoin, so we have proofs of security for both
+is exactly Bitcoin with an arbitrary tie-breaker, so we have proofs of security for both
 $\gamma = 0$ and $\gamma \to \infty$, but not for $0 < \gamma < \infty$.
 We leave the formal analysis of these questions for future work.
 

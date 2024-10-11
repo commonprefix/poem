@@ -205,8 +205,6 @@ by the respective system).
 To do this, we determine the \emph{last} point in time when the adversary had a chain with more work than the honest parties,
 and we record the work $k$ of the honest chain that first surpasses the adversary's chain immediately after.
 For this execution, a confirmation parameter larger or equal to $k$ would safeguard the protocol from a Common Prefix violation.
-% TODO: Footnote that this k is safe only against the EiaR attack, and not other possible attacks, even though EiaR is the
-% best possible attack wrt resilience.
 
 To accurately calculate the latency of a given system parameterization $(g, \beta)$ -- and, for PoEM, also $\gamma$ -- we
 simulate $100{,}000$ such executions and record the minimum safe confirmation
@@ -229,7 +227,7 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
     \includegraphics[width = 0.8\textwidth]{figures/bitcoin_vs_poem.pdf}
 
     \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$.
-             The results were obtained by running 240 million simulations per point.
+             The results were obtained by running 200 million simulations per point.
              For every value of the triplet $(\beta, g, \gamma)$, we perform
              $100{,}000$ Monte Carlo iterations and obtain the latency-optimal parameters
              $(g, \gamma)$ for which the latency is illustrated on the vertical axis.}
@@ -275,7 +273,7 @@ for a total of $6.15$ billion simulation runs across all points in the plot.
 
 We observe that PoEM outperforms Bitcoin in terms of latency across all adversarial ratios $\beta$.
 For small values of $\beta$, PoEM has as much as $70\%$ faster confirmation than Bitcoin.
-The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratio around $0.4$.
+The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratios around $0.4$.
 For small adversarial presence, the block production rate $g$ can be safely increased. This is illustrated in Figure~\ref{fig:g}.
 It is for these larger values of $g$ that PoEM truly shines, utilizing more effectively the work of the
 forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
@@ -286,7 +284,7 @@ forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
 
     \caption{Bitcoin vs PoEM optimal block production rate $g$ over different adversarial ratios $\beta$.
              The results were obtained by running $100{,}000$ Monte Carlo iterations for each parametrization triplet
-             $(\beta, g, \gamma)$, for a total of $240{,}000{,}000$ simulations per point.}
+             $(\beta, g, \gamma)$, for a total of $200{,}000{,}000$ simulations per point.}
     \label{fig:g}
 \end{figure}
 
@@ -316,15 +314,15 @@ and the discrete-time model used in our theoretical analysis.
 \noindent
 \textbf{Real-world Deployment.}
 In addition to the above simulations,
-we have implemented and deployed\ifanonymous\else\footnote{
+we have implemented and deployed\footnote{
     \ifanonymous
-        % TODO: add anonymous link here and remove anonymous guard
-        The source code will be made available in the full version of this paper.
+        The source code is available in the following anonymized repository:
+        \url{https://anonymous.4open.science/r/go-quai-3182}
     \else
         The source code can be found at
         \url{https://github.com/dominant-strategies/go-quai/releases/tag/v0.28.2}
     \fi
-}\fi PoEM in a real-world permissionless peer-to-peer
+} PoEM in a real-world permissionless peer-to-peer
 setting.
 The deployment is on a testnet that has been continuously operating for
 four months. During this period, the network generated 7.5 million blocks
