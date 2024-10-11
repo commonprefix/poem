@@ -16,20 +16,23 @@ A formal proof of the composability of PoEM with these protocols is left for fut
 \myparagraph[Bias]
 Whereas our security analysis was conducted for $\gamma = 0$,
 the real-world PoEM deployment uses positive values for $\gamma$.
-We also used positive values for $\gamma$ when conducting our experiments
+We also used (among others) positive values for $\gamma$ when conducting our experiments
 in Section~\ref{sec:experiments}. We have experimentally observed that
 increasing $\gamma$ improves the rate at which the
 sum of independent random variables each distributed as $\Bern(\cdot) (\gamma + \Exp(\frac{1}{\ln2}))$
 converges, but the expectations deteriorate as far as security is concerned.
 We suspect that, for a given acceptable probability of failure given by the security
-parameter $\kappa$, there is an optimal parametrization triplet $(g, \gamma, k)$ that
-minimizes the confirmation delay. Can this optimal parametrization be found analytically?
+parameter $\kappa$, there is an optimal configuration $(g, \gamma)$ (and a corresponding $k$) that
+minimizes the confirmation delay. This is supported by our experimental evidence in Section~\ref{sec:more-experiments}.
+Can this optimal configuration be found analytically?
 
 Additionally,
 we know that, at the operating limit of $\gamma \to \infty$, the protocol
 is exactly Bitcoin with an arbitrary tie-breaker, so we have proofs of security for both
 $\gamma = 0$ and $\gamma \to \infty$, but not for $0 < \gamma < \infty$.
-We leave the formal analysis of these questions for future work.
+We leave the full formal analysis of these questions for future work,
+although we note that the relevant Chernoff bounds for non-negative biases $\gamma$
+are well-behaved, as we analytically prove in Lemma~\ref{lem:bern-exp}.
 
 \noindent
 \myparagraph[Work functions]
