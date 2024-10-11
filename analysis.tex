@@ -63,7 +63,7 @@ $\rwork(C[{:}{i}]) < \alpha \leq \rwork(C[{:}{i + 1}])$.
 If $\rwork(C) < \alpha$, then $[\alpha] \rlhd C = \bot$.
 If $\alpha < 0$, then $[\alpha] \rlhd C = C[i]$
 where
-$\rwork(C[{i}{:}]) < -\alpha \leq \rwork(C[{i + 1}{:}])$.
+$\rwork(C[{i}{:}]) > -\alpha \geq \rwork(C[{i + 1}{:}])$.
 Let $[{\alpha}{:}{\beta}] \rlhd C = C[{i}{:}{j}]$,
 where $i$ is the index of $[\alpha] \rlhd C$
 and $j$ is the index of $[\beta] \rlhd C$ in $C$.
@@ -78,8 +78,8 @@ towards proving the security of the protocol.
 \begin{definition}[Entropic Growth]
   The \emph{Entropic Growth} property of
   a \poem execution,
-  parametrized by the growth interval $s \in \mathbb{N}$
-  and the entropic growth velocity $\tau \in \mathbb{R}^+$,
+  parametrized by the \emph{growth interval} $s \in \mathbb{N}$
+  and the entropic \emph{growth velocity} $\tau \in \mathbb{R}^+$,
   states that for
   all honest parties $P$ and all rounds $r_1 + s \leq r_2$,
   the chains $C_1, C_2$ of $P$ at rounds $r_1, r_2$ respectively
@@ -780,7 +780,7 @@ of chains do not fall dangerously close to each other.
 
 \begin{corollary} \label{cor:slicing-work-bound}
   In a typical execution of \poem, for any honest party $P$ and any round $r$ it holds that
-  $\rwork([{:}{-k}] \rlhd \Chain[P][][r]) < 2k$.
+  $\rwork([{-k}{:}] \rlhd \Chain[P][][r]) < 2k$.
 \end{corollary}
 \begin{proof}
   From Entropic Patience (Lemma~\ref{lem:patience}), every block has less than $k$ real work. Therefore,
