@@ -60,8 +60,9 @@ intrinsic work.
 
 To guarantee security, it suffices~\cite{eiar} that the work of any honest chain grows
 faster than the work of the adversary's chain.
-Suppose we have $n$ blocks produced in short succession.
-If they are honestly produced, they will be placed in parallel due to network delays.
+Suppose we have $n$ blocks produced in quick succession.
+If they are honestly produced, they will be placed in parallel due to network delays,
+forming $n$ different forks.
 If they are adversarially produced, since no network delay is incurred, they will be placed in series,
 forming a chain of length $n$.
 In Bitcoin, all blocks count the same constant amount of work $w$. So the honest chain grows by $w$,
@@ -69,7 +70,7 @@ and the adversarial chain grows by $n w$.
 In PoEM, each block is scored differently: $w_1, w_2, \dots, w_n$, but has an expected work of $w$.
 The adversarial chain grows by the sum of its blocks' work, $\sum_{i=1}^n w_i$.
 In expectation, this is equal to $n w$, same as Bitcoin.
-However, the honest chain now grows by the heaviest block's work $\max_i w_i$,
+However, the honest chain now grows by the heaviest block's work: $\max_i w_i$,
 which in expectation is greater than $w$. Hence, in expectation, honest PoEM chains grow
 faster than honest Bitcoin chains in relation to the adversary's chain.
 

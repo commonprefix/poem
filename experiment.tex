@@ -2,13 +2,8 @@
 
 In this section, we report on experimental measurements illustrating the concrete improvements
 in latency of PoEM as compared to Bitcoin. We implemented a stochastic simulation in 1500 lines of
-Rust code\footnote{%
-    The source code will be made available in the full version of this paper. % TODO
-    \ifanonymous
-        % TODO
-    \else
-    \fi
-} to compare the two protocols.
+Rust code\footnote{The source code is available in the following anonymized repository:
+\url{https://anonymous.4open.science/r/anonymized-poem-simulations-A2FC}} to compare the two protocols.
 
 % \subsection{Experimental Methodology}\label{sec:methodology}
 %
@@ -101,7 +96,7 @@ Rust code\footnote{%
 % this $k^*$ by $f$ to calculate the time (in units of network delay $\Delta$)
 % needed to get $k^*$ blocks on average.
 %
-% In PoEM's case, we mark the cummulative chain work at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
+% In PoEM's case, we mark the cumulative chain work at every $\work$ point in intervals of $\gamma + \frac{1}{\ln2}$
 % (corresponding to the expected amount of work per valid block),
 % namely $\gamma + \frac{1}{\ln2}, 2\left(\gamma + \frac{1}{\ln2}\right),\allowbreak\ldots,\allowbreak 200\left(\gamma + \frac{1}{\ln2}\right)$.
 % For each of those $\work$ points, we record a flag indicating whether the honest
@@ -138,7 +133,7 @@ Rust code\footnote{%
 % % PoEM($d=27.4$))
 
 We simulate various executions of Bitcoin and PoEM with different parameterizations.
-In each execution simulation, we fix the block production rate $g$, the adversarial ratio $\beta$,
+In each simulated execution, we fix the block production rate $g$, the adversarial ratio $\beta$,
 and, for PoEM, also the bias parameter $\gamma$, and we
 measure the latency of the system. The latency is defined as the time it takes for a new transaction
 to become stable in the system (i.e., $k$-confirmed for a sufficiently large $k$).
@@ -153,12 +148,12 @@ We use the private mining attack as the adversarial strategy, which was
 proven~\cite{eiar} to be the best possible attack against Bitcoin in the continuous-time model~\cite{bitcoin-made-simple}.
 In a nutshell, in this strategy, the adversary mines blocks in private on her own chain, whereas the honest parties mine
 their own blocktree, following the heaviest chain rule (in Bitcoin) or the most intrinsic work rule (in PoEM) respectively.
-The adversary imposes a network delay of $\Delta$ to honest parties.
-Our simulation begins with all honest parties and the adversary agreeing on a particular block
-$B$ with no premining having occurred. At that point, the adversary uses the private mining strategy
-to conduct a double spend in a block immediately following $B$.
+The adversary imposes a network delay of $\Delta$ on honest parties.
+Our simulation begins with all honest parties and the adversary agreeing on a particular genesis block
+$G$ with no premining having occurred. At that point, the adversary uses the private mining strategy
+with the goal of conducting a double-spend in a block immediately following $G$.
 For a particular execution simulation sample, we determine the \emph{safe} confirmation parameter $k$
-that the honest parties \emph{should} have used to avoid this double spend.
+that the honest parties \emph{should} have used to avoid this double-spend.
 Whereas in our experiments, this confirmation parameter is determined retroactively,
 in the real implementation, the confirmation parameter should be determined prospectively.
 
@@ -167,7 +162,7 @@ in a chain without incurring any delay, and therefore without any forks. The adv
 $g\frac{\beta}{1 - \beta}$. On the other hand, the honest parties incur a network delay of $\Delta$ for each mined block,
 and they mine blocks at a rate of $g$. Because of this delay, the blocks mined by the honest parties form a blocktree.
 
-To save time, instead of wastefully simulating proof of work, we artificially simulate block production by a
+To save time, instead of wastefully simulating proof of work, we artificially simulate block production using a
 continuous-time stochastic process.
 We know that the time between the creation of two honest blocks is exponentially distributed
 with rate $g$ (because the times of block creation form a Poisson point process~\cite{bitcoin-made-simple}).
@@ -178,13 +173,13 @@ by sampling from $\exp(g\frac{\beta}{1 - \beta})$. These two stochastic processe
 adversary parties, from which we can determine the blocktree that was constructed taking the delay into account.
 
 In Bitcoin, the work of each block is equal to one,
-whereas in PoEM, the work of block is exponentially
-distributed with rate $\gamma + \frac{1}{\ln2}$ (and note that these exponential samples of \emph{work} are a different,
-parallel process from the exponential samples of \emph{time intervals} between block creations).
-Hence, in PoEM's case, we sample from $\exp(\frac{1}{\ln2})$ to get the work
+whereas in PoEM, the work of a block is
+distributed as $\gamma + \exp(\frac{1}{\ln2})$ (as we show in the Analysis section). Note that these biased exponential samples of \emph{work} are a different,
+parallel process from the exponential samples of \emph{time intervals} between block creations.
+Hence, in PoEM's case, we sample from $\gamma + \exp(\frac{1}{\ln2})$ to get the work
 of each block in the execution. The creation time of each block and its work are enough to simulate the honest parties' execution
 and determine the blocktree that was constructed.
-The honest blocktree is computed as follows. We create a list of \emph{events} pertaining to either the creation of a new honest block,
+The honest blocktree is computed as follows: We create a list of \emph{events} pertaining to either the creation of a new honest block,
 or the arrival of the block to the rest of honest parties $\Delta$ later. We sort these events in chronological order and process them one by one.
 Throughout time, we maintain a single value indicating the cumulative work of the heaviest chain seen so far by all honest parties.
 For every block, we also keep the cumulative work of the chain ending at that block.
@@ -192,19 +187,19 @@ At the block creation event, we compute the cumulative work associated with the 
 heaviest chain seen so far plus the work of the block (1 in Bitcoin, sampled in PoEM). At the block arrival event, we compare the
 cumulative work of the chain ending at the arrival block with the cumulative work of the heaviest chain seen so far.
 If it is heavier, we update our best cumulative work value. Every time we update the best cumulative work value,
-we remember this cumulative work together with the creation timestamp associated with the block that cause the work to increase.
+we remember this cumulative work together with the creation timestamp associated with the block that caused the work to increase.
 % TODO: Cite EiaR for the Δ optimality
 % TODO: assume n -> inf
 
 Then, independently we simulate the adversary's execution. Like in the honest execution, we sample from $\exp(g\frac{\beta}{1 - \beta})$
 to get the interval between the time of successive adversarially produced blocks, where $g\frac{\beta}{1 - \beta}$ is the adversary's block production rate.
-Then, similar to the honest simulation, we set the work of each block to $1$ in Bitcoin, and sample from $\exp(\frac{1}{\ln2})$ to get the work of each block in PoEM.
+Then, similar to the honest simulation, we set the work of each block to $1$ in Bitcoin, and sample from $\gamma + \exp(\frac{1}{\ln2})$ to get the work of each block in PoEM.
 Since the adversary has no network delay, all her blocks are chained in series.
 Again, we maintain an association of timestamps and cumulative work values for every block.
 % TODO: Talk about the initial sampling of the adversarial execution and the scaling with $\beta$ retroactively
 
-Having simulated the honest and adversary executions, we can determine the latency of the system (whether this system is Bitcoin or PoEM).
-To find this latency, we must find the minimum \emph{safe} confirmation parameter $k$ (where $k$ is denominated in amount of work per block, as measured
+Having simulated the honest and adversary executions, we can now determine the latency of the system (whether this system is Bitcoin or PoEM).
+To find this latency, we must find the minimum \emph{safe} confirmation parameter $k$ (where $k$ is denominated in \emph{amount of work} per block, as measured
 by the respective system).
 To do this, we determine the \emph{last} point in time when the adversary had a chain with more work than the honest parties,
 and we record the work $k$ of the honest chain that first surpasses the adversary's chain immediately after.
@@ -212,7 +207,8 @@ For this execution, a confirmation parameter larger or equal to $k$ would safegu
 % TODO: Footnote that this k is safe only against the EiaR attack, and not other possible attacks, even though EiaR is the
 % best possible attack wrt resilience.
 
-To accurately calculate the latency of a given system parameterization $(g, \beta)$, we simulate multiple such executions and record the minimum safe confirmation
+To accurately calculate the latency of a given system parameterization $(g, \beta)$ -- and, for PoEM, also $\gamma$ -- we
+simulate multiple such executions and record the minimum safe confirmation
 % TODO: What is your Monte Carlo iteration count?
 parameter $k$ for each execution. We collect these $k$ values into a list $K$. We wish to determine the value of $k$ that gives a specific
 security level -- in our case, we want $90\%$ of the executions to be safe from a Common Prefix violation (i.e., $3.32$ bits of
@@ -227,12 +223,27 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
 % TODO: infinite values not taken into account
 % TODO: lifetime of simulations
 
-The latency of the system is now calculated as $d = \frac{k^*}{f}$, were $f$ is the average cumulative work increase rate for the honest chains.
-Roughly, $d$ measures the average time it takes to produce $k^*$ chained work in the system (both in Bitcoin and PoEM).
-% TODO: Explicitly write out what f is
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/bitcoin_vs_poem.pdf}
 
-To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$.
-The $g$ that minimizes the latency of the system is the optimal block production rate for a given adversarial ratio $\beta$.
+    \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$.
+             The results were obtained by running 240 million simulations per point.
+             For every value of the triplet $(\beta, g, \gamma)$, we perform
+             $100,000$ Monte Carlo iterations and obtain the latency-optimal parameters
+             $(g, \gamma)$ for which the latency is illustrated on the vertical axis.}
+    \label{fig:bitcoin_vs_poem}
+\end{figure}
+
+The latency of the system is calculated as $d = \frac{k^*}{f}$, where $f$ is the average cumulative work increase rate for the honest chains.
+Roughly, $d$ measures the average time it takes to produce $k^*$ chained work in the system (both in Bitcoin and PoEM).
+To acquire $f$, we calculate the honest cumulative work increase rate for each execution and take their average.
+Namely, for each execution, we take the last cumulative work increase that happened during its lifetime, and divide it by the time at which it occurred.
+
+To get the optimal system latency given an adversarial ratio $\beta$, we explore the latency of the system for various block production rates $g$,
+and for PoEM, also various bias parameters $\gamma$. The value of $g$ -- and potentially $\gamma$ -- that minimizes the latency of the system is
+the optimal system parameterization for a given adversarial ratio $\beta$.
+
 
 % TODO: Quantization
 % TODO: Rust code, lines of code, visualization in Python
@@ -245,7 +256,7 @@ The $g$ that minimizes the latency of the system is the optimal block production
 %   Latency of Bitcoin and PoEM for various parameterizations (horizontal axis is β, vertical axis is latency, optimize over g and γ)
 
 % Figure 2:
-%   PoEM executions across different βs (horizontal axis is β, vertical axes are larency, optimal g, optimal γ)
+%   PoEM executions across different βs (horizontal axis is β, vertical axes are latency, optimal g, optimal γ)
 %
 % Figure 3:
 %   Optimization of γ. Fix (β=0.1, g=0.7) and (β=0.3, g=1.5), vary γ, plot latency. 100k iterations.
@@ -253,36 +264,25 @@ The $g$ that minimizes the latency of the system is the optimal block production
 % Figure 4:
 %   Optimization of g. Fix β=0.2, fix γ=0, vary g, plot latency. 100k iterations.
 
-\begin{figure}[pt]
-    \centering
-    \includegraphics[width = 0.9\textwidth]{figures/bitcoin_vs_poem.pdf}
 
-    \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$.
+Following the above methodology, we obtain the results illustrated in Figures~\ref{fig:bitcoin_vs_poem}.
+We observe that PoEM outperforms Bitcoin in terms of latency across all adversarial ratios $\beta$.
+For small values of $\beta$, PoEM has as much as $70\%$ faster confirmation than Bitcoin.
+The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratio around $0.4$.
+For small adversarial presence, the block production rate $g$ can be safely increased. This is illustrated in Figure~\ref{fig:g}.
+It is for these larger values of $g$ that PoEM truly shines, utilizing more effectively the work of the
+forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figures/g.pdf}
+
+    \caption{Bitcoin vs PoEM optimal block production rate $g$ over different adversarial ratios $\beta$.
             The results were obtained by running 100k simulations per point.}
-    \label{fig:bitcoin_vs_poem}
+    \label{fig:g}
 \end{figure}
 
-\begin{figure}[pt]
-    \centering
-    \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width = \textwidth]{figures/gamma_latency_0.1.pdf}
-    \caption{$\beta = 0.1$ and $g = 0.7$}
-    \label{fig:gamma_latency_0.1}
-    \end{subfigure}
-    \begin{subfigure}{0.48\textwidth}
-    \centering
-    \includegraphics[width = \textwidth]{figures/gamma_latency_0.3.pdf}
-    \caption{$\beta = 0.3$ and $g = 0.7$}
-    \label{fig:gamma_latency_0.3}
-    \end{subfigure}
-
-  \caption{Fixing $\beta$ and $g$, we compare the latency of PoEM parameterized under different $\gamma$ values
-          and the latency of Bitcoin. We observe that the plot is convex and for large $\gamma$, the latency
-          converges asymptotically to a value lower than Bitcoin's latency. The results were obtained by running 100k simulations per point.}
-    \label{fig:gamma_latency}
-\end{figure}
-
+%TODO: Where to place this figure?
 \begin{figure}[pt]
     \centering
     \includegraphics[width = 0.48\textwidth]{figures/g_latency.pdf}

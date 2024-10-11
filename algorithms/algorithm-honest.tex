@@ -10,8 +10,7 @@
             \State \textsf{round} $\leftarrow 1$
         \EndFunction
         \Function{$\execute_{\net}$}{$1^\kappa$}
-            \CommentLine{Receive chains from the network}
-            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive}
+            \State $\bar M \leftarrow \net.\receive()$\label{alg-backbone.receive} \Comment{Receive chains from the network}
             \State $C \leftarrow$ maxvalid$(C \cup \bar M)$ \label{alg-backbone.maxvalid} \Comment{Adopt heaviest chain}
             \Let{x}{\textsc{input}()} \Comment{Take all transactions in mempool}
             \Let{B}{\pow(x, H(C[-1]))} \Comment{Mine a new block}
