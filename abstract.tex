@@ -3,16 +3,15 @@
   Instead of choosing the heaviest chain, we choose the chain with the most
   \emph{intrinsic work}. The intrinsic work of a block is roughly the number of
   zeroes at the front of its hash. This modification allows us to safely
-  decrease the confirmations required,
-  yielding a roughly $20\%$ improvement in \emph{confirmation delay} as compared
-  to Bitcoin for adversaries close to $10\%$. %TODO
+  speed up the protocol,
+  yielding a roughly $40\%$ improvement in \emph{confirmation delay} as compared
+  to Bitcoin for adversaries close to $10\%$.
   Our modification is at the
   level of the proof-of-work inequality, and thus can be composed with
-  any other methods to improve latency or throughput that have been
+  any other methods to improve latency
   proposed in the literature (e.g., GHOST).
-  We compile detailed simulation evidence from over $2$ billion
-  monte carlo executions of our system across different parameters
-  to support our claims.
+  We compile detailed simulation evidence from $3{,}000$ years of
+  simulated executions of our system across different parameters.
   We formally prove the
   security of our new protocol in the Bitcoin Backbone model.
   These proofs use a new technical tool, the \emph{real-valued Random Oracle}
