@@ -99,7 +99,7 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
     \centering
     \includegraphics[width = 0.9\textwidth]{figures/bitcoin_vs_poem.pdf}
 
-    \caption{Bitcoin vs PoEM latency over different adversarial ratios $\beta$ (logarithmic scale).
+    \caption{Bitcoin vs PoEM latency (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running 200 million simulations per point.
              For every value of the triplet $(\beta, g, \gamma)$, we perform
              $100{,}000$ Monte Carlo iterations and obtain the latency-optimal parameters
@@ -133,7 +133,8 @@ for a total of $6.15$ billion simulation runs across all points in the plot.
 We observe that PoEM outperforms Bitcoin in terms of latency across all adversarial ratios $\beta$.
 For small values of $\beta$, PoEM has as much as $70\%$ faster confirmation than Bitcoin.
 The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratios around $0.4$.
-For small adversarial presence, the block production rate $g$ can be safely increased. This is illustrated in Figure~\ref{fig:g}.
+For small adversarial presence, the block production rate $g$ of PoEM can be safely increased much more than in Bitcoin.
+This is illustrated in Figure~\ref{fig:g}.
 It is for these larger values of $g$ that PoEM truly shines, utilizing more effectively the work of the
 forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
 
@@ -143,7 +144,7 @@ forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
     \centering
     \includegraphics[width = 0.8\textwidth]{figures/g.pdf}
 
-    \caption{Bitcoin vs PoEM optimal block production rate $g$ over different adversarial ratios $\beta$ (logarithmic scale).
+    \caption{Bitcoin vs PoEM optimal block production rate $g$ (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running $100{,}000$ Monte Carlo iterations for each parametrization triplet
              $(\beta, g, \gamma)$, for a total of $200{,}000{,}000$ simulations per point.}
     \label{fig:g}
