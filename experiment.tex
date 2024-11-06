@@ -2,8 +2,15 @@
 
 In this section, we report on experimental measurements illustrating the concrete improvements
 in latency of PoEM as compared to Bitcoin. We implemented a stochastic simulation in 1500 lines of
-Rust code\footnote{The source code is available in the following anonymized repository:
-\url{https://anonymous.4open.science/r/anonymized-poem-simulations-A2FC}} and used Python's matplotlib
+Rust code\footnote{
+    \ifanonymous
+    The source code is available in the following anonymized repository:
+    \url{https://anonymous.4open.science/r/anonymized-poem-simulations-A2FC}
+\else
+    The source code is available in the following repository:
+    \url{https://github.com/commonprefix/poem/tree/main/simulation}
+\fi
+} and used Python's matplotlib
 to plot the results comparing Bitcoin and PoEM.
 
 We simulate various executions of Bitcoin and PoEM with different parameterizations.
