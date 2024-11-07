@@ -15,7 +15,7 @@ We get optimal latency somewhere in the middle.
   \includegraphics[width = 0.8\textwidth]{figures/g_latency.pdf}
 
   \caption{Fixing $\beta=0.2$ and $\gamma=0$, we plot the latency of PoEM parameterized under different block production rates $g$.
-           The results were obtained by running $100{,}000$ Monte Carlo iterations per point.}
+           The results were obtained by running \montecarlo{} Monte Carlo iterations per point.}
   \label{fig:g_latency}
 \end{figure}
 
@@ -50,6 +50,6 @@ which helps with latency. In this regime, this tie-breaker is as good as any.
   \caption{Fixing $\beta$ and $g$, we compare Bitcoin's latency against PoEM's parameterized under different $\gamma$ values
            (denser around the points of interest).
           We observe the plot is convex and for large $\gamma$, the latency
-          approaches a value lower than Bitcoin's. The results were obtained by running $100{,}000$ simulations per point.}
+          approaches a value lower than Bitcoin's. The results were obtained by running \montecarlo{} simulations per point.}
     \label{fig:gamma_latency}
 \end{figure}

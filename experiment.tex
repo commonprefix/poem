@@ -89,7 +89,7 @@ and we record the work $k$ of the honest chain that first surpasses the adversar
 For this execution, a confirmation parameter larger or equal to $k$ would safeguard the protocol from a Common Prefix violation.
 
 To accurately calculate the latency of a given system parameterization $(g, \beta)$ -- and, for PoEM, also $\gamma$ -- we
-simulate $100{,}000$ such executions and record the minimum safe confirmation
+simulate \montecarlo{} such executions and record the minimum safe confirmation
 parameter $k$ for each execution. We wish to determine the value of $k$ that gives a specific
 security level -- in our case, we want $90\%$ of the executions to be safe from a Common Prefix violation (i.e., $3.32$ bits of
 security\footnote{While $-\lg_2(10\%) = 3.32$ bits of security are not enough for cryptographic security, we use this as a
@@ -98,7 +98,7 @@ in the security parameter $\kappa$.}).
 Intuitively, using a common reference security level is what allows us to fairly compare these disparate systems.
 
 In a nutshell, we set $k^*$ to be the minimum confirmation parameter that would safeguard $90\%$ of the executions against a Common Prefix violation.
-To do this, we collect all the safe $k$ values of the $100{,}000$ Monte Carlo iterations into a list.
+To do this, we collect all the safe $k$ values of the \montecarlo{} Monte Carlo iterations into a list.
 We take the $20\%$ highest percentile of the list and set $k^*$ to be the mean of these values (i.e., the \emph{expected shortfall}
 at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ percentile).
 
@@ -109,7 +109,7 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
     \caption{Bitcoin vs PoEM latency (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running 200 million simulations per point.
              For every value of the triplet $(\beta, g, \gamma)$, we perform
-             $100{,}000$ Monte Carlo iterations and obtain the latency-optimal parameters
+             \montecarlo{} Monte Carlo iterations and obtain the latency-optimal parameters
              $(g, \gamma)$ for which the latency is illustrated on the vertical axis.}
     \label{fig:bitcoin_vs_poem}
 \end{figure}
@@ -123,12 +123,12 @@ at which it occurred.
 We get the optimal system latency for $30$ different adversarial ratios $\beta$ ranging linearly from $0$ to $0.4$.
 We explore the latency of the system for $50$ different block production rates $g$ increasing geometrically from $0.05$ to $85$ blocks per network delay.
 For PoEM, we explore $40$ different bias parameters $\gamma$ starting at $0$ and then ranging geometrically from $0.01$ to $20$.
-For each tuple $(\beta, g, \gamma)$, we run the $100{,}000$ Monte Carlo iterations to obtain the
+For each tuple $(\beta, g, \gamma)$, we run the \montecarlo{} Monte Carlo iterations to obtain the
 confirmation delay that achieves $90\%$ security (in the expected shortfall sense), and find the minimum delay across all configurations $(g, \gamma)$ (for PoEM)
 and $g$ (for Bitcoin) for each $\beta$.
 These optimal latencies are illustrated in Figure~\ref{fig:bitcoin_vs_poem}.
-For each point in the plot, we ran $100{,}000 \times 50 \times 40 = 200{,}000{,}000$ PoEM simulations
-and $100{,}000 \times 50 = 5{,}000{,}000$ Bitcoin simulations,
+For each point in the plot, we ran \montecarlo$ \times 50 \times 40 = 200{,}000{,}000$ PoEM simulations
+and \montecarlo$ \times 50 = 5{,}000{,}000$ Bitcoin simulations,
 for a total of $6.15$ billion simulation runs across all points in the plot.
 
 % TODO: Explain the following aspects of the experimental methodology:
@@ -152,7 +152,7 @@ forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
     \includegraphics[width = 0.8\textwidth]{figures/g.pdf}
 
     \caption{Bitcoin vs PoEM optimal block production rate $g$ (logarithmic scale) over different adversarial ratios $\beta$.
-             The results were obtained by running $100{,}000$ Monte Carlo iterations for each parametrization triplet
+             The results were obtained by running \montecarlo{} Monte Carlo iterations for each parametrization triplet
              $(\beta, g, \gamma)$, for a total of $200{,}000{,}000$ simulations per point.}
     \label{fig:g}
 \end{figure}
