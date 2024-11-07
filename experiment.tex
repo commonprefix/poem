@@ -157,6 +157,20 @@ forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
     \label{fig:g}
 \end{figure}
 
+Some more detail about how exactly the sampling of adversarial and honest block creation events in the form of the
+Poisson point process is warranted. We do not re-sample block creation times for each parametrization triplet
+$(\beta, g, \gamma)$ (or $(\beta, g)$ for Bitcoin respectively). Instead, we sample \montecarlo{} independent
+Poisson point processes with $\lambda = 1$ for the adversary, and \montecarlo{} additional independent Poisson point processes
+with $\lambda = 1$ for the honest parties. These are the only timestamp samples we ever take. These Monte Carlo timestamp
+samples are re-used all the same for both Bitcoin and PoEM. As the parameters $\beta$ and $g$ vary, the existing
+samples are appropriately scaled (by multiplying their timestamps accordingly) to obtain the correct block
+production rates for the adversary and the honest parties,
+i.e., the Poisson process of the adversary is adjusted to have a rate of $\lambda = g\frac{\beta}{1 - \beta}$ and the
+Poisson process of the honest parties is adjusted to have a rate of $\lambda = g$.
+For PoEM in particular, for each block timestamp that appears in our previous samples, we also sample, independently for each block, an additional exponentially distributed (with $\lambda = \frac{1}{\ln2}$) sample indicating the work of the block.
+These samples are also re-used across all parameterizations. As the parameter $\gamma$
+varies, the works are adjusted, without resampling, by adding the constant $\gamma$ to each block's work.
+
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
 for Bitcoin only, and not for PoEM, but in our experiments we have used the same attack for both protocols.
 Secondly, the optimality of the private attack previously proven~\cite{eiar} is a reduction illustrating
