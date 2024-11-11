@@ -67,4 +67,5 @@ __pycache__/
 venv/
 
 target/
-simulation_data/
+plot_scripts/*.pdf
+simulation/simulation_data/
