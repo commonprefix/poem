@@ -45,6 +45,12 @@ pub struct BitcoinData {
     pub adversary_max_height: Vec<f64>,
 }
 
+pub enum ReductionType {
+    Beta,
+    Gamma,
+    G,
+}
+
 pub fn simulate_poem(
     timestamps: (Vec<[f64; HONEST_COUNT]>, Vec<[f64; ADVERSARY_COUNT]>),
     monte_carlo: usize,
@@ -52,18 +58,24 @@ pub fn simulate_poem(
     beta_range: Vec<f64>,
     g_range: Vec<f64>,
     gamma_range: Vec<f64>,
+    reduction_type: ReductionType,
 ) -> PoemData {
     println!("Working on PoEM...");
+    let data_length = match reduction_type {
+        ReductionType::Beta => beta_range.len(),
+        ReductionType::Gamma => gamma_range.len(),
+        ReductionType::G => g_range.len(),
+    };
     let mut poem_data = PoemData {
-        latency: vec![INF; beta_range.len()],
-        optimal_k: vec![INF; beta_range.len()],
-        optimal_g: vec![0.0; beta_range.len()],
-        optimal_gamma: vec![0.0; beta_range.len()],
-        throughput: vec![0.0; beta_range.len()],
-        max_work: vec![0.0; beta_range.len()],
-        max_height: vec![0.0; beta_range.len()],
-        adversary_max_work: vec![0.0; beta_range.len()],
-        adversary_max_height: vec![0.0; beta_range.len()],
+        latency: vec![INF; data_length],
+        optimal_k: vec![INF; data_length],
+        optimal_g: vec![0.0; data_length],
+        optimal_gamma: vec![0.0; data_length],
+        throughput: vec![0.0; data_length],
+        max_work: vec![0.0; data_length],
+        max_height: vec![0.0; data_length],
+        adversary_max_work: vec![0.0; data_length],
+        adversary_max_height: vec![0.0; data_length],
     };
 
     // Get the block creations
@@ -89,9 +101,9 @@ pub fn simulate_poem(
     let mut scaled_poem_adversary_progress_monte_carlo =
         original_poem_adversary_progress_monte_carlo.clone();
 
-    for &gamma in gamma_range.iter() {
+    for (gamma_index, &gamma) in gamma_range.iter().enumerate() {
         println!("gamma: {}", gamma);
-        for &g in g_range.iter() {
+        for (g_index, &g) in g_range.iter().enumerate() {
             println!(" - g: {}", g);
             // Scale PoEM honest blocks
             scale_monte_carlo_blocks(
@@ -132,16 +144,22 @@ pub fn simulate_poem(
                     epsilon,
                 );
                 let poem_latency = k / f_work;
-                if poem_latency < poem_data.latency[beta_index] {
-                    poem_data.latency[beta_index] = poem_latency;
-                    poem_data.optimal_k[beta_index] = k;
-                    poem_data.optimal_gamma[beta_index] = gamma;
-                    poem_data.optimal_g[beta_index] = g;
-                    poem_data.throughput[beta_index] = f_height;
-                    poem_data.max_work[beta_index] = max_work;
-                    poem_data.max_height[beta_index] = max_height;
-                    poem_data.adversary_max_work[beta_index] = adversary_max_work;
-                    poem_data.adversary_max_height[beta_index] = adversary_max_height;
+                let reduction_index = match reduction_type {
+                    ReductionType::Beta => beta_index,
+                    ReductionType::Gamma => gamma_index,
+                    ReductionType::G => g_index,
+                };
+
+                if poem_latency < poem_data.latency[reduction_index] {
+                    poem_data.latency[reduction_index] = poem_latency;
+                    poem_data.optimal_k[reduction_index] = k;
+                    poem_data.optimal_gamma[reduction_index] = gamma;
+                    poem_data.optimal_g[reduction_index] = g;
+                    poem_data.throughput[reduction_index] = f_height;
+                    poem_data.max_work[reduction_index] = max_work;
+                    poem_data.max_height[reduction_index] = max_height;
+                    poem_data.adversary_max_work[reduction_index] = adversary_max_work;
+                    poem_data.adversary_max_height[reduction_index] = adversary_max_height;
                 }
             }
         }
@@ -244,34 +262,3 @@ pub fn simulate_bitcoin(
     }
     bitcoin_data
 }
-
-// pub fn poem_throughput_at_optimal_latency(
-//     monte_carlo: usize,
-//     epsilon: f64,
-//     beta_range: Vec<f64>,
-//     optimal_g_range: Vec<f64>,
-//     optimal_gamma_range: Vec<f64>,
-// ) -> Vec<f64> {
-//     let mut poem_throughputs = vec![];
-//     for (beta, (g, gamma)) in zip(beta_range, zip(optimal_g_range, optimal_gamma_range)) {
-//         let data = poem_vs_bitcoin(
-//             monte_carlo, epsilon, vec![beta], vec![g], vec![gamma]);
-//         poem_throughputs.push(data.poem_throughputs[0]);
-//     }
-//     poem_throughputs
-// }
-
-// pub fn bitcoin_throughput_at_optimal_latency(
-//     monte_carlo: usize,
-//     epsilon: f64,
-//     beta_range: Vec<f64>,
-//     optimal_g_range: Vec<f64>,
-// ) -> Vec<f64> {
-//     let mut bitcoin_throughputs = vec![];
-//     for (beta, g) in zip(beta_range, optimal_g_range) {
-//         let data = poem_vs_bitcoin(
-//             monte_carlo, epsilon, vec![beta], vec![g], vec![0.0]);
-//         bitcoin_throughputs.push(data.bitcoin_throughputs[0]);
-//     }
-//     bitcoin_throughputs
-// }
