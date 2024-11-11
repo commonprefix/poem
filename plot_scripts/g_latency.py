@@ -34,8 +34,8 @@ def plot_g_latency(file_path):
     plt.ylabel(r'Latency (in $\Delta$s)')
 
     # plt.legend()
-    # plt.savefig("g_latency.pdf", bbox_inches = "tight")
-    plt.show()
+    plt.savefig("g_latency.pdf", bbox_inches = "tight")
+    # plt.show()
 
 def main():
     # Create the argument parser

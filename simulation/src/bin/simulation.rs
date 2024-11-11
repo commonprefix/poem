@@ -22,11 +22,13 @@ impl std::error::Error for RangeParseError {}
 #[command(author, version, about, long_about = None)]
 #[command(group(
     ArgGroup::new("commands")
-        .args(&["bitcoin_vs_poem", "poem", "g_latency"])
+        .args(&["bitcoin_vs_poem", "poem", "g_latency", "gamma_latency"])
         .required(true)
         .multiple(false)
 ))]
 struct Args {
+    #[arg(long)]
+    gamma_latency: bool,
     #[arg(long)]
     g_latency: bool,
     #[arg(long)]
@@ -39,6 +41,8 @@ struct Args {
     gamma: Option<f64>,
     #[arg(long)]
     g_range: Option<String>,
+    #[arg(long)]
+    g: Option<f64>,
     #[arg(long)]
     beta_range: Option<String>,
     #[arg(long)]
@@ -92,6 +96,59 @@ fn parse_range(s: String, exponent: Option<f64>) -> Result<Vec<f64>, RangeParseE
 fn main() {
     let args = Args::parse();
     let start = std::time::Instant::now();
+
+    if args.gamma_latency {
+        let gamma_range = parse_range(args.gamma_range.clone().unwrap(), Some(0.5)).unwrap();
+        let beta_range = vec![args.beta.clone().unwrap()];
+        let g_range = vec![args.g.clone().unwrap()];
+
+        println!("G range: {:?}", g_range);
+        println!("Beta range: {:?}", beta_range);
+        println!("Gamma range: {:?}", gamma_range);
+
+        let timestamps = sample_monte_carlo_execution_timestamps::<HONEST_COUNT, ADVERSARY_COUNT>(
+            args.monte_carlo,
+        );
+        let poem_data = simulate_poem(
+            timestamps,
+            args.monte_carlo,
+            args.error,
+            beta_range.clone(),
+            g_range.clone(),
+            gamma_range.clone(),
+            ReductionType::Gamma,
+        );
+
+        let data = json!({
+            "monte_carlo": args.monte_carlo,
+            "error": args.error,
+            "beta": beta_range,
+            "g": g_range,
+            "gamma": gamma_range,
+            "latency": poem_data.latency,
+            "optimal_k": poem_data.optimal_k,
+            "optimal_g": poem_data.optimal_g,
+            "optimal_gamma": poem_data.optimal_gamma,
+            "throughput": poem_data.throughput,
+            "max_work": poem_data.max_work,
+            "max_height": poem_data.max_height,
+            "adversary_max_work": poem_data.adversary_max_work,
+            "adversary_max_height": poem_data.adversary_max_height,
+        });
+        let json_string = serde_json::to_string_pretty(&data).unwrap();
+        let file_name = format!(
+            "simulation_data/poem_gamma_latency_beta_{}_g_{}_gamma_{}_monte_carlo_{}_error_{}.json",
+            args.beta.clone().unwrap(),
+            args.g.clone().unwrap(),
+            args.gamma_range.clone().unwrap(),
+            args.monte_carlo,
+            args.error
+        );
+        let mut file = File::create(file_name.clone()).unwrap();
+
+        file.write_all(json_string.as_bytes()).unwrap();
+        println!("Wrote to file: {}", file_name);
+    }
 
     if args.g_latency {
         let g_range = parse_range(args.g_range.clone().unwrap(), None).unwrap();
