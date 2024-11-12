@@ -132,7 +132,6 @@ and \montecarlo$ \times 50 = 5{,}000{,}000$ Bitcoin simulations,
 for a total of $6.15$ billion simulation runs across all points in the plot.
 
 % TODO: Explain the following aspects of the experimental methodology:
-% 1) Talk about the initial sampling of the adversarial execution and the scaling with $\beta$ retroactively
 % 2) infinite values not taken into account
 % 3) lifetime of simulations
 % 4) Quantization
@@ -170,6 +169,8 @@ Poisson process of the honest parties is adjusted to have a rate of $\lambda = g
 For PoEM in particular, for each block timestamp that appears in our previous samples, we also sample, independently for each block, an additional exponentially distributed (with $\lambda = \frac{1}{\ln2}$) sample indicating the work of the block.
 These samples are also re-used across all parameterizations. As the parameter $\gamma$
 varies, the works are adjusted, without resampling, by adding the constant $\gamma$ to each block's work.
+Following these time and work adjustments, the honest blocktree is recomputed to account for the delay and
+different cumulative chain work.
 
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
 for Bitcoin only, and not for PoEM, but in our experiments we have used the same attack for both protocols.
