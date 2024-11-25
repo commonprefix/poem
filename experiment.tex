@@ -49,8 +49,8 @@ continuous-time stochastic process.
 We know that the time between the creation of two honest blocks is exponentially distributed
 with rate $g$ (because the times of block creation form a Poisson point process~\cite{bitcoin-made-simple}).
 Hence, we take multiple independent samples from $\exp(g)$ to get the interval between each successive honest block production event,
-thereby giving rise to a Poisson process of honest block creations (even though these blocks may not necessarily be placed in a chain).
-We simulate a similar independent Poisson process for the adversary
+thereby giving rise to a Poisson point process of honest block creations (even though these blocks may not necessarily be placed in a chain).
+We simulate a similar independent Poisson point process for the adversary
 by sampling from $\exp(g\frac{\beta}{1 - \beta})$. These two stochastic processes produce the block creation times of the honest and
 adversary parties, from which we can determine the blocktree that was constructed taking the delay into account.
 
