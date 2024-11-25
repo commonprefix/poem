@@ -68,4 +68,3 @@ venv/
 
 target/
 plot_scripts/*.pdf
-simulation/simulation_data/

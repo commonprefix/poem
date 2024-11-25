@@ -26,7 +26,7 @@ seems to be a promising knob to tune the performance of PoEM. While we leave
 the
 analytic treatment of the optimal $\gamma$ for future work, we note here that,
 for given values of $g$ and $\beta$, the delay of the system behaves as illustrated
-in Figure~\ref{fig:gamma_latency} for varying values of $\gamma$. This is convex, and for $\gamma \to \infty$,
+in Figure~\ref{fig:gamma_latency} for varying values of $\gamma$. It is convex, and for $\gamma \to \infty$,
 the delay asymptotically approaches a value smaller than Bitcoin's. Indeed, if $\gamma$ is made sufficiently large, the bias
 parameter dominates against the $-\lg\frac{H(B)}{T}$ term, and the system behaves
 as if each block counts the same. However, even with $\gamma \to \infty$, PoEM provides a tie-breaker
@@ -36,14 +36,14 @@ which helps with latency. In this regime, this tie-breaker is as good as any.
     \centering
     \begin{subfigure}{0.8\textwidth}
     \centering
-    \includegraphics[width = \textwidth]{figures/gamma_latency_0.1.pdf}
-    \caption{$\beta = 0.1$ and $g = 0.7$}
+    \includegraphics[width = \textwidth]{figures/gamma_latency_beta_0.1_g_1.7.pdf}
+    \caption{$\beta = 0.1$ and $g = 1.7$}
     \label{fig:gamma_latency_0.1}
     \end{subfigure}
     \begin{subfigure}{0.8\textwidth}
     \centering
-    \includegraphics[width = \textwidth]{figures/gamma_latency_0.3.pdf}
-    \caption{$\beta = 0.3$ and $g = 0.7$}
+    \includegraphics[width = \textwidth]{figures/gamma_latency_beta_0.3_g_0.4.pdf}
+    \caption{$\beta = 0.3$ and $g = 0.4$}
     \label{fig:gamma_latency_0.3}
     \end{subfigure}
 
