@@ -16,7 +16,6 @@ def plot_g_latency(file_path):
     import json
 
     # Open and read the JSON file
-    # simulation_data/poem_g_latency_beta_0.2_g_0.1:6.3:50_gamma_0_monte_carlo_100_error_0.1.json
     with open(file_path, 'r') as file:
         data = json.load(file)
 

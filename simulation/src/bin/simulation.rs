@@ -110,7 +110,7 @@ fn main() {
             args.monte_carlo,
         );
         let poem_data = simulate_poem(
-            timestamps,
+            timestamps.clone(),
             args.monte_carlo,
             args.error,
             beta_range.clone(),
@@ -119,21 +119,22 @@ fn main() {
             ReductionType::Gamma,
         );
 
+        let bitcoin_data = simulate_bitcoin(
+            timestamps,
+            args.monte_carlo,
+            args.error,
+            beta_range.clone(),
+            g_range.clone(),
+        );
+
         let data = json!({
             "monte_carlo": args.monte_carlo,
             "error": args.error,
             "beta": beta_range,
             "g": g_range,
             "gamma": gamma_range,
-            "latency": poem_data.latency,
-            "optimal_k": poem_data.optimal_k,
-            "optimal_g": poem_data.optimal_g,
-            "optimal_gamma": poem_data.optimal_gamma,
-            "throughput": poem_data.throughput,
-            "max_work": poem_data.max_work,
-            "max_height": poem_data.max_height,
-            "adversary_max_work": poem_data.adversary_max_work,
-            "adversary_max_height": poem_data.adversary_max_height,
+            "poem_latency": poem_data.latency,
+            "bitcoin_latency": bitcoin_data.latency,
         });
         let json_string = serde_json::to_string_pretty(&data).unwrap();
         let file_name = format!(

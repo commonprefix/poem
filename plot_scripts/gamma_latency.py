@@ -24,19 +24,20 @@ def plot_gamma_latency(file_path):
     beta = data['beta'][0]
     g = data['g'][0]
     gamma_range = data['gamma']
-    poem_latency = data['latency']
-    # bitcoin_latency = data['interpolated_bitcoin_latency']
+    poem_latency = data['poem_latency']
+    bitcoin_latency = data['bitcoin_latency']
+    print(bitcoin_latency)
 
     plt.figure()
 
-    # plt.axhline(y=bitcoin_latency, color='blue', linestyle='-', linewidth=0.8, label='Bitcoin')
+    plt.axhline(y=bitcoin_latency, color='blue', linestyle='-', linewidth=0.8, label='Bitcoin')
     plt.plot(gamma_range, poem_latency, marker='.', linestyle='-', color='red', label='PoEM')
 
     plt.xlabel(r'Bias parameter $\gamma$')
     plt.ylabel(r'Latency (in $\Delta$s)')
 
     plt.legend()
-    plt.savefig(f"gamma_latency_{beta}.pdf", bbox_inches = "tight")
+    plt.savefig(f"gamma_latency_beta_{beta}_g_{g}.pdf", bbox_inches = "tight")
     # plt.title(rf'PoEM latency per $\gamma$ compared to Bitcoin latency with $\beta = {beta}$ and $g = {g}$(MONTE_CARLO = {monte_carlo}, error = {error})', loc='center')
     # plt.show()
     # plt.close()
