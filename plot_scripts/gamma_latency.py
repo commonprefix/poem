@@ -30,7 +30,7 @@ def plot_gamma_latency(file_path):
 
     plt.figure()
 
-    plt.axhline(y=bitcoin_latency, color='blue', linestyle='-', linewidth=0.9, label='Bitcoin')
+    plt.axhline(y=bitcoin_latency, color='blue', linestyle='--', linewidth=0.9, label='Bitcoin')
     plt.plot(gamma_range, poem_latency, marker='.', linestyle='-', color='red', label='PoEM')
 
     plt.xlabel(r'Bias parameter $\gamma$')

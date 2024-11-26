@@ -131,11 +131,6 @@ For each point in the plot, we ran \montecarlo$ \times 50 \times 40 = 200{,}000{
 and \montecarlo$ \times 50 = 5{,}000{,}000$ Bitcoin simulations,
 for a total of $6.15$ billion simulation runs across all points in the plot.
 
-% TODO: Explain the following aspects of the experimental methodology:
-% 2) infinite values not taken into account
-% 3) lifetime of simulations
-% 4) Quantization
-
 We observe that PoEM outperforms Bitcoin in terms of latency across all adversarial ratios $\beta$.
 For small values of $\beta$, PoEM has as much as $70\%$ faster confirmation than Bitcoin.
 The speedup decreases as $\beta$ increases, but PoEM still outperforms Bitcoin by $11.7\%$ for adversarial ratios around $0.4$.
@@ -144,11 +139,9 @@ This is illustrated in Figure~\ref{fig:g}.
 It is for these larger values of $g$ that PoEM truly shines, utilizing more effectively the work of the
 forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
 
-% TODO: fix the fonts that are sans-serif in these figures
-% TODO: make all figures readable in grayscale
 \begin{figure}[h]
     \centering
-    \includegraphics[width = 0.8\textwidth]{figures/g.pdf}
+    \includegraphics[width = 0.8\textwidth]{figures/optimal_g.pdf}
 
     \caption{Bitcoin vs PoEM optimal block production rate $g$ (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running \montecarlo{} Monte Carlo iterations for each parametrization triplet

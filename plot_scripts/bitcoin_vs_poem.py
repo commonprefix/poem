@@ -75,7 +75,7 @@ def g(file_path):
 
     # ax1 = ax1.twinx()
     ax1.semilogy(beta_range, bitcoin_optimal_g, marker='.', linestyle='--', color='blue', label=rf'Bitcoin')
-    ax1.semilogy(beta_range, poem_optimal_g, marker='.', linestyle='--', color='red', label=rf'PoEM')
+    ax1.semilogy(beta_range, poem_optimal_g, marker='.', linestyle='-', color='red', label=rf'PoEM')
     ax1.tick_params(axis='y')
     ax1.set_ylabel(r'Optimal Block Production Rate $g$', color='black')
     ax1.legend()
@@ -103,7 +103,7 @@ def g(file_path):
 
     # plt.title(rf'PoEM vs Bitcoin latency based on adversarial resilience $\beta$ (MONTE_CARLO = {monte_carlo}, error = {error})')
     # plt.show()
-    plt.savefig("g.pdf", bbox_inches = "tight")
+    plt.savefig("optimal_g.pdf", bbox_inches = "tight")
 
 def bitcoin_vs_poem(file_path):
     import json
@@ -128,7 +128,7 @@ def bitcoin_vs_poem(file_path):
 
 
     fig, ax1 = plt.subplots()
-    ax1.semilogy(beta_range, bitcoin_latency, marker='.', linestyle='-', color='blue', label='Bitcoin')
+    ax1.semilogy(beta_range, bitcoin_latency, marker='.', linestyle='--', color='blue', label='Bitcoin')
     ax1.semilogy(beta_range, poem_latency, marker='.', linestyle='-', color='red', label='PoEM')
     ax1.set_xlabel(r'Adversarial ratio $\beta$')
     ax1.set_ylabel(r'Latency (in $\Delta$s)')
@@ -138,7 +138,7 @@ def bitcoin_vs_poem(file_path):
     ax2 = ax1.twinx()
     ax2.set_ylabel(rf'Latency Improvement (\%)', color='green')
     ax2.plot(beta_range, [(bitcoin_latency[i]/poem_latency[i] - 1) * 100 for i in range(len(beta_range))],
-             marker='.', linestyle='-', color='green', label=rf'Speed-up (\%)')
+             marker='.', linestyle='dotted', color='green', label=rf'Speed-up (\%)')
     ax2.tick_params(axis='y', labelcolor='green')
     ax2.yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.0f}\%'.format(y)))
     ax2.legend(loc='center right')
