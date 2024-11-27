@@ -165,6 +165,14 @@ varies, the works are adjusted, without resampling, by adding the constant $\gam
 Following these time and work adjustments, the honest blocktree is recomputed to account for the delay and
 different cumulative chain work.
 
+Each execution was concluded when a certain number of (not necessarily chained) blocks had been mined.
+This number was chosen to be large enough so that $k^*$ was well-defined, namely the executions were
+chosen to be long enough so that there was always a safe confirmation parameter $k$. However, as the
+race between the adversary and the honest parties approaches a tie ($\beta \rightarrow 0.5, g \rightarrow \infty$),
+we set an upper bound on the number of blocks to be mined, and if no safe confirmation parameter $k$ is found during the
+execution lifetime we set $k$ to infinity. In the calculation of the expected shortfall, we discard the executions for which
+$k$ is infinite.
+
 We note some limitations of our experimental methodology. Firstly, the private attack has been proven optimal
 for Bitcoin only, and not for PoEM, but in our experiments we have used the same attack for both protocols.
 Secondly, the optimality of the private attack previously proven~\cite{eiar} is a reduction illustrating
