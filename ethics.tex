@@ -1,0 +1,29 @@
+\section{Ethics Considerations}
+
+In this paper, we did not interact with any live systems (in the form of attacks or data collection).
+We designed a new protocol and took measurements sourced from two different deployments: Firstly,
+a simulation which we ran in our controlled environment; and secondly, a real-world deployment of
+a testnet. The simulation is not used by real users beyond our research group. The real-world deployment
+of the testnet \emph{is} used by real users, but is explicitly designed for testing purposes and does
+not carry any real value. Additionally, all the measurements we took on the testnet are about aggregate
+metrics, and not about any individual user; for example, we measured the latency and throughput of the
+system. Therefore, no responsible disclosure or informed consent was required.
+
+Our paper improves on the performance of proof-of-work blockchains. Blockchains have been historically used
+for a variety of purposes, some of whose ethics are questionable (e.g. gambling, darknet markets, etc.).
+We believe improving the underlying infrastructural technology of blockchains is a step in the right direction,
+and we hope that this paper will be a useful contribution to that cause. Proof-of-work itself has been criticized
+for its energy consumption. However, there is an ongoing discussion on the trade-offs between energy consumption
+and security. We believe our contributions will be useful to the ongoing discussion to fairly determine whether
+proof-of-work is a good choice for the future of blockchain technology. Because our protocol does not change the
+energy requirements of proof-of-work, but improves on latency and throughput. If proof-of-work is to be used,
+we believe our protocol is a step in the right direction.
+
+\section{Open Science}
+
+In an effort to support open science, we uploaded a Creative-Commons--licensed early version of our paper to the
+ePrint archive and continue to keep it updated. We also made the source code of our simulation available on
+GitHub under a permissive license. Lastly, the production implementation of our testnet (and upcoming mainnet)
+is fully open source and available on GitHub. For anonymity purposes, we have included anonymized copies of
+the GitHub repositories in the paper. Should the reviewers require the source code to be made available in
+the form of an artifact, we will be happy to provide it.
