@@ -133,6 +133,9 @@ are orthogonal and can be combined with our approach, yielding even
 further performance gains.
 Such examples include GHOST~\cite{ghost},
 PHANTOM~\cite{phantom}, SPECTRE~\cite{spectre}, and GhostDAG~\cite{ghostdag}.
+For example, to compose PoEM with GHOST, one can follow the usual greediest subtree rule of GHOST, but
+make each subtree's score equal to the sum of the scores of individual blocks,
+which can be taken to be entropic, as in PoEM.
 Additional mechanisms towards improving the latency and throughput
 of proof-of-work blockchains at the consensus
 layer, also composable with ours, include parallel chains~\cite{parallel-chains},
