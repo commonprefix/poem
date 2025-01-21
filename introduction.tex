@@ -10,7 +10,7 @@ Nevertheless, these ``heavier'' blocks are counted all the same when choosing
 which chain to mine on.
 We posit that the weight of a block is information
 that can be useful to improve the protocol.
-In this paper, we introduce \emph{\poem}.
+In this paper, we introduce \emph{\poem} (Proof of Entropy Minima).
 We modify the fork choice rule of Bitcoin to take this information into account,
 achieving better confirmation latency.
 
@@ -120,14 +120,13 @@ onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
 gas consumption~\cite{gasefficient-nipopows},
 bribing resilience~\cite{soft-power},
 and variable populations~\cite{dionyziz}.
-We are the first to modify the fork choice rule to take these refinements into
-account, following \ifanonymous
-the
-\else
-our
-\fi
-previous short report ``POEM: Proof of Entropy Minima''~\cite{poem-short},
-where the entropic fork choice rule was defined but not analyzed.
+We are the first to modify the fork choice rule to take these nuances into
+account%
+\ifanonymous%
+\else%
+\footnote{Parts of the construction appeared in an earlier preprint~\cite{poem-short} by KK and SS}%
+\fi%
+.
 Our work only changes the PoW inequality.
 Other mechanisms refining the fork choice rule
 are orthogonal and can be combined with our approach, yielding even
