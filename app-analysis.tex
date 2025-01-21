@@ -361,8 +361,8 @@ of chains do not fall dangerously close to each other.
 
   Consequently,
   \begin{align*}
-      &\Pr[\BADRANGE_{j,i}]
-    = \Pr[\BADRANGE_{j,i}|\rw_1 < \rw_2]\Pr[\rw_1 < \rw_2]\\
+      &\Pr[\BADRANGE_{j,i}] =\\
+      &\Pr[\BADRANGE_{j,i}|\rw_1 < \rw_2]\Pr[\rw_1 < \rw_2]\\
     \leq & \Pr[\BADRANGE_{j,i}|\rw_1 < \rw_2]\\
     = &\Pr[\rw_2 - \frac{nqL}{2^{\kappa/2}} - \frac{1}{2^{\kappa/2}} \leq \rw_1 + \rw < \rw_2 | \rw_1 < \rw_2] +\\
       &\Pr[\rw_2 < \rw_1 + \rw \leq \rw_2 + \frac{nqL}{2^{\kappa/2}} + \frac{1}{2^{\kappa/2}} | \rw_1 < \rw_2]\\
@@ -814,9 +814,10 @@ of chains do not fall dangerously close to each other.
   of real work $\rwork(C_3[{u'}{:}]) + L$, and so $L \geq X(S)$.
 
   Therefore,
-  \[
-    Z(S) \geq L - x > (1 - \mu)L \geq (1 - \mu)X(S) \geq ((1 + \frac{\delta}{2})\cdot\frac{t}{n - t} + \frac{\epsilon}{1 - \epsilon})X(S)\,.
-  \]
+  \begin{align*}
+    Z(S) \geq L - x > (1 - \mu)L \geq (1 - \mu)X(S)\\
+    \geq ((1 + \frac{\delta}{2})\cdot\frac{t}{n - t} + \frac{\epsilon}{1 - \epsilon})X(S)\,.
+  \end{align*}
 
   The last inequality follows from replacing the value of $\mu$ from the statement.
   By Lemma~\ref{lem:patience}, $|S| > \lambda$ and typical bounds apply. Therefore,
@@ -849,15 +850,15 @@ of chains do not fall dangerously close to each other.
   It suffices to show that $\Pr[\borderline]$ is negligible.
 
   Let $E_1$ be the event that there exists a subchain $C^*$ such that
-  $\work(C^*) - \rwork(C^*) \geq Lqn2^{−\kappa/2}$, and let $p_1 = \Pr[E_1]$.
+  $\work(C^*) - \rwork(C^*) \geq Lqn2^{-\kappa/2}$, and let $p_1 = \Pr[E_1]$.
   Let $E_2$ be the event that there exists a subchain $C^*$ such that
   $k - Lqn2^{\kappa/2} \leq \rwork(C^*) < k$, and let $p_2 = \Pr[E_2]$.
   We observe that $\lnot E_1 \land \lnot E_2 \rightarrow \lnot \borderline$,
   hence $\borderline \rightarrow E_1 \lor E_2$.
   Therefore, from the union bound, we have
   \[
-  \Pr[E_1] + \Pr[E_2] = p_1 + p_2 \geq \Pr[E_1 \lor E_2] \geq \Pr[\borderline]\~.
-  \]
+  \Pr[E_1] + \Pr[E_2] = p_1 + p_2 \geq \Pr[E_1 \lor E_2] \geq \Pr[\borderline]
+  \]\~.
 
   From Corollary~\ref{cor:chain-work-approximation}, we have that
   $p_1$ is negligible.

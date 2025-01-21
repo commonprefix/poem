@@ -1,3 +1,12 @@
+all: pdflatex
+
+pdflatex: *.tex *.bib *.sty algorithms/*.tex figures/*.tex
+	pdflatex poem.tex && \
+	bibtex poem && \
+	pdflatex poem.tex && \
+	pdflatex poem.tex && \
+	rm -rf *.aux *.log *.out;
+
 poem.pdf: *.tex *.bib *.sty algorithms/*.tex figures/*.tex
 	xelatex poem.tex && \
 	bibtex poem && \

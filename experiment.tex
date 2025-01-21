@@ -102,9 +102,13 @@ To do this, we collect all the safe $k$ values of the \montecarlo{} Monte Carlo 
 We take the $20\%$ highest percentile of the list and set $k^*$ to be the mean of these values (i.e., the \emph{expected shortfall}
 at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ percentile).
 
-\begin{figure}[h]
+\begin{figure*}[h]
     \centering
-    \includegraphics[width = 0.9\textwidth]{figures/bitcoin_vs_poem.pdf}
+    \ifusenix
+        \includegraphics[width = 0.7\textwidth]{figures/bitcoin_vs_poem.pdf}
+    \else
+        \includegraphics[width = 0.9\textwidth]{figures/bitcoin_vs_poem.pdf}
+    \fi
 
     \caption{Bitcoin vs PoEM latency (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running 200 million simulations per point.
@@ -112,7 +116,7 @@ at $20\%$, noting that the $90\%$ mark falls in the middle of the top $20\%$ per
              \montecarlo{} Monte Carlo iterations and obtain the latency-optimal parameters
              $(g, \gamma)$ for which the latency is illustrated on the vertical axis.}
     \label{fig:bitcoin_vs_poem}
-\end{figure}
+\end{figure*}
 
 The latency of the system is calculated as $d = \frac{k^*}{f}$, where $f$ is the average cumulative work increase rate for the honest chains.
 The latency $d$ is the average time it takes to produce $k^*$ chained honest work in the system (both in Bitcoin and PoEM).
@@ -139,15 +143,19 @@ This is illustrated in Figure~\ref{fig:g}.
 It is for these larger values of $g$ that PoEM truly shines, utilizing more effectively the work of the
 forks that appear in the honest blocktree (Figure~\ref{fig:poem-wasted-work}).
 
-\begin{figure}[h]
+\begin{figure*}[h]
     \centering
-    \includegraphics[width = 0.8\textwidth]{figures/optimal_g.pdf}
+    \ifusenix
+        \includegraphics[width = 0.7\textwidth]{figures/optimal_g.pdf}
+    \else
+        \includegraphics[width = 0.9\textwidth]{figures/optimal_g.pdf}
+    \fi
 
     \caption{Bitcoin vs PoEM optimal block production rate $g$ (logarithmic scale) over different adversarial ratios $\beta$.
              The results were obtained by running \montecarlo{} Monte Carlo iterations for each parametrization triplet
              $(\beta, g, \gamma)$, for a total of $200{,}000{,}000$ simulations per point.}
     \label{fig:g}
-\end{figure}
+\end{figure*}
 
 Some more detail about how exactly the sampling of adversarial and honest block creation events in the form of the
 Poisson point process is warranted. We do not re-sample block creation times for each parametrization triplet

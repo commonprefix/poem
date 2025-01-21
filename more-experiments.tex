@@ -10,14 +10,18 @@ For large block production rates, we get high latency because honest blocks effe
 are all chained in series, and a large confirmation parameter $k$ is required for safety.
 We get optimal latency somewhere in the middle.
 
-\begin{figure}[pt]
+\begin{figure*}[pt]
   \centering
-  \includegraphics[width = 0.8\textwidth]{figures/g_latency.pdf}
+  \ifusenix
+    \includegraphics[width = 0.7\textwidth]{figures/g_latency.pdf}
+  \else
+    \includegraphics[width = 0.8\textwidth]{figures/g_latency.pdf}
+  \fi
 
   \caption{Fixing $\beta=0.2$ and $\gamma=0$, we plot the latency of PoEM parameterized under different block production rates $g$.
            The results were obtained by running \montecarlo{} Monte Carlo iterations per point.}
   \label{fig:g_latency}
-\end{figure}
+\end{figure*}
 
 \subsection{The Bias Parameter}
 
@@ -32,15 +36,23 @@ parameter dominates against the $-\lg\frac{H(B)}{T}$ term, and the system behave
 as if each block counts the same. However, even with $\gamma \to \infty$, PoEM provides a tie-breaker
 which helps with latency. In this regime, this tie-breaker is as good as any.
 
-\begin{figure}[h]
+\begin{figure*}[h]
     \centering
+    \ifusenix
+    \begin{subfigure}{0.7\textwidth}
+    \else
     \begin{subfigure}{0.8\textwidth}
+    \fi
     \centering
     \includegraphics[width = \textwidth]{figures/gamma_latency_beta_0.1_g_1.7.pdf}
     \caption{$\beta = 0.1$ and $g = 1.7$}
     \label{fig:gamma_latency_0.1}
     \end{subfigure}
+    \ifusenix
+    \begin{subfigure}{0.7\textwidth}
+    \else
     \begin{subfigure}{0.8\textwidth}
+    \fi
     \centering
     \includegraphics[width = \textwidth]{figures/gamma_latency_beta_0.3_g_0.4.pdf}
     \caption{$\beta = 0.3$ and $g = 0.4$}
@@ -52,4 +64,4 @@ which helps with latency. In this regime, this tie-breaker is as good as any.
           We observe the plot is convex and for large $\gamma$, the latency
           approaches a value lower than Bitcoin's. The results were obtained by running \montecarlo{} simulations per point.}
     \label{fig:gamma_latency}
-\end{figure}
+\end{figure*}

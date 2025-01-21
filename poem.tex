@@ -5,11 +5,14 @@
 \newif\iflncs
 \newif\ifccs
 \newif\ifoakland
+\newif\ifusenix
 
 % \todaytrue
-% \anonymoustrue
+\anonymoustrue
 % \ccstrue
-\lncstrue
+% \lncstrue
+\usenixtrue
+\twocolumntrue
 
 \iflncs
   \onecolumntrue
@@ -37,13 +40,31 @@
   \input{oakland-preamble}
 \fi
 
-\usepackage{graphicx}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{hyperref}
-\usepackage{preamble}
+
+
+\ifusenix
+  \documentclass[letterpaper,twocolumn,10pt]{article}
+  \usepackage{preamble}
+  \usepackage{hyperref}
+  \usepackage{usenix}
+  \usepackage{import}
+  \usepackage{filecontents}
+\else
+  \usepackage{graphicx}
+  \usepackage{algorithm}
+  \usepackage{algpseudocode}
+  \usepackage{hyperref}
+  \usepackage{preamble}
+\fi
+
 
 \begin{document}
+
+\ifusenix
+  %don't want date printed
+  \date{}
+\fi
+
 \import{./}{frontpage.tex}
 \import{./}{body.tex}
 
@@ -55,6 +76,9 @@
 \fi
 \ifccs
   \bibliographystyle{ACM-Reference-Format}
+\fi
+\ifusenix
+  \bibliographystyle{plain}
 \fi
 \bibliography{pubs}
 \pdfbookmark[section]{References}{references}

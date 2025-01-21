@@ -152,7 +152,8 @@
   For all $0 < t < \lambda$:
 
   \begin{align*}
-    \Pr[X > (1 + \epsilon)\E[X]] = \Pr[X > (1 + \epsilon)np(\gamma + \frac{1}{\lambda})] =
+    \Pr[X > (1 + \epsilon)\E[X]] =\\
+    \Pr[X > (1 + \epsilon)np(\gamma + \frac{1}{\lambda})] =
     \Pr[e^{tX} > e^{t(1 + \epsilon)np(\gamma + \frac{1}{\lambda})}]\\
     \leq \E[e^{tX}] e^{-t(1 + \epsilon)np(\gamma + \frac{1}{\lambda})}
     = e^{n \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - nt(1 + \epsilon)p(\gamma + \frac{1}{\lambda})}\,.
@@ -164,7 +165,7 @@
 
   \begin{align*}
     \frac{d}{dt} \left(\ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right)\right) = \\
-    \frac{1}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right) = \\
+    \frac{1}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} \frac{d}{dt} \left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right]\\ - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right) = \\
     \frac{pe^{t\gamma}\frac{\lambda}{\lambda - t}(\gamma + \frac{1}{\lambda - t})}{(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}} - (1 + \epsilon)p\left(\gamma + \frac{1}{\lambda}\right)
   \end{align*}
 
@@ -185,7 +186,8 @@
   For all $t < 0$:
 
   \begin{align*}
-    \Pr[X < (1 - \epsilon)\E[X]] = \Pr\left[X < (1 - \epsilon)np(\gamma + \frac{1}{\lambda})\right] = \Pr[e^{tX} > e^{t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})}]\\
+    \Pr[X < (1 - \epsilon)\E[X]] =\\
+    \Pr\left[X < (1 - \epsilon)np(\gamma + \frac{1}{\lambda})\right] = \Pr[e^{tX} > e^{t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})}]\\
     % \leq \E[e^{tX}] e^{-t(1 - \epsilon)\frac{np}{\lambda}} \\
     \leq \E[e^{tX}] e^{-t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})} \\
     = e^{n \ln\left[(1 - p) + pe^{t\gamma}\frac{\lambda}{\lambda - t}\right] - t(1 - \epsilon)np(\gamma + \frac{1}{\lambda})}
