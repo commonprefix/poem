@@ -118,8 +118,12 @@ Proofs of Proof-of-Work~\cite{popow}. These were later refined multiple times
 to account for non\-/interactivity~\cite{nipopows}, backwards compatibility~\cite{velvet-nipopows},
 onlineness~\cite{logspace}, on-chain data efficiency~\cite{compact-superblocks},
 gas consumption~\cite{gasefficient-nipopows},
+\ifanonymous%
+and bribing resilience~\cite{soft-power}.
+\else%
 bribing resilience~\cite{soft-power},
 and variable populations~\cite{dionyziz}.
+\fi%
 We are the first to modify the fork choice rule to take these nuances into
 account%
 \ifanonymous%
